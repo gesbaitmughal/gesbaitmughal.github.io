@@ -18,7 +18,7 @@
     <!-- Firebase App (Core) & Realtime Database SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getDatabase, ref, set, get, update, remove, child } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { getDatabase, ref, set, get, update, remove, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
         // Your web app's Firebase configuration (from your Console)[cite: 4]
         const firebaseConfig = {
@@ -36,8 +36,9 @@
         const db = getDatabase(app);
 
         // Make Firebase tools globally accessible if needed
-        window.firebaseDB = { db, ref, set, get, update, remove, child };
+        window.firebaseDB = { db, ref, set, get, update, remove, child, onValue };
         console.log("Firebase Realtime Database Connected Successfully!");
+        window.dispatchEvent(new Event('firebase-ready'));
     </script>
 
     <style>
@@ -49,6 +50,12 @@
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- LOADING OVERLAY (shown until live data arrives from Firebase) -->
+    <div id="app-loading-overlay" class="fixed inset-0 bg-emerald-900 z-[9999] flex flex-col items-center justify-center text-white space-y-3">
+        <i class="fa-solid fa-graduation-cap fa-3x animate-pulse"></i>
+        <p id="app-loading-text" class="text-sm font-semibold">Connecting to school database...</p>
+    </div>
 
     <!-- TOP HEADER / BANNER -->
     <header class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white shadow-xl">
@@ -680,40 +687,151 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        let db;
-        const dbRequest = indexedDB.open("GES_BaitMughal_DB", 1);
+        // ===================================================================
+        // FIREBASE-BACKED DATA LAYER
+        // Replaces the old localStorage/IndexedDB approach. Every visitor's
+        // browser now reads/writes the SAME central database, so any update
+        // made by the Headmaster or a Teacher is instantly visible to every
+        // device/visitor - not just the one that made the change.
+        // ===================================================================
+        let DB_CACHE = {};          // in-memory mirror of Firebase data
+        let DB_FIRST_LOAD_DONE = false;
 
-        dbRequest.onupgradeneeded = function(e) {
-            db = e.target.result;
-            if (!db.objectStoreNames.contains("media")) {
-                db.createObjectStore("media", { keyPath: "key" });
+        // Drop-in replacements for localStorage.getItem / localStorage.setItem
+        // so the rest of the app's code barely had to change.
+        const DB = {
+            get(key) {
+                const v = DB_CACHE[key];
+                if (v === undefined || v === null) return null;
+                return (typeof v === 'string') ? v : JSON.stringify(v);
+            },
+            set(key, value) {
+                let toStore;
+                try { toStore = JSON.parse(value); } catch (e) { toStore = value; }
+                DB_CACHE[key] = toStore; // update instantly for the current user
+                if (window.firebaseDB) {
+                    const { ref, set, db } = window.firebaseDB;
+                    set(ref(db, 'gesData/' + key), toStore).catch(err => {
+                        console.error('Firebase save failed for', key, err);
+                        alert('Warning: Could not save to the online database. Please check your internet connection and try again.');
+                    });
+                }
             }
         };
 
-        dbRequest.onsuccess = function(e) {
-            db = e.target.result;
-            loadGlobals();
-        };
+        // Fill in any keys missing from the online database with sensible
+        // defaults (only runs the very first time the database is empty).
+        // Built as a function (not a plain object) because it references
+        // DEFAULT_INCHARGES / DEFAULT_TEACHER_PINS / DEFAULT_SLIDES, which
+        // are declared further down this script - by the time this actually
+        // runs (after the whole script has executed once) they're ready.
+        function getDefaultDataValues() {
+            return {
+                ges_news: [],
+                ges_students: [],
+                ges_homework: [],
+                ges_head_pass: 'head123',
+                ges_teacher_pins: DEFAULT_TEACHER_PINS,
+                ges_incharges: DEFAULT_INCHARGES,
+                ges_timings: '08:00 AM - 01:30 PM',
+                ges_ticker: 'Welcome to GES Bait Mughal Digital Smart Portal.',
+                ges_docs: [],
+                ges_gallery: [],
+                ges_slides: DEFAULT_SLIDES,
+                ges_adm_title: 'ADMISSIONS OPEN FOR SESSION 2026-2027',
+                ges_adm_desc: 'Admissions are open for Class 1 to 8. Contact school office for registration forms.',
+                ges_adm_img: '',
+                ges_video: ''
+            };
+        }
 
-        function saveMediaToDB(key, blob) {
-            return new Promise((resolve, reject) => {
-                const tx = db.transaction("media", "readwrite");
-                const store = tx.objectStore("media");
-                const request = store.put({ key: key, data: blob });
-                request.onsuccess = () => resolve();
-                request.onerror = (e) => reject(e);
+        function ensureDefaultData() {
+            const defaults = getDefaultDataValues();
+            for (const key in defaults) {
+                if (DB_CACHE[key] === undefined) {
+                    const defaultVal = defaults[key];
+                    DB.set(key, typeof defaultVal === 'string' ? defaultVal : JSON.stringify(defaultVal));
+                }
+            }
+        }
+
+        function hideLoadingOverlay() {
+            const overlay = document.getElementById('app-loading-overlay');
+            if (overlay) overlay.remove();
+        }
+
+        function showLoadingError() {
+            const textEl = document.getElementById('app-loading-text');
+            if (textEl) {
+                textEl.innerText = "Could not connect to the database. Please check your internet connection and reload the page.";
+            }
+        }
+
+        // Refreshes every piece of dynamic UI from the current in-memory cache.
+        // Called after the initial load AND every time data changes on any
+        // device, so all visitors always see the latest content live.
+        function refreshAllUI() {
+            document.getElementById('display-school-timings').innerText = DB.get('ges_timings') || '';
+            document.getElementById('header-notice-ticker').innerText = DB.get('ges_ticker') || '';
+
+            const player = document.getElementById('school-video-player');
+            const videoSrc = DB.get('ges_video');
+            if (videoSrc && player.getAttribute('data-current-src') !== videoSrc) {
+                player.src = videoSrc;
+                player.setAttribute('data-current-src', videoSrc);
+            }
+
+            document.getElementById('adm-banner-title').innerText = DB.get('ges_adm_title') || '';
+            document.getElementById('adm-banner-desc').innerText = DB.get('ges_adm_desc') || '';
+            const admImg = DB.get('ges_adm_img');
+            const admImgContainer = document.getElementById('adm-banner-img-container');
+            admImgContainer.innerHTML = admImg
+                ? `<img src="${admImg}" class="h-20 rounded-xl border-2 border-white shadow-md object-cover">`
+                : '';
+
+            renderHomeIncharges();
+            renderSlider();
+            renderNews();
+            renderRulesAndDocs();
+            renderGallery();
+
+            if (document.getElementById('tab-homework').classList.contains('active')) renderHomework();
+            if (currentUserRole === 'incharge' && activeInchargeClass) renderClassStudents();
+            if (currentUserRole === 'headmaster') renderHeadmasterControls();
+        }
+
+        // Kick things off once the Firebase module (in <head>) has finished
+        // initializing. It fires a 'firebase-ready' event; if it already
+        // fired before we got here, window.firebaseDB will already exist.
+        function startFirebaseSync() {
+            const { ref, onValue, db } = window.firebaseDB;
+
+            // Safety timeout: if nothing arrives in 12s, show a friendly error
+            const timeoutId = setTimeout(() => {
+                if (!DB_FIRST_LOAD_DONE) showLoadingError();
+            }, 12000);
+
+            onValue(ref(db, 'gesData'), (snapshot) => {
+                DB_CACHE = snapshot.val() || {};
+                ensureDefaultData();
+
+                if (!DB_FIRST_LOAD_DONE) {
+                    DB_FIRST_LOAD_DONE = true;
+                    clearTimeout(timeoutId);
+                    hideLoadingOverlay();
+                    startSlider();
+                }
+                refreshAllUI();
+            }, (error) => {
+                console.error('Firebase read failed:', error);
+                showLoadingError();
             });
         }
 
-        function getMediaFromDB(key) {
-            return new Promise((resolve, reject) => {
-                if (!db) return resolve(null);
-                const tx = db.transaction("media", "readonly");
-                const store = tx.objectStore("media");
-                const request = store.get(key);
-                request.onsuccess = () => resolve(request.result ? request.result.data : null);
-                request.onerror = (e) => reject(e);
-            });
+        if (window.firebaseDB) {
+            startFirebaseSync();
+        } else {
+            window.addEventListener('firebase-ready', startFirebaseSync, { once: true });
         }
 
         const fileToBase64 = file => new Promise((resolve, reject) => {
@@ -751,59 +869,13 @@
             { id: 3, title: "Smart Digital Classroom Management", img: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1000&q=80" }
         ];
 
-        if(!localStorage.getItem('ges_news')) localStorage.setItem('ges_news', JSON.stringify([]));
-        if(!localStorage.getItem('ges_students')) localStorage.setItem('ges_students', JSON.stringify([]));
-        if(!localStorage.getItem('ges_homework')) localStorage.setItem('ges_homework', JSON.stringify([]));
-        if(!localStorage.getItem('ges_head_pass')) localStorage.setItem('ges_head_pass', 'head123');
-        if(!localStorage.getItem('ges_teacher_pins')) localStorage.setItem('ges_teacher_pins', JSON.stringify(DEFAULT_TEACHER_PINS));
-        if(!localStorage.getItem('ges_incharges')) localStorage.setItem('ges_incharges', JSON.stringify(DEFAULT_INCHARGES));
-        if(!localStorage.getItem('ges_timings')) localStorage.setItem('ges_timings', '08:00 AM - 01:30 PM');
-        if(!localStorage.getItem('ges_ticker')) localStorage.setItem('ges_ticker', 'Welcome to GES Bait Mughal Digital Smart Portal.');
-        if(!localStorage.getItem('ges_docs')) localStorage.setItem('ges_docs', JSON.stringify([]));
-        if(!localStorage.getItem('ges_gallery')) localStorage.setItem('ges_gallery', JSON.stringify([]));
-        if(!localStorage.getItem('ges_slides')) localStorage.setItem('ges_slides', JSON.stringify(DEFAULT_SLIDES));
-        if(!localStorage.getItem('ges_adm_title')) localStorage.setItem('ges_adm_title', 'ADMISSIONS OPEN FOR SESSION 2026-2027');
-        if(!localStorage.getItem('ges_adm_desc')) localStorage.setItem('ges_adm_desc', 'Admissions are open for Class 1 to 8. Contact school office for registration forms.');
-        if(!localStorage.getItem('ges_adm_img')) localStorage.setItem('ges_adm_img', '');
-
         let currentUserRole = "public";
         let activeInchargeClass = null;
         let currentSlideIndex = 0;
         let sliderInterval = null;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderNews();
-            renderRulesAndDocs();
-            renderGallery();
-            startSlider();
-        });
-
-        async function loadGlobals() {
-            document.getElementById('display-school-timings').innerText = localStorage.getItem('ges_timings');
-            document.getElementById('header-notice-ticker').innerText = localStorage.getItem('ges_ticker');
-            
-            const videoBlob = await getMediaFromDB('ges_video_blob');
-            const player = document.getElementById('school-video-player');
-            if(videoBlob) {
-                player.src = URL.createObjectURL(videoBlob);
-            }
-            
-            document.getElementById('adm-banner-title').innerText = localStorage.getItem('ges_adm_title');
-            document.getElementById('adm-banner-desc').innerText = localStorage.getItem('ges_adm_desc');
-            const admImg = localStorage.getItem('ges_adm_img');
-            const admImgContainer = document.getElementById('adm-banner-img-container');
-            if(admImg) {
-                admImgContainer.innerHTML = `<img src="${admImg}" class="h-20 rounded-xl border-2 border-white shadow-md object-cover">`;
-            } else {
-                admImgContainer.innerHTML = '';
-            }
-
-            renderHomeIncharges();
-            renderSlider();
-        }
-
         function renderSlider() {
-            const slides = JSON.parse(localStorage.getItem('ges_slides')) || [];
+            const slides = JSON.parse(DB.get('ges_slides')) || [];
             const container = document.getElementById('home-slider-container');
             const dots = document.getElementById('slider-dots');
             
@@ -832,7 +904,7 @@
         function startSlider() {
             if(sliderInterval) clearInterval(sliderInterval);
             sliderInterval = setInterval(() => {
-                const slides = JSON.parse(localStorage.getItem('ges_slides')) || [];
+                const slides = JSON.parse(DB.get('ges_slides')) || [];
                 if(slides.length > 0) {
                     currentSlideIndex = (currentSlideIndex + 1) % slides.length;
                     renderSlider();
@@ -852,10 +924,11 @@
             const fileInput = document.getElementById('slide-file-input').files[0];
 
             if(fileInput) {
+                if (!checkFileSize(fileInput, 3, 'image')) return;
                 const img = await fileToBase64(fileInput);
-                let slides = JSON.parse(localStorage.getItem('ges_slides')) || [];
+                let slides = JSON.parse(DB.get('ges_slides')) || [];
                 slides.unshift({ id: Date.now(), title, img });
-                localStorage.setItem('ges_slides', JSON.stringify(slides));
+                DB.set('ges_slides', JSON.stringify(slides));
                 alert('Slide added successfully!');
                 document.getElementById('slide-title').value = '';
                 document.getElementById('slide-file-input').value = '';
@@ -866,16 +939,16 @@
 
         function deleteSliderImage(id) {
             if(confirm('Delete this slide image?')) {
-                let slides = JSON.parse(localStorage.getItem('ges_slides')) || [];
+                let slides = JSON.parse(DB.get('ges_slides')) || [];
                 slides = slides.filter(s => s.id != id);
-                localStorage.setItem('ges_slides', JSON.stringify(slides));
+                DB.set('ges_slides', JSON.stringify(slides));
                 renderSlider();
                 renderHeadmasterSliderList();
             }
         }
 
         function renderHeadmasterSliderList() {
-            const slides = JSON.parse(localStorage.getItem('ges_slides')) || [];
+            const slides = JSON.parse(DB.get('ges_slides')) || [];
             const list = document.getElementById('headmaster-slider-manage-list');
             list.innerHTML = '';
             slides.forEach(slide => {
@@ -905,7 +978,7 @@
             const btn = document.getElementById('btn-' + tabName);
             if(btn) btn.classList.add('bg-emerald-700');
 
-            if(tabName === 'home') { renderNews(); renderHomeIncharges(); loadGlobals(); startSlider(); }
+            if(tabName === 'home') { renderNews(); renderHomeIncharges(); refreshAllUI(); startSlider(); }
             if(tabName === 'rules') renderRulesAndDocs();
             if(tabName === 'gallery') renderGallery();
             if(tabName === 'homework') renderHomework();
@@ -913,13 +986,29 @@
             if(tabName === 'incharge' && activeInchargeClass) renderClassStudents();
         }
 
+        // Checks a file isn't too large before converting it to base64 and
+        // uploading it to the shared database. Large files make the site
+        // slow to load for every visitor, since the whole database is
+        // fetched on page load - so we keep sensible limits.
+        function checkFileSize(file, maxMB, label) {
+            const maxBytes = maxMB * 1024 * 1024;
+            if (file.size > maxBytes) {
+                alert(`This ${label} is too large (${(file.size / (1024*1024)).toFixed(1)}MB). Please use a file under ${maxMB}MB so the website stays fast for all visitors.`);
+                return false;
+            }
+            return true;
+        }
+
         async function updateSchoolVideo(e) {
             e.preventDefault();
             const fileInput = document.getElementById('input-video-file');
             if(fileInput.files.length > 0) {
-                await saveMediaToDB('ges_video_blob', fileInput.files[0]);
-                loadGlobals();
-                alert('School Video Uploaded Successfully!');
+                const file = fileInput.files[0];
+                if (!checkFileSize(file, 15, 'video')) return;
+                const videoBase64 = await fileToBase64(file);
+                DB.set('ges_video', videoBase64);
+                refreshAllUI();
+                alert('School Video Uploaded Successfully! It is now visible to all visitors.');
                 fileInput.value = '';
             }
         }
@@ -930,18 +1019,19 @@
             const desc = document.getElementById('adm-desc').value;
             const imgFile = document.getElementById('adm-img-file').files[0];
 
-            localStorage.setItem('ges_adm_title', title);
-            localStorage.setItem('ges_adm_desc', desc);
+            DB.set('ges_adm_title', title);
+            DB.set('ges_adm_desc', desc);
             if(imgFile) {
+                if (!checkFileSize(imgFile, 3, 'image')) return;
                 const base64Img = await fileToBase64(imgFile);
-                localStorage.setItem('ges_adm_img', base64Img);
+                DB.set('ges_adm_img', base64Img);
             }
-            loadGlobals();
+            refreshAllUI();
             alert('Admission Banner Updated!');
         }
 
         function renderRulesAndDocs() {
-            const docs = JSON.parse(localStorage.getItem('ges_docs')) || [];
+            const docs = JSON.parse(DB.get('ges_docs')) || [];
             const grid = document.getElementById('docs-download-grid');
             grid.innerHTML = '';
             docs.forEach(doc => {
@@ -966,10 +1056,11 @@
             const fileInput = document.getElementById('doc-file-input').files[0];
 
             if(fileInput) {
+                if (!checkFileSize(fileInput, 8, 'document')) return;
                 const fileData = await fileToBase64(fileInput);
-                let docs = JSON.parse(localStorage.getItem('ges_docs')) || [];
+                let docs = JSON.parse(DB.get('ges_docs')) || [];
                 docs.unshift({ id: Date.now(), title, fileData });
-                localStorage.setItem('ges_docs', JSON.stringify(docs));
+                DB.set('ges_docs', JSON.stringify(docs));
                 alert('Official Document Uploaded!');
                 document.getElementById('doc-title').value = '';
                 document.getElementById('doc-file-input').value = '';
@@ -980,16 +1071,16 @@
 
         function deleteDocument(id) {
             if(confirm('Delete this document?')) {
-                let docs = JSON.parse(localStorage.getItem('ges_docs')) || [];
+                let docs = JSON.parse(DB.get('ges_docs')) || [];
                 docs = docs.filter(d => d.id != id);
-                localStorage.setItem('ges_docs', JSON.stringify(docs));
+                DB.set('ges_docs', JSON.stringify(docs));
                 renderRulesAndDocs();
                 renderHeadmasterDocsList();
             }
         }
 
         function renderHeadmasterDocsList() {
-            const docs = JSON.parse(localStorage.getItem('ges_docs')) || [];
+            const docs = JSON.parse(DB.get('ges_docs')) || [];
             const list = document.getElementById('headmaster-docs-manage-list');
             list.innerHTML = '';
             docs.forEach(doc => {
@@ -1004,7 +1095,7 @@
         }
 
         function renderGallery() {
-            const gallery = JSON.parse(localStorage.getItem('ges_gallery')) || [];
+            const gallery = JSON.parse(DB.get('ges_gallery')) || [];
             const grid = document.getElementById('photo-gallery-grid');
             grid.innerHTML = '';
             gallery.forEach(img => {
@@ -1024,10 +1115,11 @@
             const fileInput = document.getElementById('gal-file-input').files[0];
 
             if(fileInput) {
+                if (!checkFileSize(fileInput, 3, 'image')) return;
                 const fileData = await fileToBase64(fileInput);
-                let gallery = JSON.parse(localStorage.getItem('ges_gallery')) || [];
+                let gallery = JSON.parse(DB.get('ges_gallery')) || [];
                 gallery.unshift({ id: Date.now(), caption, fileData });
-                localStorage.setItem('ges_gallery', JSON.stringify(gallery));
+                DB.set('ges_gallery', JSON.stringify(gallery));
                 alert('Photo Uploaded to Gallery!');
                 document.getElementById('gal-caption').value = '';
                 document.getElementById('gal-file-input').value = '';
@@ -1038,16 +1130,16 @@
 
         function deleteGalleryImage(id) {
             if(confirm('Delete photo from gallery?')) {
-                let gallery = JSON.parse(localStorage.getItem('ges_gallery')) || [];
+                let gallery = JSON.parse(DB.get('ges_gallery')) || [];
                 gallery = gallery.filter(g => g.id != id);
-                localStorage.setItem('ges_gallery', JSON.stringify(gallery));
+                DB.set('ges_gallery', JSON.stringify(gallery));
                 renderGallery();
                 renderHeadmasterGalleryList();
             }
         }
 
         function renderHeadmasterGalleryList() {
-            const gallery = JSON.parse(localStorage.getItem('ges_gallery')) || [];
+            const gallery = JSON.parse(DB.get('ges_gallery')) || [];
             const list = document.getElementById('headmaster-gallery-manage-list');
             list.innerHTML = '';
             gallery.forEach(img => {
@@ -1067,8 +1159,8 @@
         function updateSchoolTimings(e) {
             e.preventDefault();
             const timings = document.getElementById('input-timings').value;
-            localStorage.setItem('ges_timings', timings);
-            loadGlobals();
+            DB.set('ges_timings', timings);
+            refreshAllUI();
             alert('School Timings Updated!');
             document.getElementById('input-timings').value = '';
         }
@@ -1076,8 +1168,8 @@
         function updateHeaderTicker(e) {
             e.preventDefault();
             const ticker = document.getElementById('input-ticker').value;
-            localStorage.setItem('ges_ticker', ticker);
-            loadGlobals();
+            DB.set('ges_ticker', ticker);
+            refreshAllUI();
             alert('Header Ticker Notice Updated!');
             document.getElementById('input-ticker').value = '';
         }
@@ -1087,9 +1179,9 @@
             const cls = document.getElementById('incharge-assign-class').value;
             const teacher = document.getElementById('incharge-teacher-name').value;
 
-            let incharges = JSON.parse(localStorage.getItem('ges_incharges'));
+            let incharges = JSON.parse(DB.get('ges_incharges'));
             incharges[cls] = teacher;
-            localStorage.setItem('ges_incharges', JSON.stringify(incharges));
+            DB.set('ges_incharges', JSON.stringify(incharges));
             alert(`Teacher assigned to ${cls} successfully!`);
             document.getElementById('incharge-teacher-name').value = '';
             renderHomeIncharges();
@@ -1097,7 +1189,7 @@
         }
 
         function renderHomeIncharges() {
-            const incharges = JSON.parse(localStorage.getItem('ges_incharges'));
+            const incharges = JSON.parse(DB.get('ges_incharges'));
             const list = document.getElementById('home-incharges-list');
             list.innerHTML = '';
             for(const [cls, teacher] of Object.entries(incharges)) {
@@ -1109,7 +1201,7 @@
         }
 
         function renderNews() {
-            const newsList = JSON.parse(localStorage.getItem('ges_news')) || [];
+            const newsList = JSON.parse(DB.get('ges_news')) || [];
             const container = document.getElementById('news-feed');
             container.innerHTML = '';
             newsList.forEach(item => {
@@ -1139,10 +1231,13 @@
             const docFile = document.getElementById('news-doc-file').files[0];
             const date = new Date().toISOString().split('T')[0];
 
+            if (imgFile && !checkFileSize(imgFile, 3, 'image')) return;
+            if (docFile && !checkFileSize(docFile, 8, 'attachment')) return;
+
             let imgData = imgFile ? await fileToBase64(imgFile) : '';
             let fileData = docFile ? await fileToBase64(docFile) : '';
 
-            let news = JSON.parse(localStorage.getItem('ges_news')) || [];
+            let news = JSON.parse(DB.get('ges_news')) || [];
             if(editId) {
                 news = news.map(n => n.id == editId ? { 
                     id: parseInt(editId), title, content, 
@@ -1155,7 +1250,7 @@
                 news.unshift({ id: Date.now(), title, content, img: imgData, file: fileData, date });
                 alert('Announcement Published!');
             }
-            localStorage.setItem('ges_news', JSON.stringify(news));
+            DB.set('ges_news', JSON.stringify(news));
             resetAnnouncementForm();
             renderNews();
             if(currentUserRole === 'headmaster') renderManageNewsList();
@@ -1163,9 +1258,9 @@
 
         function deleteAnnouncement(id) {
             if(confirm('Delete announcement?')) {
-                let news = JSON.parse(localStorage.getItem('ges_news')) || [];
+                let news = JSON.parse(DB.get('ges_news')) || [];
                 news = news.filter(n => n.id != id);
-                localStorage.setItem('ges_news', JSON.stringify(news));
+                DB.set('ges_news', JSON.stringify(news));
                 renderNews();
                 renderManageNewsList();
             }
@@ -1180,7 +1275,7 @@
         }
 
         function renderManageNewsList() {
-            const newsList = JSON.parse(localStorage.getItem('ges_news')) || [];
+            const newsList = JSON.parse(DB.get('ges_news')) || [];
             const list = document.getElementById('headmaster-news-manage-list');
             list.innerHTML = '';
             newsList.forEach(item => {
@@ -1201,8 +1296,8 @@
             e.preventDefault();
             const cls = document.getElementById('search-class').value;
             const roll = parseInt(document.getElementById('search-roll').value);
-            const students = JSON.parse(localStorage.getItem('ges_students')) || [];
-            const incharges = JSON.parse(localStorage.getItem('ges_incharges'));
+            const students = JSON.parse(DB.get('ges_students')) || [];
+            const incharges = JSON.parse(DB.get('ges_incharges'));
             const std = students.find(s => s.class === cls && parseInt(s.roll) === roll);
 
             if(std) {
@@ -1222,7 +1317,7 @@
         }
 
         function renderHomework() {
-            const list = JSON.parse(localStorage.getItem('ges_homework')) || [];
+            const list = JSON.parse(DB.get('ges_homework')) || [];
             const filter = document.getElementById('homework-filter').value;
             const grid = document.getElementById('homework-grid');
             grid.innerHTML = '';
@@ -1256,11 +1351,12 @@
             const title = document.getElementById('hw-title').value;
             const desc = document.getElementById('hw-desc').value;
             const fileInput = document.getElementById('hw-file-input').files[0];
+            if (fileInput && !checkFileSize(fileInput, 8, 'attachment')) return;
             let fileData = fileInput ? await fileToBase64(fileInput) : '';
 
-            let list = JSON.parse(localStorage.getItem('ges_homework')) || [];
+            let list = JSON.parse(DB.get('ges_homework')) || [];
             list.unshift({ id: Date.now(), class: cls, subject, title, desc, fileData });
-            localStorage.setItem('ges_homework', JSON.stringify(list));
+            DB.set('ges_homework', JSON.stringify(list));
             alert('Vacation Homework Uploaded!');
             document.getElementById('hw-subject').value = '';
             document.getElementById('hw-title').value = '';
@@ -1273,7 +1369,7 @@
             e.preventDefault();
             const cls = document.getElementById('login-class-select').value;
             const pin = document.getElementById('login-pin').value;
-            const pins = JSON.parse(localStorage.getItem('ges_teacher_pins'));
+            const pins = JSON.parse(DB.get('ges_teacher_pins'));
 
             if(pins[cls] && pins[cls] === pin) {
                 currentUserRole = "incharge";
@@ -1297,17 +1393,17 @@
             const total = parseFloat(document.getElementById('std-total').value);
             const obtained = parseFloat(document.getElementById('std-obtained').value);
 
-            let students = JSON.parse(localStorage.getItem('ges_students')) || [];
+            let students = JSON.parse(DB.get('ges_students')) || [];
             students = students.filter(s => !(s.class === activeInchargeClass && parseInt(s.roll) === roll));
             students.push({ class: activeInchargeClass, roll, name, total, obtained });
-            localStorage.setItem('ges_students', JSON.stringify(students));
+            DB.set('ges_students', JSON.stringify(students));
             alert('Student Record Saved / Updated!');
             cancelEditStudent();
             renderClassStudents();
         }
 
         function editStudent(cls, roll) {
-            const students = JSON.parse(localStorage.getItem('ges_students')) || [];
+            const students = JSON.parse(DB.get('ges_students')) || [];
             const std = students.find(s => s.class === cls && parseInt(s.roll) === parseInt(roll));
             if(std) {
                 document.getElementById('std-roll').value = std.roll;
@@ -1330,7 +1426,7 @@
         }
 
         function renderClassStudents() {
-            const students = JSON.parse(localStorage.getItem('ges_students')) || [];
+            const students = JSON.parse(DB.get('ges_students')) || [];
             const classStudents = students.filter(s => s.class === activeInchargeClass);
             const tbody = document.getElementById('class-result-tbody');
             tbody.innerHTML = '';
@@ -1357,9 +1453,9 @@
 
         function deleteStudent(cls, roll) {
             if(confirm('Are you sure you want to delete this student record?')) {
-                let students = JSON.parse(localStorage.getItem('ges_students')) || [];
+                let students = JSON.parse(DB.get('ges_students')) || [];
                 students = students.filter(s => !(s.class === cls && parseInt(s.roll) === parseInt(roll)));
-                localStorage.setItem('ges_students', JSON.stringify(students));
+                DB.set('ges_students', JSON.stringify(students));
                 if(currentUserRole === 'incharge') renderClassStudents();
                 if(currentUserRole === 'headmaster') renderHeadmasterReport();
             }
@@ -1368,7 +1464,7 @@
         function handleHeadmasterLogin(e) {
             e.preventDefault();
             const pass = document.getElementById('head-pass').value;
-            if(pass === localStorage.getItem('ges_head_pass')) {
+            if(pass === DB.get('ges_head_pass')) {
                 currentUserRole = "headmaster";
                 document.getElementById('current-role-badge').innerText = "Headmaster Admin";
                 document.getElementById('logout-container').classList.remove('hidden');
@@ -1391,7 +1487,7 @@
 
         function changeHeadmasterPassword(e) {
             e.preventDefault();
-            localStorage.setItem('ges_head_pass', document.getElementById('new-head-pass').value);
+            DB.set('ges_head_pass', document.getElementById('new-head-pass').value);
             alert('Headmaster Admin Password Updated!');
             document.getElementById('new-head-pass').value = '';
         }
@@ -1399,16 +1495,16 @@
         function setTeacherPassword(e) {
             e.preventDefault();
             const cls = document.getElementById('teacher-pass-class').value;
-            let pins = JSON.parse(localStorage.getItem('ges_teacher_pins'));
+            let pins = JSON.parse(DB.get('ges_teacher_pins'));
             pins[cls] = document.getElementById('new-teacher-pin').value;
-            localStorage.setItem('ges_teacher_pins', JSON.stringify(pins));
+            DB.set('ges_teacher_pins', JSON.stringify(pins));
             alert(`PIN for ${cls} updated successfully!`);
             document.getElementById('new-teacher-pin').value = '';
         }
 
         function renderHeadmasterReport() {
-            const students = JSON.parse(localStorage.getItem('ges_students')) || [];
-            const incharges = JSON.parse(localStorage.getItem('ges_incharges'));
+            const students = JSON.parse(DB.get('ges_students')) || [];
+            const incharges = JSON.parse(DB.get('ges_incharges'));
             const tbody = document.getElementById('headmaster-report-tbody');
             tbody.innerHTML = '';
             students.forEach(s => {
@@ -1432,8 +1528,8 @@
 
         function downloadClassReportPDF() {
             const selectedClass = document.getElementById('pdf-class-select').value;
-            const students = JSON.parse(localStorage.getItem('ges_students')) || [];
-            const incharges = JSON.parse(localStorage.getItem('ges_incharges'));
+            const students = JSON.parse(DB.get('ges_students')) || [];
+            const incharges = JSON.parse(DB.get('ges_incharges'));
             let filteredStudents = selectedClass === 'ALL' ? students : students.filter(s => s.class === selectedClass);
 
             if(filteredStudents.length === 0) {
