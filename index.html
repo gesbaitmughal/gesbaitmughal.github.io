@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GES BAIT MUGHAL - Ultimate Smart Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf Library for PDF Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <!-- Firebase App (Core) & Realtime Database SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getDatabase, ref, set, get, update, remove, child } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        // Your web app's Firebase configuration (from your Console)[cite: 4]
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUp1jNM0VyMly5m4Zq8h-zbE6Hqnr5Zyg",
+            authDomain: "ges-bait-mughal.firebaseapp.com",
+            databaseURL: "https://ges-bait-mughal-default-rtdb.firebaseio.com",
+            projectId: "ges-bait-mughal",
+            storageBucket: "ges-bait-mughal.appspot.com",
+            messagingSenderId: "5737837063",
+            appId: "1:5737837063:web:dffc601015ffde68cac32"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Make Firebase tools globally accessible if needed
+        window.firebaseDB = { db, ref, set, get, update, remove, child };
+        console.log("Firebase Realtime Database Connected Successfully!");
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .slide-fade { transition: opacity 0.8s ease-in-out; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- TOP HEADER / BANNER -->
+    <header class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center space-x-4 mb-2 md:mb-0">
+                <div class="bg-white p-2.5 rounded-2xl text-emerald-800 shadow-lg">
+                    <i class="fa-solid fa-graduation-cap fa-2x"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-extrabold tracking-wide">GES BAIT MUGHAL</h1>
+                    <p class="text-emerald-200 text-xs">Government Elementary School | Smart Digital Management System</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="bg-emerald-900/80 border border-emerald-600 px-3 py-1.5 rounded-xl text-xs flex items-center space-x-2">
+                    <i class="fa-solid fa-user-shield text-amber-400"></i>
+                    <span>Role: <strong id="current-role-badge" class="text-amber-300">Public Visitor</strong></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- LIVE NOTICE TICKER -->
+    <div class="bg-amber-400 text-slate-900 text-xs font-bold py-1.5 px-4 shadow-inner flex items-center justify-between">
+        <div class="flex items-center space-x-2 max-w-7xl mx-auto w-full">
+            <span class="bg-slate-900 text-amber-400 px-2 py-0.5 rounded text-[10px] uppercase tracking-wider">Notice</span>
+            <marquee id="header-notice-ticker" class="w-full font-semibold">Welcome to GES Bait Mughal Smart Portal.</marquee>
+        </div>
+    </div>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-2 md:px-4 flex flex-wrap justify-between items-center">
+            <div class="flex flex-wrap space-x-1 md:space-x-2 py-2">
+                <button onclick="switchTab('home')" class="nav-btn px-3 py-1.5 rounded-lg hover:bg-emerald-700 text-xs font-semibold transition flex items-center space-x-1.5 bg-emerald-700" id="btn-home">
+                    <i class="fa-solid fa-house"></i> <span>Home</span>
+                </button>
+                <button onclick="switchTab('student-result')" class="nav-btn px-3 py-1.5 rounded-lg hover:bg-emerald-700 text-xs font-semibold transition flex items-center space-x-1.5" id="btn-student-result">
+                    <i class="fa-solid fa-square-poll-vertical text-teal-300"></i> <span>Check Result</span>
+                </button>
+                <button onclick="switchTab('homework')" class="nav-btn px-3 py-1.5 rounded-lg hover:bg-emerald-700 text-xs font-semibold transition flex items-center space-x-1.5" id="btn-homework">
+                    <i class="fa-solid fa-book-open text-amber-400"></i> <span>Vacation Homework</span>
+                </button>
+                <button onclick="switchTab('rules')" class="nav-btn px-3 py-1.5 rounded-lg hover:bg-emerald-700 text-xs font-semibold transition flex items-center space-x-1.5" id="btn-rules">
+                    <i class="fa-solid fa-file-pdf text-rose-300"></i> <span>Rules & Downloads</span>
+                </button>
+                <button onclick="switchTab('gallery')" class="nav-btn px-3 py-1.5 rounded-lg hover:bg-emerald-700 text-xs font-semibold transition flex items-center space-x-1.5" id="btn-gallery">
+                    <i class="fa-solid fa-images text-purple-300"></i> <span>Gallery</span>
+                </button>
+                <button onclick="switchTab('incharge')" class="nav-btn px-3 py-1.5 rounded-lg hover:bg-emerald-700 text-xs font-semibold transition flex items-center space-x-1.5" id="btn-incharge">
+                    <i class="fa-solid fa-user-tie text-blue-300"></i> <span>Teacher Portal</span>
+                </button>
+                <button onclick="switchTab('headmaster')" class="nav-btn px-3 py-1.5 rounded-lg hover:bg-emerald-700 text-xs font-semibold transition flex items-center space-x-1.5" id="btn-headmaster">
+                    <i class="fa-solid fa-user-gear text-amber-400"></i> <span>Headmaster Control</span>
+                </button>
+            </div>
+            <div id="logout-container" class="hidden py-1.5">
+                <button onclick="logout()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1 rounded-lg text-xs font-bold transition shadow">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- ================= 1. HOME TAB ================= -->
+        <section id="tab-home" class="tab-content active space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- AUTO IMAGE SLIDER -->
+                <div class="lg:col-span-2 bg-slate-900 rounded-2xl overflow-hidden shadow-lg relative h-64 md:h-80 border-2 border-emerald-600">
+                    <div id="home-slider-container" class="w-full h-full relative">
+                        <div class="absolute inset-0 flex items-center justify-center text-white text-xs">Loading Slides...</div>
+                    </div>
+                    <div class="absolute bottom-2 left-0 right-0 flex justify-center space-x-2 z-10" id="slider-dots"></div>
+                </div>
+
+                <!-- VIDEO PLAYER -->
+                <div class="bg-slate-900 p-3 rounded-2xl shadow-lg border-2 border-teal-600 flex flex-col justify-between h-64 md:h-80">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-teal-300 flex items-center space-x-1">
+                            <i class="fa-solid fa-circle-play text-rose-500 animate-pulse"></i>
+                            <span>School Tour Video</span>
+                        </span>
+                        <button onclick="toggleFullScreenVideo()" class="text-[10px] bg-teal-800 text-teal-100 px-2 py-0.5 rounded hover:bg-teal-700">
+                            <i class="fa-solid fa-expand"></i> Full Screen
+                        </button>
+                    </div>
+                    <div class="relative w-full flex-grow rounded-xl overflow-hidden bg-black flex items-center justify-center">
+                        <video id="school-video-player" class="w-full h-full object-cover" controls playsinline preload="metadata">
+                            <source src="" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <p class="text-[10px] text-slate-400 text-center mt-1">Click play to watch with sound</p>
+                </div>
+            </div>
+
+            <!-- ADMISSION & TIMINGS ROW -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div id="admission-banner-box" class="md:col-span-2 bg-gradient-to-r from-amber-500 to-rose-600 text-white p-5 rounded-2xl shadow-md border border-amber-300 flex justify-between items-center">
+                    <div class="space-y-1">
+                        <span class="bg-slate-900 text-amber-300 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Admission Notice</span>
+                        <h3 id="adm-banner-title" class="text-xl md:text-2xl font-black">ADMISSIONS OPEN FOR SESSION 2026-2027</h3>
+                        <p id="adm-banner-desc" class="text-xs text-amber-100">Admissions are open for Class 1 to 8. Contact school office for registration forms.</p>
+                    </div>
+                    <div id="adm-banner-img-container" class="hidden sm:block ml-2"></div>
+                </div>
+
+                <div class="bg-gradient-to-br from-emerald-800 to-teal-900 text-white p-5 rounded-2xl shadow-md flex items-center justify-around border border-emerald-600">
+                    <i class="fa-solid fa-clock text-4xl text-amber-300"></i>
+                    <div class="text-right">
+                        <p class="text-[10px] uppercase font-bold text-emerald-200 tracking-wider">School Timings</p>
+                        <p id="display-school-timings" class="text-lg font-extrabold text-white mt-0.5">08:00 AM - 01:30 PM</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEWS & INCHARGES -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-4">
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
+                        <i class="fa-solid fa-newspaper text-emerald-600"></i>
+                        <span>Latest News & Announcements</span>
+                    </h3>
+                    <div id="news-feed" class="space-y-3"></div>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                        <h4 class="font-bold text-slate-800 mb-3 flex items-center space-x-2 border-b pb-2 text-sm">
+                            <i class="fa-solid fa-chalkboard-user text-amber-500"></i>
+                            <span>Class Incharges List</span>
+                        </h4>
+                        <div id="home-incharges-list" class="space-y-1.5 text-xs"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 2. RULES & DOWNLOADS TAB ================= -->
+        <section id="tab-rules" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <div class="border-b pb-3">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center space-x-2">
+                        <i class="fa-solid fa-file-pdf text-rose-600"></i>
+                        <span>School Rules, Code of Conduct & Official Documents</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Download official PDF/Word files and view school discipline policies.</p>
+                </div>
+                <div id="docs-download-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+        </section>
+
+        <!-- ================= 3. PHOTO GALLERY TAB ================= -->
+        <section id="tab-gallery" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <div class="border-b pb-3">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center space-x-2">
+                        <i class="fa-solid fa-images text-purple-600"></i>
+                        <span>School Photo Gallery</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Glimpses of school events, campus and activities.</p>
+                </div>
+                <div id="photo-gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+            </div>
+        </section>
+
+        <!-- ================= 4. STUDENT RESULT SEARCH ================= -->
+        <section id="tab-student-result" class="tab-content space-y-6">
+            <div class="max-w-xl mx-auto bg-white p-6 rounded-2xl shadow-lg border border-slate-200">
+                <div class="text-center mb-5">
+                    <div class="bg-teal-100 text-teal-700 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2 shadow">
+                        <i class="fa-solid fa-magnifying-glass-chart text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-extrabold text-slate-800">Check Student Result</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Select class and enter roll number</p>
+                </div>
+
+                <form onsubmit="searchStudentResult(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Select Class</label>
+                        <select id="search-class" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs outline-none bg-slate-50">
+                            <option value="Class 1">Class 1</option>
+                            <option value="Class 2">Class 2</option>
+                            <option value="Class 3">Class 3</option>
+                            <option value="Class 4">Class 4</option>
+                            <option value="Class 5">Class 5</option>
+                            <option value="Class 6">Class 6</option>
+                            <option value="Class 7">Class 7</option>
+                            <option value="Class 8">Class 8</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Roll Number</label>
+                        <input type="number" id="search-roll" placeholder="e.g. 101" required class="w-full border border-slate-300 rounded-xl p-2.5 text-xs outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-lg">
+                        <i class="fa-solid fa-search mr-1"></i> View Result Card
+                    </button>
+                </form>
+            </div>
+
+            <!-- RESULT CARD DISPLAY -->
+            <div id="result-card-display" class="max-w-2xl mx-auto hidden bg-white p-6 rounded-2xl shadow-xl border-2 border-emerald-500 space-y-4">
+                <div id="printable-result-card" class="p-5 bg-white rounded-xl border space-y-3">
+                    <div class="text-center border-b pb-3 mb-2">
+                        <h2 class="text-xl font-extrabold text-emerald-800">GES BAIT MUGHAL</h2>
+                        <p class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Official Student Performance Card</p>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-2 bg-slate-50 p-3 rounded-xl border text-xs">
+                        <div><span class="text-[10px] text-slate-400 block">Class:</span> <strong id="res-card-class">-</strong></div>
+                        <div><span class="text-[10px] text-slate-400 block">Roll No:</span> <strong id="res-card-roll">-</strong></div>
+                        <div><span class="text-[10px] text-slate-400 block">Student Name:</span> <strong id="res-card-name">-</strong></div>
+                        <div><span class="text-[10px] text-slate-400 block">Class Teacher:</span> <strong id="res-card-incharge" class="text-teal-700">-</strong></div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3 mb-2 text-center">
+                        <div class="bg-slate-100 p-3 rounded-xl">
+                            <p class="text-[10px] text-slate-500 font-bold uppercase">Total Marks</p>
+                            <p id="res-card-total" class="text-xl font-black text-slate-700">0</p>
+                        </div>
+                        <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
+                            <p class="text-[10px] text-emerald-700 font-bold uppercase">Obtained</p>
+                            <p id="res-card-obtained" class="text-xl font-black text-emerald-700">0</p>
+                        </div>
+                        <div class="bg-amber-50 p-3 rounded-xl border border-amber-200">
+                            <p class="text-[10px] text-amber-700 font-bold uppercase">Percentage</p>
+                            <p id="res-card-perc" class="text-xl font-black text-amber-700">0%</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button onclick="downloadPDF('printable-result-card', 'Student_Result')" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow">
+                        <i class="fa-solid fa-file-pdf mr-1"></i> Download Result PDF
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 5. VACATION HOMEWORK TAB ================= -->
+        <section id="tab-homework" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-3 mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800 flex items-center space-x-2">
+                            <i class="fa-solid fa-book-open text-amber-500"></i>
+                            <span>Vacation Homework & Summer Tasks</span>
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Select class to view assignments and downloadable files.</p>
+                    </div>
+                    <div class="mt-3 md:mt-0 flex items-center space-x-2">
+                        <label class="text-xs font-bold text-slate-600">Filter Class:</label>
+                        <select id="homework-filter" onchange="renderHomework()" class="border rounded-xl px-2.5 py-1 text-xs bg-slate-50">
+                            <option value="ALL">All Classes</option>
+                            <option value="Class 1">Class 1</option>
+                            <option value="Class 2">Class 2</option>
+                            <option value="Class 3">Class 3</option>
+                            <option value="Class 4">Class 4</option>
+                            <option value="Class 5">Class 5</option>
+                            <option value="Class 6">Class 6</option>
+                            <option value="Class 7">Class 7</option>
+                            <option value="Class 8">Class 8</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="add-homework-box" class="hidden bg-slate-50 p-4 rounded-xl border mb-4">
+                    <h4 class="font-bold text-slate-800 mb-2 text-xs"><i class="fa-solid fa-plus text-emerald-600"></i> Add Vacation Homework Assignment</h4>
+                    <form onsubmit="addHomework(event)" class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <select id="hw-class" class="border p-2 rounded-lg text-xs bg-white">
+                            <option value="Class 1">Class 1</option>
+                            <option value="Class 2">Class 2</option>
+                            <option value="Class 3">Class 3</option>
+                            <option value="Class 4">Class 4</option>
+                            <option value="Class 5">Class 5</option>
+                            <option value="Class 6">Class 6</option>
+                            <option value="Class 7">Class 7</option>
+                            <option value="Class 8">Class 8</option>
+                        </select>
+                        <input type="text" id="hw-subject" placeholder="Subject (e.g. English, Math)" required class="border p-2 rounded-lg text-xs bg-white">
+                        <input type="text" id="hw-title" placeholder="Topic / Assignment Title" required class="border p-2 rounded-lg text-xs bg-white">
+                        <textarea id="hw-desc" placeholder="Detailed Instructions..." required class="border p-2 rounded-lg text-xs md:col-span-3 bg-white" rows="2"></textarea>
+                        <div class="md:col-span-3">
+                            <label class="block text-[10px] font-bold mb-1">Attach File / Photo (Optional):</label>
+                            <input type="file" id="hw-file-input" class="border p-1 rounded-lg text-xs w-full bg-white">
+                        </div>
+                        <button type="submit" class="bg-emerald-600 text-white font-bold py-1.5 rounded-lg text-xs md:col-span-3">Upload Homework</button>
+                    </form>
+                </div>
+
+                <div id="homework-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+        </section>
+
+        <!-- ================= 6. TEACHER / INCHARGE PORTAL ================= -->
+        <section id="tab-incharge" class="tab-content space-y-6">
+            <div id="incharge-login-box" class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-lg border border-slate-200">
+                <div class="text-center mb-4">
+                    <div class="bg-blue-100 text-blue-700 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2 shadow">
+                        <i class="fa-solid fa-user-tie text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Class Incharge Login</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Select class & enter PIN provided by Headmaster</p>
+                </div>
+
+                <form onsubmit="handleInchargeLogin(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Select Class</label>
+                        <select id="login-class-select" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs outline-none bg-slate-50">
+                            <option value="Class 1">Class 1</option>
+                            <option value="Class 2">Class 2</option>
+                            <option value="Class 3">Class 3</option>
+                            <option value="Class 4">Class 4</option>
+                            <option value="Class 5">Class 5</option>
+                            <option value="Class 6">Class 6</option>
+                            <option value="Class 7">Class 7</option>
+                            <option value="Class 8">Class 8</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Incharge PIN</label>
+                        <input type="password" id="login-pin" placeholder="Enter PIN (Default: 1234)" required class="w-full border border-slate-300 rounded-xl p-2.5 text-xs outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow">
+                        Login to Class Portal
+                    </button>
+                </form>
+            </div>
+
+            <!-- INCHARGE DASHBOARD -->
+            <div id="incharge-dashboard" class="hidden space-y-6">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center">
+                    <div>
+                        <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Teacher Control Panel</span>
+                        <h2 class="text-xl font-bold text-slate-800" id="active-class-title">Class Portal</h2>
+                    </div>
+                    <button onclick="logout()" class="mt-2 md:mt-0 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-1.5 rounded-xl border">
+                        Logout
+                    </button>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-md font-bold text-slate-800 mb-3 flex items-center space-x-2">
+                        <i class="fa-solid fa-pen-to-square text-emerald-600"></i>
+                        <span id="std-form-title">Enter / Update Student Marks</span>
+                    </h3>
+                    <form onsubmit="saveStudentMarks(event)" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <input type="hidden" id="edit-student-roll" value="">
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-600 mb-1">Roll Number</label>
+                            <input type="number" id="std-roll" placeholder="e.g. 101" required class="w-full border rounded-xl p-2 text-xs outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-600 mb-1">Student Name</label>
+                            <input type="text" id="std-name" placeholder="Full Name" required class="w-full border rounded-xl p-2 text-xs outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-600 mb-1">Total Marks</label>
+                            <input type="number" id="std-total" value="500" required class="w-full border rounded-xl p-2 text-xs outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-600 mb-1">Obtained Marks</label>
+                            <input type="number" id="std-obtained" placeholder="e.g. 420" min="0" required class="w-full border rounded-xl p-2 text-xs outline-none">
+                        </div>
+                        <div class="md:col-span-2 flex items-end space-x-2">
+                            <button type="submit" id="save-std-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition">
+                                <i class="fa-solid fa-save mr-1"></i> Save Student Record
+                            </button>
+                            <button type="button" onclick="cancelEditStudent()" id="cancel-std-btn" class="hidden bg-slate-400 text-white font-bold px-3 py-2 rounded-xl text-xs">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-md font-bold text-slate-800">Class Student Records</h3>
+                        <span id="class-std-count" class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold">0 Students</span>
+                    </div>
+                    <div id="printable-class-report" class="overflow-x-auto p-1 bg-white">
+                        <table class="w-full text-left text-xs text-slate-600">
+                            <thead class="bg-slate-100 text-slate-700 uppercase font-bold">
+                                <tr>
+                                    <th class="p-2">Roll No</th>
+                                    <th class="p-2">Student Name</th>
+                                    <th class="p-2">Obtained</th>
+                                    <th class="p-2">Total</th>
+                                    <th class="p-2">Percentage</th>
+                                    <th class="p-2 text-center print:hidden">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="class-result-tbody" class="divide-y"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 7. HEADMASTER CONTROL PANEL ================= -->
+        <section id="tab-headmaster" class="tab-content space-y-6">
+            <div id="headmaster-login-box" class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-lg border border-slate-200">
+                <div class="text-center mb-4">
+                    <div class="bg-amber-100 text-amber-700 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2 shadow">
+                        <i class="fa-solid fa-user-gear text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Headmaster Admin Login</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Full Central Control over Website</p>
+                </div>
+
+                <form onsubmit="handleHeadmasterLogin(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Admin Password</label>
+                        <input type="password" id="head-pass" placeholder="Password (Default: head123)" required class="w-full border border-slate-300 rounded-xl p-2.5 text-xs outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow">
+                        Access Admin Dashboard
+                    </button>
+                </form>
+            </div>
+
+            <div id="headmaster-dashboard" class="hidden space-y-6">
+                <!-- Slider Control -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
+                        <i class="fa-solid fa-images text-indigo-600"></i>
+                        <span>Home Page Image Slider Control</span>
+                    </h3>
+                    <form onsubmit="addSliderImage(event)" class="grid grid-cols-1 md:grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border">
+                        <input type="text" id="slide-title" placeholder="Slide Caption/Title" required class="border p-2 rounded-xl text-xs bg-white">
+                        <input type="file" id="slide-file-input" accept="image/*" required class="border p-1 rounded-xl text-xs bg-white">
+                        <button type="submit" class="bg-indigo-600 text-white font-bold py-1.5 rounded-xl text-xs">Add Slide Picture</button>
+                    </form>
+                    <div id="headmaster-slider-manage-list" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+                </div>
+
+                <!-- Video & Banner Control -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
+                        <i class="fa-solid fa-video text-rose-600"></i>
+                        <span>School Video & Admission Campaign Banner Control</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <form onsubmit="updateSchoolVideo(event)" class="bg-slate-50 p-3 rounded-xl border space-y-2">
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Upload School Video File</label>
+                            <input type="file" id="input-video-file" accept="video/*" required class="w-full border p-1 rounded-xl text-xs bg-white">
+                            <button type="submit" class="bg-rose-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs w-full">Upload & Save Video</button>
+                        </form>
+                        <form onsubmit="updateAdmissionBanner(event)" class="bg-slate-50 p-3 rounded-xl border space-y-2">
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Admission Banner Details</label>
+                            <input type="text" id="adm-title" placeholder="Banner Title" required class="w-full border p-1.5 rounded-xl text-xs bg-white">
+                            <input type="text" id="adm-desc" placeholder="Banner Description" required class="w-full border p-1.5 rounded-xl text-xs bg-white">
+                            <input type="file" id="adm-img-file" accept="image/*" class="w-full border p-1 rounded-xl text-xs bg-white">
+                            <button type="submit" class="bg-amber-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs w-full">Save Admission Banner</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Documents & Rules -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
+                        <i class="fa-solid fa-file-arrow-up text-blue-600"></i>
+                        <span>Add Official Rules & PDF/Word Documents</span>
+                    </h3>
+                    <form onsubmit="addOfficialDocument(event)" class="grid grid-cols-1 md:grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border">
+                        <input type="text" id="doc-title" placeholder="Document Title" required class="border p-2 rounded-xl text-xs bg-white">
+                        <input type="file" id="doc-file-input" required class="border p-1 rounded-xl text-xs bg-white">
+                        <button type="submit" class="bg-blue-600 text-white font-bold py-1.5 rounded-xl text-xs">Upload Document</button>
+                    </form>
+                    <div id="headmaster-docs-manage-list" class="space-y-1.5"></div>
+                </div>
+
+                <!-- Gallery Management -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
+                        <i class="fa-solid fa-images text-purple-600"></i>
+                        <span>Manage Photo Gallery</span>
+                    </h3>
+                    <form onsubmit="addGalleryImage(event)" class="grid grid-cols-1 md:grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border">
+                        <input type="text" id="gal-caption" placeholder="Photo Caption" required class="border p-2 rounded-xl text-xs bg-white">
+                        <input type="file" id="gal-file-input" accept="image/*" required class="border p-1 rounded-xl text-xs bg-white">
+                        <button type="submit" class="bg-purple-600 text-white font-bold py-1.5 rounded-xl text-xs">Upload Photo</button>
+                    </form>
+                    <div id="headmaster-gallery-manage-list" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+                </div>
+
+                <!-- Timings & Ticker -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
+                        <i class="fa-solid fa-clock text-emerald-600"></i>
+                        <span>School Timings & Header Ticker Control</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <form onsubmit="updateSchoolTimings(event)" class="bg-slate-50 p-3 rounded-xl border space-y-2">
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Update School Timings</label>
+                            <input type="text" id="input-timings" placeholder="08:00 AM - 01:30 PM" required class="w-full border p-1.5 rounded-xl text-xs bg-white">
+                            <button type="submit" class="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs w-full">Save Timings</button>
+                        </form>
+                        <form onsubmit="updateHeaderTicker(event)" class="bg-slate-50 p-3 rounded-xl border space-y-2">
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Update Header Notice Ticker</label>
+                            <input type="text" id="input-ticker" placeholder="Notice text..." required class="w-full border p-1.5 rounded-xl text-xs bg-white">
+                            <button type="submit" class="bg-teal-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs w-full">Save Ticker Notice</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Announcements Management -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
+                        <i class="fa-solid fa-bullhorn text-amber-500"></i>
+                        <span id="announcement-form-title">Add / Edit Announcement</span>
+                    </h3>
+                    <form onsubmit="handleAnnouncementSubmit(event)" class="space-y-2 bg-slate-50 p-3 rounded-xl border">
+                        <input type="hidden" id="edit-announcement-id" value="">
+                        <input type="text" id="news-title" placeholder="Announcement Title" required class="w-full border rounded-xl p-2 text-xs outline-none bg-white">
+                        <textarea id="news-content" rows="2" placeholder="Announcement Details..." required class="w-full border rounded-xl p-2 text-xs outline-none bg-white"></textarea>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <input type="file" id="news-img-file" accept="image/*" class="w-full border p-1 rounded-xl text-xs bg-white">
+                            <input type="file" id="news-doc-file" class="w-full border p-1 rounded-xl text-xs bg-white">
+                        </div>
+                        <button type="submit" id="announcement-submit-btn" class="bg-amber-600 text-white font-bold px-4 py-1.5 rounded-xl text-xs">Publish Announcement</button>
+                    </form>
+                    <div id="headmaster-news-manage-list" class="space-y-2"></div>
+                </div>
+
+                <!-- Class Incharges -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
+                        <i class="fa-solid fa-chalkboard-user text-blue-600"></i>
+                        <span>Manage Class Incharges</span>
+                    </h3>
+                    <form onsubmit="saveClassInchargeName(event)" class="grid grid-cols-1 md:grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border">
+                        <select id="incharge-assign-class" class="border p-2 rounded-xl text-xs bg-white">
+                            <option value="Class 1">Class 1</option>
+                            <option value="Class 2">Class 2</option>
+                            <option value="Class 3">Class 3</option>
+                            <option value="Class 4">Class 4</option>
+                            <option value="Class 5">Class 5</option>
+                            <option value="Class 6">Class 6</option>
+                            <option value="Class 7">Class 7</option>
+                            <option value="Class 8">Class 8</option>
+                        </select>
+                        <input type="text" id="incharge-teacher-name" placeholder="Teacher Name" required class="border p-2 rounded-xl text-xs bg-white">
+                        <button type="submit" class="bg-blue-600 text-white font-bold py-1.5 rounded-xl text-xs">Assign Incharge</button>
+                    </form>
+                </div>
+
+                <!-- Security / PINs -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
+                        <i class="fa-solid fa-key text-amber-500"></i>
+                        <span>Security & Teacher Access PINs</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <form onsubmit="changeHeadmasterPassword(event)" class="bg-slate-50 p-3 rounded-xl border space-y-2">
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Change Admin Password</label>
+                            <input type="password" id="new-head-pass" placeholder="New Password" required class="w-full border rounded-xl p-1.5 text-xs bg-white">
+                            <button type="submit" class="bg-amber-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold w-full">Update Password</button>
+                        </form>
+                        <form onsubmit="setTeacherPassword(event)" class="bg-slate-50 p-3 rounded-xl border space-y-2">
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Set Teacher Class Login PIN</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <select id="teacher-pass-class" class="border rounded-xl p-1.5 text-xs bg-white">
+                                    <option value="Class 1">Class 1</option>
+                                    <option value="Class 2">Class 2</option>
+                                    <option value="Class 3">Class 3</option>
+                                    <option value="Class 4">Class 4</option>
+                                    <option value="Class 5">Class 5</option>
+                                    <option value="Class 6">Class 6</option>
+                                    <option value="Class 7">Class 7</option>
+                                    <option value="Class 8">Class 8</option>
+                                </select>
+                                <input type="password" id="new-teacher-pin" placeholder="New PIN" required class="border rounded-xl p-1.5 text-xs bg-white">
+                            </div>
+                            <button type="submit" class="bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold w-full">Set Class PIN</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Reports PDF -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-2 gap-2">
+                        <div>
+                            <h3 class="text-md font-bold text-slate-800">Master Consolidated School Report</h3>
+                            <p class="text-xs text-slate-500">Download PDF reports class-wise or for all classes at once.</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <select id="pdf-class-select" class="border rounded-xl px-2.5 py-1 text-xs bg-slate-50 font-bold">
+                                <option value="ALL">All Classes Combined</option>
+                                <option value="Class 1">Class 1 Only</option>
+                                <option value="Class 2">Class 2 Only</option>
+                                <option value="Class 3">Class 3 Only</option>
+                                <option value="Class 4">Class 4 Only</option>
+                                <option value="Class 5">Class 5 Only</option>
+                                <option value="Class 6">Class 6 Only</option>
+                                <option value="Class 7">Class 7 Only</option>
+                                <option value="Class 8">Class 8 Only</option>
+                            </select>
+                            <button onclick="downloadClassReportPDF()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow">
+                                <i class="fa-solid fa-file-pdf mr-1"></i> Download PDF Report
+                            </button>
+                        </div>
+                    </div>
+                    <div id="printable-master-report" class="overflow-x-auto p-2 bg-white">
+                        <table class="w-full text-left text-xs text-slate-600 border-collapse">
+                            <thead class="bg-slate-100 text-slate-700 uppercase font-bold">
+                                <tr>
+                                    <th class="p-2 border">Class</th>
+                                    <th class="p-2 border">Incharge</th>
+                                    <th class="p-2 border">Roll No</th>
+                                    <th class="p-2 border">Student Name</th>
+                                    <th class="p-2 border">Obtained / Total</th>
+                                    <th class="p-2 border">Percentage</th>
+                                    <th class="p-2 border text-center print:hidden">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="headmaster-report-tbody" class="divide-y"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 py-4 text-center text-xs border-t border-slate-800 mt-auto">
+        <p>© 2026 GES BAIT MUGHAL. All Rights Reserved.</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let db;
+        const dbRequest = indexedDB.open("GES_BaitMughal_DB", 1);
+
+        dbRequest.onupgradeneeded = function(e) {
+            db = e.target.result;
+            if (!db.objectStoreNames.contains("media")) {
+                db.createObjectStore("media", { keyPath: "key" });
+            }
+        };
+
+        dbRequest.onsuccess = function(e) {
+            db = e.target.result;
+            loadGlobals();
+        };
+
+        function saveMediaToDB(key, blob) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction("media", "readwrite");
+                const store = tx.objectStore("media");
+                const request = store.put({ key: key, data: blob });
+                request.onsuccess = () => resolve();
+                request.onerror = (e) => reject(e);
+            });
+        }
+
+        function getMediaFromDB(key) {
+            return new Promise((resolve, reject) => {
+                if (!db) return resolve(null);
+                const tx = db.transaction("media", "readonly");
+                const store = tx.objectStore("media");
+                const request = store.get(key);
+                request.onsuccess = () => resolve(request.result ? request.result.data : null);
+                request.onerror = (e) => reject(e);
+            });
+        }
+
+        const fileToBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        function downloadPDF(elementId, filename) {
+            const element = document.getElementById(elementId);
+            const opt = {
+                margin:       0.5,
+                filename:     `${filename}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        const DEFAULT_INCHARGES = {
+            "Class 1": "Not Assigned", "Class 2": "Not Assigned", "Class 3": "Not Assigned", "Class 4": "Not Assigned",
+            "Class 5": "Not Assigned", "Class 6": "Not Assigned", "Class 7": "Not Assigned", "Class 8": "Not Assigned"
+        };
+
+        const DEFAULT_TEACHER_PINS = {
+            "Class 1": "1234", "Class 2": "1234", "Class 3": "1234", "Class 4": "1234",
+            "Class 5": "1234", "Class 6": "1234", "Class 7": "1234", "Class 8": "1234"
+        };
+
+        const DEFAULT_SLIDES = [
+            { id: 1, title: "Welcome to GES Bait Mughal", img: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1000&q=80" },
+            { id: 2, title: "Quality Education & Discipline", img: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1000&q=80" },
+            { id: 3, title: "Smart Digital Classroom Management", img: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1000&q=80" }
+        ];
+
+        if(!localStorage.getItem('ges_news')) localStorage.setItem('ges_news', JSON.stringify([]));
+        if(!localStorage.getItem('ges_students')) localStorage.setItem('ges_students', JSON.stringify([]));
+        if(!localStorage.getItem('ges_homework')) localStorage.setItem('ges_homework', JSON.stringify([]));
+        if(!localStorage.getItem('ges_head_pass')) localStorage.setItem('ges_head_pass', 'head123');
+        if(!localStorage.getItem('ges_teacher_pins')) localStorage.setItem('ges_teacher_pins', JSON.stringify(DEFAULT_TEACHER_PINS));
+        if(!localStorage.getItem('ges_incharges')) localStorage.setItem('ges_incharges', JSON.stringify(DEFAULT_INCHARGES));
+        if(!localStorage.getItem('ges_timings')) localStorage.setItem('ges_timings', '08:00 AM - 01:30 PM');
+        if(!localStorage.getItem('ges_ticker')) localStorage.setItem('ges_ticker', 'Welcome to GES Bait Mughal Digital Smart Portal.');
+        if(!localStorage.getItem('ges_docs')) localStorage.setItem('ges_docs', JSON.stringify([]));
+        if(!localStorage.getItem('ges_gallery')) localStorage.setItem('ges_gallery', JSON.stringify([]));
+        if(!localStorage.getItem('ges_slides')) localStorage.setItem('ges_slides', JSON.stringify(DEFAULT_SLIDES));
+        if(!localStorage.getItem('ges_adm_title')) localStorage.setItem('ges_adm_title', 'ADMISSIONS OPEN FOR SESSION 2026-2027');
+        if(!localStorage.getItem('ges_adm_desc')) localStorage.setItem('ges_adm_desc', 'Admissions are open for Class 1 to 8. Contact school office for registration forms.');
+        if(!localStorage.getItem('ges_adm_img')) localStorage.setItem('ges_adm_img', '');
+
+        let currentUserRole = "public";
+        let activeInchargeClass = null;
+        let currentSlideIndex = 0;
+        let sliderInterval = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNews();
+            renderRulesAndDocs();
+            renderGallery();
+            startSlider();
+        });
+
+        async function loadGlobals() {
+            document.getElementById('display-school-timings').innerText = localStorage.getItem('ges_timings');
+            document.getElementById('header-notice-ticker').innerText = localStorage.getItem('ges_ticker');
+            
+            const videoBlob = await getMediaFromDB('ges_video_blob');
+            const player = document.getElementById('school-video-player');
+            if(videoBlob) {
+                player.src = URL.createObjectURL(videoBlob);
+            }
+            
+            document.getElementById('adm-banner-title').innerText = localStorage.getItem('ges_adm_title');
+            document.getElementById('adm-banner-desc').innerText = localStorage.getItem('ges_adm_desc');
+            const admImg = localStorage.getItem('ges_adm_img');
+            const admImgContainer = document.getElementById('adm-banner-img-container');
+            if(admImg) {
+                admImgContainer.innerHTML = `<img src="${admImg}" class="h-20 rounded-xl border-2 border-white shadow-md object-cover">`;
+            } else {
+                admImgContainer.innerHTML = '';
+            }
+
+            renderHomeIncharges();
+            renderSlider();
+        }
+
+        function renderSlider() {
+            const slides = JSON.parse(localStorage.getItem('ges_slides')) || [];
+            const container = document.getElementById('home-slider-container');
+            const dots = document.getElementById('slider-dots');
+            
+            if(slides.length === 0) {
+                container.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-slate-800 text-white text-xs">No slides added yet.</div>`;
+                dots.innerHTML = '';
+                return;
+            }
+
+            if(currentSlideIndex >= slides.length) currentSlideIndex = 0;
+
+            container.innerHTML = slides.map((slide, idx) => `
+                <div class="slide-item absolute inset-0 transition-opacity duration-700 ease-in-out ${idx === currentSlideIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}">
+                    <img src="${slide.img}" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
+                        <h3 class="text-white font-extrabold text-sm md:text-lg drop-shadow-md">${slide.title}</h3>
+                    </div>
+                </div>
+            `).join('');
+
+            dots.innerHTML = slides.map((_, idx) => `
+                <button onclick="goToSlide(${idx})" class="w-2.5 h-2.5 rounded-full transition-all ${idx === currentSlideIndex ? 'bg-amber-400 w-5' : 'bg-white/50'}"></button>
+            `).join('');
+        }
+
+        function startSlider() {
+            if(sliderInterval) clearInterval(sliderInterval);
+            sliderInterval = setInterval(() => {
+                const slides = JSON.parse(localStorage.getItem('ges_slides')) || [];
+                if(slides.length > 0) {
+                    currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+                    renderSlider();
+                }
+            }, 3500);
+        }
+
+        function goToSlide(index) {
+            currentSlideIndex = index;
+            renderSlider();
+            startSlider();
+        }
+
+        async function addSliderImage(e) {
+            e.preventDefault();
+            const title = document.getElementById('slide-title').value;
+            const fileInput = document.getElementById('slide-file-input').files[0];
+
+            if(fileInput) {
+                const img = await fileToBase64(fileInput);
+                let slides = JSON.parse(localStorage.getItem('ges_slides')) || [];
+                slides.unshift({ id: Date.now(), title, img });
+                localStorage.setItem('ges_slides', JSON.stringify(slides));
+                alert('Slide added successfully!');
+                document.getElementById('slide-title').value = '';
+                document.getElementById('slide-file-input').value = '';
+                renderSlider();
+                if(currentUserRole === 'headmaster') renderHeadmasterSliderList();
+            }
+        }
+
+        function deleteSliderImage(id) {
+            if(confirm('Delete this slide image?')) {
+                let slides = JSON.parse(localStorage.getItem('ges_slides')) || [];
+                slides = slides.filter(s => s.id != id);
+                localStorage.setItem('ges_slides', JSON.stringify(slides));
+                renderSlider();
+                renderHeadmasterSliderList();
+            }
+        }
+
+        function renderHeadmasterSliderList() {
+            const slides = JSON.parse(localStorage.getItem('ges_slides')) || [];
+            const list = document.getElementById('headmaster-slider-manage-list');
+            list.innerHTML = '';
+            slides.forEach(slide => {
+                const el = document.createElement('div');
+                el.className = "relative bg-slate-100 rounded-xl overflow-hidden border border-slate-200 group";
+                el.innerHTML = `
+                    <img src="${slide.img}" class="w-full h-20 object-cover">
+                    <button onclick="deleteSliderImage(${slide.id})" class="absolute top-1 right-1 bg-rose-600 text-white p-1 rounded-full text-xs shadow">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <p class="p-1 text-[10px] font-semibold text-center truncate">${slide.title}</p>
+                `;
+                list.appendChild(el);
+            });
+        }
+
+        function toggleFullScreenVideo() {
+            const player = document.getElementById('school-video-player');
+            if (player.requestFullscreen) player.requestFullscreen();
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('bg-emerald-700'));
+
+            document.getElementById('tab-' + tabName).classList.add('active');
+            const btn = document.getElementById('btn-' + tabName);
+            if(btn) btn.classList.add('bg-emerald-700');
+
+            if(tabName === 'home') { renderNews(); renderHomeIncharges(); loadGlobals(); startSlider(); }
+            if(tabName === 'rules') renderRulesAndDocs();
+            if(tabName === 'gallery') renderGallery();
+            if(tabName === 'homework') renderHomework();
+            if(tabName === 'headmaster' && currentUserRole === 'headmaster') renderHeadmasterControls();
+            if(tabName === 'incharge' && activeInchargeClass) renderClassStudents();
+        }
+
+        async function updateSchoolVideo(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('input-video-file');
+            if(fileInput.files.length > 0) {
+                await saveMediaToDB('ges_video_blob', fileInput.files[0]);
+                loadGlobals();
+                alert('School Video Uploaded Successfully!');
+                fileInput.value = '';
+            }
+        }
+
+        async function updateAdmissionBanner(e) {
+            e.preventDefault();
+            const title = document.getElementById('adm-title').value;
+            const desc = document.getElementById('adm-desc').value;
+            const imgFile = document.getElementById('adm-img-file').files[0];
+
+            localStorage.setItem('ges_adm_title', title);
+            localStorage.setItem('ges_adm_desc', desc);
+            if(imgFile) {
+                const base64Img = await fileToBase64(imgFile);
+                localStorage.setItem('ges_adm_img', base64Img);
+            }
+            loadGlobals();
+            alert('Admission Banner Updated!');
+        }
+
+        function renderRulesAndDocs() {
+            const docs = JSON.parse(localStorage.getItem('ges_docs')) || [];
+            const grid = document.getElementById('docs-download-grid');
+            grid.innerHTML = '';
+            docs.forEach(doc => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-between items-center";
+                card.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-file-pdf text-rose-600 text-xl"></i>
+                        <span class="font-bold text-slate-800 text-xs">${doc.title}</span>
+                    </div>
+                    <a href="${doc.fileData}" download="${doc.title}" class="bg-rose-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg hover:bg-rose-700 transition">
+                        <i class="fa-solid fa-download"></i> Download
+                    </a>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        async function addOfficialDocument(e) {
+            e.preventDefault();
+            const title = document.getElementById('doc-title').value;
+            const fileInput = document.getElementById('doc-file-input').files[0];
+
+            if(fileInput) {
+                const fileData = await fileToBase64(fileInput);
+                let docs = JSON.parse(localStorage.getItem('ges_docs')) || [];
+                docs.unshift({ id: Date.now(), title, fileData });
+                localStorage.setItem('ges_docs', JSON.stringify(docs));
+                alert('Official Document Uploaded!');
+                document.getElementById('doc-title').value = '';
+                document.getElementById('doc-file-input').value = '';
+                renderRulesAndDocs();
+                if(currentUserRole === 'headmaster') renderHeadmasterDocsList();
+            }
+        }
+
+        function deleteDocument(id) {
+            if(confirm('Delete this document?')) {
+                let docs = JSON.parse(localStorage.getItem('ges_docs')) || [];
+                docs = docs.filter(d => d.id != id);
+                localStorage.setItem('ges_docs', JSON.stringify(docs));
+                renderRulesAndDocs();
+                renderHeadmasterDocsList();
+            }
+        }
+
+        function renderHeadmasterDocsList() {
+            const docs = JSON.parse(localStorage.getItem('ges_docs')) || [];
+            const list = document.getElementById('headmaster-docs-manage-list');
+            list.innerHTML = '';
+            docs.forEach(doc => {
+                const el = document.createElement('div');
+                el.className = "bg-slate-50 p-2 rounded-xl border flex justify-between items-center text-xs";
+                el.innerHTML = `
+                    <span class="font-bold text-slate-800">${doc.title}</span>
+                    <button onclick="deleteDocument(${doc.id})" class="text-rose-600 font-bold hover:underline"><i class="fa-solid fa-trash"></i> Delete</button>
+                `;
+                list.appendChild(el);
+            });
+        }
+
+        function renderGallery() {
+            const gallery = JSON.parse(localStorage.getItem('ges_gallery')) || [];
+            const grid = document.getElementById('photo-gallery-grid');
+            grid.innerHTML = '';
+            gallery.forEach(img => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-100 rounded-xl overflow-hidden shadow-sm border border-slate-200";
+                card.innerHTML = `
+                    <img src="${img.fileData}" alt="${img.caption}" class="w-full h-40 object-cover">
+                    <div class="p-2 font-semibold text-slate-700 text-xs text-center truncate">${img.caption}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        async function addGalleryImage(e) {
+            e.preventDefault();
+            const caption = document.getElementById('gal-caption').value;
+            const fileInput = document.getElementById('gal-file-input').files[0];
+
+            if(fileInput) {
+                const fileData = await fileToBase64(fileInput);
+                let gallery = JSON.parse(localStorage.getItem('ges_gallery')) || [];
+                gallery.unshift({ id: Date.now(), caption, fileData });
+                localStorage.setItem('ges_gallery', JSON.stringify(gallery));
+                alert('Photo Uploaded to Gallery!');
+                document.getElementById('gal-caption').value = '';
+                document.getElementById('gal-file-input').value = '';
+                renderGallery();
+                if(currentUserRole === 'headmaster') renderHeadmasterGalleryList();
+            }
+        }
+
+        function deleteGalleryImage(id) {
+            if(confirm('Delete photo from gallery?')) {
+                let gallery = JSON.parse(localStorage.getItem('ges_gallery')) || [];
+                gallery = gallery.filter(g => g.id != id);
+                localStorage.setItem('ges_gallery', JSON.stringify(gallery));
+                renderGallery();
+                renderHeadmasterGalleryList();
+            }
+        }
+
+        function renderHeadmasterGalleryList() {
+            const gallery = JSON.parse(localStorage.getItem('ges_gallery')) || [];
+            const list = document.getElementById('headmaster-gallery-manage-list');
+            list.innerHTML = '';
+            gallery.forEach(img => {
+                const el = document.createElement('div');
+                el.className = "relative bg-slate-100 rounded-xl overflow-hidden border border-slate-200 group";
+                el.innerHTML = `
+                    <img src="${img.fileData}" class="w-full h-20 object-cover">
+                    <button onclick="deleteGalleryImage(${img.id})" class="absolute top-1 right-1 bg-rose-600 text-white p-1 rounded-full text-xs shadow">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <p class="p-1 text-[10px] font-semibold text-center truncate">${img.caption}</p>
+                `;
+                list.appendChild(el);
+            });
+        }
+
+        function updateSchoolTimings(e) {
+            e.preventDefault();
+            const timings = document.getElementById('input-timings').value;
+            localStorage.setItem('ges_timings', timings);
+            loadGlobals();
+            alert('School Timings Updated!');
+            document.getElementById('input-timings').value = '';
+        }
+
+        function updateHeaderTicker(e) {
+            e.preventDefault();
+            const ticker = document.getElementById('input-ticker').value;
+            localStorage.setItem('ges_ticker', ticker);
+            loadGlobals();
+            alert('Header Ticker Notice Updated!');
+            document.getElementById('input-ticker').value = '';
+        }
+
+        function saveClassInchargeName(e) {
+            e.preventDefault();
+            const cls = document.getElementById('incharge-assign-class').value;
+            const teacher = document.getElementById('incharge-teacher-name').value;
+
+            let incharges = JSON.parse(localStorage.getItem('ges_incharges'));
+            incharges[cls] = teacher;
+            localStorage.setItem('ges_incharges', JSON.stringify(incharges));
+            alert(`Teacher assigned to ${cls} successfully!`);
+            document.getElementById('incharge-teacher-name').value = '';
+            renderHomeIncharges();
+            if(currentUserRole === 'headmaster') renderHeadmasterReport();
+        }
+
+        function renderHomeIncharges() {
+            const incharges = JSON.parse(localStorage.getItem('ges_incharges'));
+            const list = document.getElementById('home-incharges-list');
+            list.innerHTML = '';
+            for(const [cls, teacher] of Object.entries(incharges)) {
+                const item = document.createElement('div');
+                item.className = "flex justify-between items-center bg-slate-50 p-2 rounded-lg border";
+                item.innerHTML = `<span class="font-bold text-slate-700">${cls}:</span> <span class="text-emerald-700 font-semibold">${teacher}</span>`;
+                list.appendChild(item);
+            }
+        }
+
+        function renderNews() {
+            const newsList = JSON.parse(localStorage.getItem('ges_news')) || [];
+            const container = document.getElementById('news-feed');
+            container.innerHTML = '';
+            newsList.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-2";
+                let imageHtml = item.img ? `<img src="${item.img}" class="w-full max-h-52 object-cover rounded-xl mt-2 border">` : '';
+                let fileHtml = item.file ? `<a href="${item.file}" download="Attachment" class="inline-block bg-teal-50 text-teal-700 border border-teal-200 px-2.5 py-1 rounded-lg text-xs font-bold mt-2"><i class="fa-solid fa-paperclip mr-1"></i> Download Attachment File</a>` : '';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-slate-800 text-base">${item.title}</h4>
+                        <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-medium">${item.date}</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">${item.content}</p>
+                    ${imageHtml}
+                    ${fileHtml}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function handleAnnouncementSubmit(e) {
+            e.preventDefault();
+            const editId = document.getElementById('edit-announcement-id').value;
+            const title = document.getElementById('news-title').value;
+            const content = document.getElementById('news-content').value;
+            const imgFile = document.getElementById('news-img-file').files[0];
+            const docFile = document.getElementById('news-doc-file').files[0];
+            const date = new Date().toISOString().split('T')[0];
+
+            let imgData = imgFile ? await fileToBase64(imgFile) : '';
+            let fileData = docFile ? await fileToBase64(docFile) : '';
+
+            let news = JSON.parse(localStorage.getItem('ges_news')) || [];
+            if(editId) {
+                news = news.map(n => n.id == editId ? { 
+                    id: parseInt(editId), title, content, 
+                    img: imgData || n.img, 
+                    file: fileData || n.file, 
+                    date 
+                } : n);
+                alert('Announcement Updated!');
+            } else {
+                news.unshift({ id: Date.now(), title, content, img: imgData, file: fileData, date });
+                alert('Announcement Published!');
+            }
+            localStorage.setItem('ges_news', JSON.stringify(news));
+            resetAnnouncementForm();
+            renderNews();
+            if(currentUserRole === 'headmaster') renderManageNewsList();
+        }
+
+        function deleteAnnouncement(id) {
+            if(confirm('Delete announcement?')) {
+                let news = JSON.parse(localStorage.getItem('ges_news')) || [];
+                news = news.filter(n => n.id != id);
+                localStorage.setItem('ges_news', JSON.stringify(news));
+                renderNews();
+                renderManageNewsList();
+            }
+        }
+
+        function resetAnnouncementForm() {
+            document.getElementById('edit-announcement-id').value = '';
+            document.getElementById('news-title').value = '';
+            document.getElementById('news-content').value = '';
+            document.getElementById('news-img-file').value = '';
+            document.getElementById('news-doc-file').value = '';
+        }
+
+        function renderManageNewsList() {
+            const newsList = JSON.parse(localStorage.getItem('ges_news')) || [];
+            const list = document.getElementById('headmaster-news-manage-list');
+            list.innerHTML = '';
+            newsList.forEach(item => {
+                const el = document.createElement('div');
+                el.className = "bg-slate-50 p-2 rounded-xl border flex justify-between items-center text-xs";
+                el.innerHTML = `
+                    <div>
+                        <strong class="text-slate-800">${item.title}</strong>
+                        <p class="text-slate-500 truncate max-w-xs">${item.content}</p>
+                    </div>
+                    <button onclick="deleteAnnouncement(${item.id})" class="text-rose-600 font-bold hover:underline"><i class="fa-solid fa-trash"></i> Delete</button>
+                `;
+                list.appendChild(el);
+            });
+        }
+
+        function searchStudentResult(e) {
+            e.preventDefault();
+            const cls = document.getElementById('search-class').value;
+            const roll = parseInt(document.getElementById('search-roll').value);
+            const students = JSON.parse(localStorage.getItem('ges_students')) || [];
+            const incharges = JSON.parse(localStorage.getItem('ges_incharges'));
+            const std = students.find(s => s.class === cls && parseInt(s.roll) === roll);
+
+            if(std) {
+                document.getElementById('res-card-class').innerText = std.class;
+                document.getElementById('res-card-roll').innerText = std.roll;
+                document.getElementById('res-card-name').innerText = std.name;
+                document.getElementById('res-card-incharge').innerText = incharges[std.class] || 'Not Assigned';
+                document.getElementById('res-card-total').innerText = std.total;
+                document.getElementById('res-card-obtained').innerText = std.obtained;
+                const perc = ((std.obtained / std.total) * 100).toFixed(1);
+                document.getElementById('res-card-perc').innerText = `${perc}%`;
+                document.getElementById('result-card-display').classList.remove('hidden');
+            } else {
+                alert('No student result found!');
+                document.getElementById('result-card-display').classList.add('hidden');
+            }
+        }
+
+        function renderHomework() {
+            const list = JSON.parse(localStorage.getItem('ges_homework')) || [];
+            const filter = document.getElementById('homework-filter').value;
+            const grid = document.getElementById('homework-grid');
+            grid.innerHTML = '';
+            const filtered = filter === 'ALL' ? list : list.filter(h => h.class === filter);
+
+            if(filtered.length === 0) {
+                grid.innerHTML = '<p class="text-xs text-slate-400 italic">No vacation homework uploaded yet.</p>';
+                return;
+            }
+            filtered.forEach(h => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1.5";
+                let fileBtn = h.fileData ? `<a href="${h.fileData}" download="Homework_${h.class}_${h.subject}" class="inline-block bg-amber-50 text-amber-800 border border-amber-300 px-2.5 py-1 rounded-lg text-[10px] font-bold mt-1"><i class="fa-solid fa-file-arrow-down mr-1"></i> Download Attachment</a>` : '';
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">${h.class}</span>
+                        <span class="text-[10px] font-semibold text-teal-700">${h.subject}</span>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-xs">${h.title}</h4>
+                    <p class="text-[11px] text-slate-600 leading-relaxed">${h.desc}</p>
+                    ${fileBtn}
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        async function addHomework(e) {
+            e.preventDefault();
+            const cls = document.getElementById('hw-class').value;
+            const subject = document.getElementById('hw-subject').value;
+            const title = document.getElementById('hw-title').value;
+            const desc = document.getElementById('hw-desc').value;
+            const fileInput = document.getElementById('hw-file-input').files[0];
+            let fileData = fileInput ? await fileToBase64(fileInput) : '';
+
+            let list = JSON.parse(localStorage.getItem('ges_homework')) || [];
+            list.unshift({ id: Date.now(), class: cls, subject, title, desc, fileData });
+            localStorage.setItem('ges_homework', JSON.stringify(list));
+            alert('Vacation Homework Uploaded!');
+            document.getElementById('hw-subject').value = '';
+            document.getElementById('hw-title').value = '';
+            document.getElementById('hw-desc').value = '';
+            document.getElementById('hw-file-input').value = '';
+            renderHomework();
+        }
+
+        function handleInchargeLogin(e) {
+            e.preventDefault();
+            const cls = document.getElementById('login-class-select').value;
+            const pin = document.getElementById('login-pin').value;
+            const pins = JSON.parse(localStorage.getItem('ges_teacher_pins'));
+
+            if(pins[cls] && pins[cls] === pin) {
+                currentUserRole = "incharge";
+                activeInchargeClass = cls;
+                document.getElementById('current-role-badge').innerText = `Teacher (${cls})`;
+                document.getElementById('logout-container').classList.remove('hidden');
+                document.getElementById('incharge-login-box').classList.add('hidden');
+                document.getElementById('incharge-dashboard').classList.remove('hidden');
+                document.getElementById('add-homework-box').classList.remove('hidden');
+                document.getElementById('active-class-title').innerText = `${cls} Portal`;
+                renderClassStudents();
+            } else {
+                alert('Invalid PIN for ' + cls);
+            }
+        }
+
+        function saveStudentMarks(e) {
+            e.preventDefault();
+            const roll = parseInt(document.getElementById('std-roll').value);
+            const name = document.getElementById('std-name').value;
+            const total = parseFloat(document.getElementById('std-total').value);
+            const obtained = parseFloat(document.getElementById('std-obtained').value);
+
+            let students = JSON.parse(localStorage.getItem('ges_students')) || [];
+            students = students.filter(s => !(s.class === activeInchargeClass && parseInt(s.roll) === roll));
+            students.push({ class: activeInchargeClass, roll, name, total, obtained });
+            localStorage.setItem('ges_students', JSON.stringify(students));
+            alert('Student Record Saved / Updated!');
+            cancelEditStudent();
+            renderClassStudents();
+        }
+
+        function editStudent(cls, roll) {
+            const students = JSON.parse(localStorage.getItem('ges_students')) || [];
+            const std = students.find(s => s.class === cls && parseInt(s.roll) === parseInt(roll));
+            if(std) {
+                document.getElementById('std-roll').value = std.roll;
+                document.getElementById('std-name').value = std.name;
+                document.getElementById('std-total').value = std.total;
+                document.getElementById('std-obtained').value = std.obtained;
+                document.getElementById('std-form-title').innerText = "Edit Student Result";
+                document.getElementById('save-std-btn').innerText = "Update Record";
+                document.getElementById('cancel-std-btn').classList.remove('hidden');
+            }
+        }
+
+        function cancelEditStudent() {
+            document.getElementById('std-roll').value = '';
+            document.getElementById('std-name').value = '';
+            document.getElementById('std-obtained').value = '';
+            document.getElementById('std-form-title').innerText = "Enter / Update Student Marks";
+            document.getElementById('save-std-btn').innerText = "Save Student Record";
+            document.getElementById('cancel-std-btn').classList.add('hidden');
+        }
+
+        function renderClassStudents() {
+            const students = JSON.parse(localStorage.getItem('ges_students')) || [];
+            const classStudents = students.filter(s => s.class === activeInchargeClass);
+            const tbody = document.getElementById('class-result-tbody');
+            tbody.innerHTML = '';
+            document.getElementById('class-std-count').innerText = `${classStudents.length} Students`;
+
+            classStudents.sort((a,b) => a.roll - b.roll).forEach(s => {
+                const perc = ((s.obtained / s.total) * 100).toFixed(1);
+                const row = document.createElement('tr');
+                row.className = "hover:bg-slate-50";
+                row.innerHTML = `
+                    <td class="p-2 font-semibold text-slate-800">${s.roll}</td>
+                    <td class="p-2 font-medium text-slate-800">${s.name}</td>
+                    <td class="p-2">${s.obtained}</td>
+                    <td class="p-2">${s.total}</td>
+                    <td class="p-2 font-bold text-teal-700">${perc}%</td>
+                    <td class="p-2 text-center print:hidden space-x-2">
+                        <button onclick="editStudent('${s.class}', ${s.roll})" class="text-blue-600 hover:text-blue-800 text-xs font-bold"><i class="fa-solid fa-pen"></i> Edit</button>
+                        <button onclick="deleteStudent('${s.class}', ${s.roll})" class="text-rose-600 hover:text-rose-800 text-xs font-bold"><i class="fa-solid fa-trash"></i> Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function deleteStudent(cls, roll) {
+            if(confirm('Are you sure you want to delete this student record?')) {
+                let students = JSON.parse(localStorage.getItem('ges_students')) || [];
+                students = students.filter(s => !(s.class === cls && parseInt(s.roll) === parseInt(roll)));
+                localStorage.setItem('ges_students', JSON.stringify(students));
+                if(currentUserRole === 'incharge') renderClassStudents();
+                if(currentUserRole === 'headmaster') renderHeadmasterReport();
+            }
+        }
+
+        function handleHeadmasterLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('head-pass').value;
+            if(pass === localStorage.getItem('ges_head_pass')) {
+                currentUserRole = "headmaster";
+                document.getElementById('current-role-badge').innerText = "Headmaster Admin";
+                document.getElementById('logout-container').classList.remove('hidden');
+                document.getElementById('headmaster-login-box').classList.add('hidden');
+                document.getElementById('headmaster-dashboard').classList.remove('hidden');
+                document.getElementById('add-homework-box').classList.remove('hidden');
+                renderHeadmasterControls();
+            } else {
+                alert('Incorrect Admin Password!');
+            }
+        }
+
+        function renderHeadmasterControls() {
+            renderManageNewsList();
+            renderHeadmasterReport();
+            renderHeadmasterDocsList();
+            renderHeadmasterGalleryList();
+            renderHeadmasterSliderList();
+        }
+
+        function changeHeadmasterPassword(e) {
+            e.preventDefault();
+            localStorage.setItem('ges_head_pass', document.getElementById('new-head-pass').value);
+            alert('Headmaster Admin Password Updated!');
+            document.getElementById('new-head-pass').value = '';
+        }
+
+        function setTeacherPassword(e) {
+            e.preventDefault();
+            const cls = document.getElementById('teacher-pass-class').value;
+            let pins = JSON.parse(localStorage.getItem('ges_teacher_pins'));
+            pins[cls] = document.getElementById('new-teacher-pin').value;
+            localStorage.setItem('ges_teacher_pins', JSON.stringify(pins));
+            alert(`PIN for ${cls} updated successfully!`);
+            document.getElementById('new-teacher-pin').value = '';
+        }
+
+        function renderHeadmasterReport() {
+            const students = JSON.parse(localStorage.getItem('ges_students')) || [];
+            const incharges = JSON.parse(localStorage.getItem('ges_incharges'));
+            const tbody = document.getElementById('headmaster-report-tbody');
+            tbody.innerHTML = '';
+            students.forEach(s => {
+                const perc = ((s.obtained / s.total) * 100).toFixed(1);
+                const row = document.createElement('tr');
+                row.className = "hover:bg-slate-50";
+                row.innerHTML = `
+                    <td class="p-2 font-bold text-emerald-700 border">${s.class}</td>
+                    <td class="p-2 font-semibold text-slate-600 border">${incharges[s.class] || 'Not Assigned'}</td>
+                    <td class="p-2 font-semibold text-slate-800 border">${s.roll}</td>
+                    <td class="p-2 font-medium text-slate-800 border">${s.name}</td>
+                    <td class="p-2 border">${s.obtained} / ${s.total}</td>
+                    <td class="p-2 font-bold text-amber-700 border">${perc}%</td>
+                    <td class="p-2 text-center border print:hidden">
+                        <button onclick="deleteStudent('${s.class}', ${s.roll})" class="text-rose-600 text-xs font-bold"><i class="fa-solid fa-trash"></i> Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function downloadClassReportPDF() {
+            const selectedClass = document.getElementById('pdf-class-select').value;
+            const students = JSON.parse(localStorage.getItem('ges_students')) || [];
+            const incharges = JSON.parse(localStorage.getItem('ges_incharges'));
+            let filteredStudents = selectedClass === 'ALL' ? students : students.filter(s => s.class === selectedClass);
+
+            if(filteredStudents.length === 0) {
+                alert('No student records found for PDF export.');
+                return;
+            }
+
+            const container = document.createElement('div');
+            container.className = "p-6 bg-white";
+            container.innerHTML = `
+                <div style="text-align:center; margin-bottom:20px;">
+                    <h2 style="font-size:22px; font-weight:bold; color:#065f46;">GES BAIT MUGHAL</h2>
+                    <p style="font-size:12px; color:#475569;">Official Result Report - ${selectedClass === 'ALL' ? 'All Classes' : selectedClass}</p>
+                </div>
+                <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                    <thead>
+                        <tr style="background-color:#f1f5f9;">
+                            <th style="border:1px solid #cbd5e1; padding:8px;">Class</th>
+                            <th style="border:1px solid #cbd5e1; padding:8px;">Incharge</th>
+                            <th style="border:1px solid #cbd5e1; padding:8px;">Roll No</th>
+                            <th style="border:1px solid #cbd5e1; padding:8px;">Student Name</th>
+                            <th style="border:1px solid #cbd5e1; padding:8px;">Marks</th>
+                            <th style="border:1px solid #cbd5e1; padding:8px;">Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredStudents.map(s => `
+                            <tr>
+                                <td style="border:1px solid #cbd5e1; padding:8px;">${s.class}</td>
+                                <td style="border:1px solid #cbd5e1; padding:8px;">${incharges[s.class] || 'N/A'}</td>
+                                <td style="border:1px solid #cbd5e1; padding:8px;">${s.roll}</td>
+                                <td style="border:1px solid #cbd5e1; padding:8px;">${s.name}</td>
+                                <td style="border:1px solid #cbd5e1; padding:8px;">${s.obtained} / ${s.total}</td>
+                                <td style="border:1px solid #cbd5e1; padding:8px; font-weight:bold;">${((s.obtained/s.total)*100).toFixed(1)}%</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            const opt = {
+                margin:       0.5,
+                filename:     `GES_Report_${selectedClass.replace(' ', '_')}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(container).save();
+        }
+
+        function logout() {
+            currentUserRole = "public";
+            activeInchargeClass = null;
+            document.getElementById('current-role-badge').innerText = "Public Visitor";
+            document.getElementById('logout-container').classList.add('hidden');
+            document.getElementById('add-homework-box').classList.add('hidden');
+            document.getElementById('incharge-dashboard').classList.add('hidden');
+            document.getElementById('incharge-login-box').classList.remove('hidden');
+            document.getElementById('headmaster-dashboard').classList.add('hidden');
+            document.getElementById('headmaster-login-box').classList.remove('hidden');
+            switchTab('home');
+        }
+    </script>
+</body>
+</html>
