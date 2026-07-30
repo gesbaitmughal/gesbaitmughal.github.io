@@ -70,6 +70,10 @@
                 </div>
             </div>
             <div class="flex items-center space-x-3">
+                <div id="connection-status-badge" class="bg-emerald-900/80 border border-emerald-600 px-3 py-1.5 rounded-xl text-xs flex items-center space-x-1.5">
+                    <span class="w-2 h-2 bg-slate-400 rounded-full inline-block"></span>
+                    <span>Connecting...</span>
+                </div>
                 <div class="bg-emerald-900/80 border border-emerald-600 px-3 py-1.5 rounded-xl text-xs flex items-center space-x-2">
                     <i class="fa-solid fa-user-shield text-amber-400"></i>
                     <span>Role: <strong id="current-role-badge" class="text-amber-300">Public Visitor</strong></span>
@@ -322,30 +326,6 @@
                     </div>
                 </div>
 
-                <div id="add-homework-box" class="hidden bg-slate-50 p-4 rounded-xl border mb-4">
-                    <h4 class="font-bold text-slate-800 mb-2 text-xs"><i class="fa-solid fa-plus text-emerald-600"></i> Add Vacation Homework Assignment</h4>
-                    <form onsubmit="addHomework(event)" class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                        <select id="hw-class" class="border p-2 rounded-lg text-xs bg-white">
-                            <option value="Class 1">Class 1</option>
-                            <option value="Class 2">Class 2</option>
-                            <option value="Class 3">Class 3</option>
-                            <option value="Class 4">Class 4</option>
-                            <option value="Class 5">Class 5</option>
-                            <option value="Class 6">Class 6</option>
-                            <option value="Class 7">Class 7</option>
-                            <option value="Class 8">Class 8</option>
-                        </select>
-                        <input type="text" id="hw-subject" placeholder="Subject (e.g. English, Math)" required class="border p-2 rounded-lg text-xs bg-white">
-                        <input type="text" id="hw-title" placeholder="Topic / Assignment Title" required class="border p-2 rounded-lg text-xs bg-white">
-                        <textarea id="hw-desc" placeholder="Detailed Instructions..." required class="border p-2 rounded-lg text-xs md:col-span-3 bg-white" rows="2"></textarea>
-                        <div class="md:col-span-3">
-                            <label class="block text-[10px] font-bold mb-1">Attach File / Photo (Optional):</label>
-                            <input type="file" id="hw-file-input" class="border p-1 rounded-lg text-xs w-full bg-white">
-                        </div>
-                        <button type="submit" class="bg-emerald-600 text-white font-bold py-1.5 rounded-lg text-xs md:col-span-3">Upload Homework</button>
-                    </form>
-                </div>
-
                 <div id="homework-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </div>
         </section>
@@ -452,6 +432,30 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Vacation Homework Control (Teacher) -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
+                        <i class="fa-solid fa-book-open text-amber-500"></i>
+                        <span id="t-hw-form-title">Add Vacation Homework for This Class</span>
+                    </h3>
+                    <form onsubmit="submitTeacherHomework(event)" class="grid grid-cols-1 md:grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border">
+                        <input type="hidden" id="edit-t-hw-id" value="">
+                        <input type="text" id="t-hw-subject" placeholder="Subject (e.g. English, Math)" required class="border p-2 rounded-lg text-xs bg-white">
+                        <input type="text" id="t-hw-title" placeholder="Topic / Assignment Title" required class="border p-2 rounded-lg text-xs bg-white">
+                        <div></div>
+                        <textarea id="t-hw-desc" placeholder="Detailed Instructions..." required class="border p-2 rounded-lg text-xs md:col-span-3 bg-white" rows="2"></textarea>
+                        <div class="md:col-span-3">
+                            <label class="block text-[10px] font-bold mb-1">Attach File / Photo (Any Format, Optional):</label>
+                            <input type="file" id="t-hw-file" class="border p-1 rounded-lg text-xs w-full bg-white">
+                        </div>
+                        <div class="md:col-span-3 flex items-center space-x-2">
+                            <button type="submit" id="t-hw-submit-btn" class="bg-emerald-600 text-white font-bold py-1.5 px-4 rounded-lg text-xs">Upload Homework</button>
+                            <button type="button" onclick="resetTeacherHomeworkForm()" id="t-hw-cancel-btn" class="hidden bg-slate-400 text-white font-bold px-3 py-1.5 rounded-lg text-xs">Cancel</button>
+                        </div>
+                    </form>
+                    <div id="teacher-homework-manage-list" class="space-y-1.5"></div>
+                </div>
             </div>
         </section>
 
@@ -526,6 +530,39 @@
                         <button type="submit" class="bg-blue-600 text-white font-bold py-1.5 rounded-xl text-xs">Upload Document</button>
                     </form>
                     <div id="headmaster-docs-manage-list" class="space-y-1.5"></div>
+                </div>
+
+                <!-- Vacation Homework Management (Headmaster) -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
+                        <i class="fa-solid fa-book-open text-amber-500"></i>
+                        <span id="h-hw-form-title">Add / Edit Vacation Homework (Any Class)</span>
+                    </h3>
+                    <form onsubmit="submitHeadmasterHomework(event)" class="grid grid-cols-1 md:grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border">
+                        <input type="hidden" id="edit-h-hw-id" value="">
+                        <select id="h-hw-class" class="border p-2 rounded-lg text-xs bg-white">
+                            <option value="Class 1">Class 1</option>
+                            <option value="Class 2">Class 2</option>
+                            <option value="Class 3">Class 3</option>
+                            <option value="Class 4">Class 4</option>
+                            <option value="Class 5">Class 5</option>
+                            <option value="Class 6">Class 6</option>
+                            <option value="Class 7">Class 7</option>
+                            <option value="Class 8">Class 8</option>
+                        </select>
+                        <input type="text" id="h-hw-subject" placeholder="Subject (e.g. English, Math)" required class="border p-2 rounded-lg text-xs bg-white">
+                        <input type="text" id="h-hw-title" placeholder="Topic / Assignment Title" required class="border p-2 rounded-lg text-xs bg-white">
+                        <textarea id="h-hw-desc" placeholder="Detailed Instructions..." required class="border p-2 rounded-lg text-xs md:col-span-3 bg-white" rows="2"></textarea>
+                        <div class="md:col-span-3">
+                            <label class="block text-[10px] font-bold mb-1">Attach File / Photo (Any Format, Optional):</label>
+                            <input type="file" id="h-hw-file" class="border p-1 rounded-lg text-xs w-full bg-white">
+                        </div>
+                        <div class="md:col-span-3 flex items-center space-x-2">
+                            <button type="submit" id="h-hw-submit-btn" class="bg-emerald-600 text-white font-bold py-1.5 px-4 rounded-lg text-xs">Upload Homework</button>
+                            <button type="button" onclick="resetHeadmasterHomeworkForm()" id="h-hw-cancel-btn" class="hidden bg-slate-400 text-white font-bold px-3 py-1.5 rounded-lg text-xs">Cancel</button>
+                        </div>
+                    </form>
+                    <div id="headmaster-homework-manage-list" class="space-y-1.5"></div>
                 </div>
 
                 <!-- Gallery Management -->
@@ -796,13 +833,23 @@
             renderGallery();
 
             if (document.getElementById('tab-homework').classList.contains('active')) renderHomework();
-            if (currentUserRole === 'incharge' && activeInchargeClass) renderClassStudents();
+            if (currentUserRole === 'incharge' && activeInchargeClass) { renderClassStudents(); renderTeacherHomeworkList(); }
             if (currentUserRole === 'headmaster') renderHeadmasterControls();
         }
 
         // Kick things off once the Firebase module (in <head>) has finished
         // initializing. It fires a 'firebase-ready' event; if it already
         // fired before we got here, window.firebaseDB will already exist.
+        function updateConnectionBadge(isConnected) {
+            const badge = document.getElementById('connection-status-badge');
+            if (!badge) return;
+            if (isConnected) {
+                badge.innerHTML = `<span class="w-2 h-2 bg-emerald-400 rounded-full inline-block animate-pulse"></span><span>Live</span>`;
+            } else {
+                badge.innerHTML = `<span class="w-2 h-2 bg-rose-400 rounded-full inline-block"></span><span>Offline</span>`;
+            }
+        }
+
         function startFirebaseSync() {
             const { ref, onValue, db } = window.firebaseDB;
 
@@ -810,6 +857,10 @@
             const timeoutId = setTimeout(() => {
                 if (!DB_FIRST_LOAD_DONE) showLoadingError();
             }, 12000);
+
+            onValue(ref(db, '.info/connected'), (snap) => {
+                updateConnectionBadge(snap.val() === true);
+            });
 
             onValue(ref(db, 'gesData'), (snapshot) => {
                 DB_CACHE = snapshot.val() || {};
@@ -983,7 +1034,7 @@
             if(tabName === 'gallery') renderGallery();
             if(tabName === 'homework') renderHomework();
             if(tabName === 'headmaster' && currentUserRole === 'headmaster') renderHeadmasterControls();
-            if(tabName === 'incharge' && activeInchargeClass) renderClassStudents();
+            if(tabName === 'incharge' && activeInchargeClass) { renderClassStudents(); renderTeacherHomeworkList(); }
         }
 
         // Checks a file isn't too large before converting it to base64 and
@@ -1344,25 +1395,174 @@
             });
         }
 
-        async function addHomework(e) {
-            e.preventDefault();
-            const cls = document.getElementById('hw-class').value;
-            const subject = document.getElementById('hw-subject').value;
-            const title = document.getElementById('hw-title').value;
-            const desc = document.getElementById('hw-desc').value;
-            const fileInput = document.getElementById('hw-file-input').files[0];
-            if (fileInput && !checkFileSize(fileInput, 8, 'attachment')) return;
-            let fileData = fileInput ? await fileToBase64(fileInput) : '';
-
+        // Shared core used by both the Teacher Portal and Headmaster Control
+        // homework forms - handles both adding a new entry and updating an
+        // existing one (when editId is provided).
+        async function saveHomeworkEntry({ cls, subject, title, desc, fileInput, editId }) {
+            let fileData = '';
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                if (!checkFileSize(file, 8, 'attachment')) return false;
+                fileData = await fileToBase64(file);
+            }
             let list = JSON.parse(DB.get('ges_homework')) || [];
-            list.unshift({ id: Date.now(), class: cls, subject, title, desc, fileData });
+            if (editId) {
+                list = list.map(h => h.id == editId ? {
+                    id: parseInt(editId), class: cls, subject, title, desc,
+                    fileData: fileData || h.fileData
+                } : h);
+            } else {
+                list.unshift({ id: Date.now(), class: cls, subject, title, desc, fileData });
+            }
             DB.set('ges_homework', JSON.stringify(list));
-            alert('Vacation Homework Uploaded!');
-            document.getElementById('hw-subject').value = '';
-            document.getElementById('hw-title').value = '';
-            document.getElementById('hw-desc').value = '';
-            document.getElementById('hw-file-input').value = '';
+            return true;
+        }
+
+        // ---- Teacher Portal homework controls (scoped to their own class) ----
+        async function submitTeacherHomework(e) {
+            e.preventDefault();
+            const editId = document.getElementById('edit-t-hw-id').value;
+            const subject = document.getElementById('t-hw-subject').value;
+            const title = document.getElementById('t-hw-title').value;
+            const desc = document.getElementById('t-hw-desc').value;
+            const fileInput = document.getElementById('t-hw-file');
+            const ok = await saveHomeworkEntry({ cls: activeInchargeClass, subject, title, desc, fileInput, editId });
+            if (!ok) return;
+            alert(editId ? 'Homework Updated!' : 'Vacation Homework Uploaded!');
+            resetTeacherHomeworkForm();
+            renderTeacherHomeworkList();
             renderHomework();
+        }
+
+        function resetTeacherHomeworkForm() {
+            document.getElementById('edit-t-hw-id').value = '';
+            document.getElementById('t-hw-subject').value = '';
+            document.getElementById('t-hw-title').value = '';
+            document.getElementById('t-hw-desc').value = '';
+            document.getElementById('t-hw-file').value = '';
+            document.getElementById('t-hw-submit-btn').innerText = 'Upload Homework';
+            document.getElementById('t-hw-cancel-btn').classList.add('hidden');
+        }
+
+        function editTeacherHomework(id) {
+            const item = (JSON.parse(DB.get('ges_homework')) || []).find(h => h.id == id);
+            if (!item) return;
+            document.getElementById('edit-t-hw-id').value = item.id;
+            document.getElementById('t-hw-subject').value = item.subject;
+            document.getElementById('t-hw-title').value = item.title;
+            document.getElementById('t-hw-desc').value = item.desc;
+            document.getElementById('t-hw-submit-btn').innerText = 'Update Homework';
+            document.getElementById('t-hw-cancel-btn').classList.remove('hidden');
+        }
+
+        function deleteTeacherHomework(id) {
+            if (!confirm('Delete this homework?')) return;
+            let list = JSON.parse(DB.get('ges_homework')) || [];
+            list = list.filter(h => h.id != id);
+            DB.set('ges_homework', JSON.stringify(list));
+            renderTeacherHomeworkList();
+            renderHomework();
+        }
+
+        function renderTeacherHomeworkList() {
+            const container = document.getElementById('teacher-homework-manage-list');
+            if (!container) return;
+            const list = (JSON.parse(DB.get('ges_homework')) || []).filter(h => h.class === activeInchargeClass);
+            container.innerHTML = '';
+            if (list.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 italic">No homework added yet for this class.</p>';
+                return;
+            }
+            list.forEach(h => {
+                const el = document.createElement('div');
+                el.className = "bg-slate-50 p-2 rounded-xl border flex justify-between items-center text-xs";
+                el.innerHTML = `
+                    <div class="pr-2">
+                        <span class="font-bold text-teal-700">${h.subject}</span> - <strong class="text-slate-800">${h.title}</strong>
+                        <p class="text-slate-500 truncate max-w-xs">${h.desc}</p>
+                    </div>
+                    <div class="space-x-2 flex-shrink-0">
+                        <button onclick="editTeacherHomework(${h.id})" class="text-blue-600 font-bold hover:underline"><i class="fa-solid fa-pen"></i> Edit</button>
+                        <button onclick="deleteTeacherHomework(${h.id})" class="text-rose-600 font-bold hover:underline"><i class="fa-solid fa-trash"></i> Delete</button>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        // ---- Headmaster Control homework controls (any class) ----
+        async function submitHeadmasterHomework(e) {
+            e.preventDefault();
+            const editId = document.getElementById('edit-h-hw-id').value;
+            const cls = document.getElementById('h-hw-class').value;
+            const subject = document.getElementById('h-hw-subject').value;
+            const title = document.getElementById('h-hw-title').value;
+            const desc = document.getElementById('h-hw-desc').value;
+            const fileInput = document.getElementById('h-hw-file');
+            const ok = await saveHomeworkEntry({ cls, subject, title, desc, fileInput, editId });
+            if (!ok) return;
+            alert(editId ? 'Homework Updated!' : 'Vacation Homework Uploaded!');
+            resetHeadmasterHomeworkForm();
+            renderHeadmasterHomeworkList();
+            renderHomework();
+        }
+
+        function resetHeadmasterHomeworkForm() {
+            document.getElementById('edit-h-hw-id').value = '';
+            document.getElementById('h-hw-subject').value = '';
+            document.getElementById('h-hw-title').value = '';
+            document.getElementById('h-hw-desc').value = '';
+            document.getElementById('h-hw-file').value = '';
+            document.getElementById('h-hw-submit-btn').innerText = 'Upload Homework';
+            document.getElementById('h-hw-cancel-btn').classList.add('hidden');
+        }
+
+        function editHeadmasterHomework(id) {
+            const item = (JSON.parse(DB.get('ges_homework')) || []).find(h => h.id == id);
+            if (!item) return;
+            document.getElementById('edit-h-hw-id').value = item.id;
+            document.getElementById('h-hw-class').value = item.class;
+            document.getElementById('h-hw-subject').value = item.subject;
+            document.getElementById('h-hw-title').value = item.title;
+            document.getElementById('h-hw-desc').value = item.desc;
+            document.getElementById('h-hw-submit-btn').innerText = 'Update Homework';
+            document.getElementById('h-hw-cancel-btn').classList.remove('hidden');
+        }
+
+        function deleteHeadmasterHomework(id) {
+            if (!confirm('Delete this homework?')) return;
+            let list = JSON.parse(DB.get('ges_homework')) || [];
+            list = list.filter(h => h.id != id);
+            DB.set('ges_homework', JSON.stringify(list));
+            renderHeadmasterHomeworkList();
+            renderHomework();
+        }
+
+        function renderHeadmasterHomeworkList() {
+            const container = document.getElementById('headmaster-homework-manage-list');
+            if (!container) return;
+            const list = JSON.parse(DB.get('ges_homework')) || [];
+            container.innerHTML = '';
+            if (list.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 italic">No vacation homework uploaded yet.</p>';
+                return;
+            }
+            list.forEach(h => {
+                const el = document.createElement('div');
+                el.className = "bg-slate-50 p-2 rounded-xl border flex justify-between items-center text-xs";
+                el.innerHTML = `
+                    <div class="pr-2">
+                        <span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">${h.class}</span>
+                        <span class="font-bold text-teal-700 ml-1">${h.subject}</span> - <strong class="text-slate-800">${h.title}</strong>
+                        <p class="text-slate-500 truncate max-w-xs">${h.desc}</p>
+                    </div>
+                    <div class="space-x-2 flex-shrink-0">
+                        <button onclick="editHeadmasterHomework(${h.id})" class="text-blue-600 font-bold hover:underline"><i class="fa-solid fa-pen"></i> Edit</button>
+                        <button onclick="deleteHeadmasterHomework(${h.id})" class="text-rose-600 font-bold hover:underline"><i class="fa-solid fa-trash"></i> Delete</button>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
         }
 
         function handleInchargeLogin(e) {
@@ -1378,9 +1578,9 @@
                 document.getElementById('logout-container').classList.remove('hidden');
                 document.getElementById('incharge-login-box').classList.add('hidden');
                 document.getElementById('incharge-dashboard').classList.remove('hidden');
-                document.getElementById('add-homework-box').classList.remove('hidden');
                 document.getElementById('active-class-title').innerText = `${cls} Portal`;
                 renderClassStudents();
+                renderTeacherHomeworkList();
             } else {
                 alert('Invalid PIN for ' + cls);
             }
@@ -1470,7 +1670,6 @@
                 document.getElementById('logout-container').classList.remove('hidden');
                 document.getElementById('headmaster-login-box').classList.add('hidden');
                 document.getElementById('headmaster-dashboard').classList.remove('hidden');
-                document.getElementById('add-homework-box').classList.remove('hidden');
                 renderHeadmasterControls();
             } else {
                 alert('Incorrect Admin Password!');
@@ -1483,6 +1682,7 @@
             renderHeadmasterDocsList();
             renderHeadmasterGalleryList();
             renderHeadmasterSliderList();
+            renderHeadmasterHomeworkList();
         }
 
         function changeHeadmasterPassword(e) {
@@ -1585,7 +1785,6 @@
             activeInchargeClass = null;
             document.getElementById('current-role-badge').innerText = "Public Visitor";
             document.getElementById('logout-container').classList.add('hidden');
-            document.getElementById('add-homework-box').classList.add('hidden');
             document.getElementById('incharge-dashboard').classList.add('hidden');
             document.getElementById('incharge-login-box').classList.remove('hidden');
             document.getElementById('headmaster-dashboard').classList.add('hidden');
