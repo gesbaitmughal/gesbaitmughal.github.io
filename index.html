@@ -53,17 +53,19 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Modern hover-lift for cards site-wide */
+        /* Modern hover-lift for cards site-wide - deeper "3D" elevation */
         .rounded-2xl.shadow-sm, .rounded-2xl.shadow-md, .rounded-2xl.shadow-lg {
-            transition: box-shadow .25s ease, transform .25s ease;
+            transition: box-shadow .3s ease, transform .3s ease;
         }
         .rounded-2xl.shadow-sm:hover {
-            box-shadow: 0 12px 24px -8px rgba(15, 23, 42, 0.12);
-            transform: translateY(-2px);
+            box-shadow: 0 20px 35px -12px rgba(15, 23, 42, 0.18), 0 8px 12px -6px rgba(15,23,42,0.08);
+            transform: translateY(-4px) scale(1.008);
         }
 
-        /* Buttons feel snappier */
+        /* Buttons feel snappier + glow on hover for a vivid, alive feel */
         button { transition: all .2s ease; }
+        button:not(.no-glow):hover { filter: brightness(1.06); }
+        button:active { transform: scale(0.97); }
         .nav-btn { position: relative; }
         .nav-btn:hover { transform: translateY(-1px); }
         .nav-btn.bg-emerald-700::after {
@@ -73,6 +75,39 @@
             height: 2px;
             background: #fbbf24;
             border-radius: 2px;
+        }
+
+        /* Colorful icon badges (the little rounded squares/circles used for
+           stats, headmaster card, incharges etc.) get a playful pop on hover */
+        .rounded-xl:has(> i.fa-solid), .rounded-full:has(> i.fa-solid) {
+            transition: transform .25s ease, box-shadow .25s ease;
+        }
+        .grid .rounded-2xl:hover .rounded-xl:has(> i.fa-solid),
+        .grid .rounded-2xl:hover .rounded-full:has(> i.fa-solid) {
+            transform: scale(1.12) rotate(-4deg);
+        }
+
+        /* Subtle shimmer sweep across primary gradient buttons on hover */
+        .bg-gradient-to-r, .bg-gradient-to-br {
+            position: relative;
+            overflow: hidden;
+        }
+        button.bg-gradient-to-r::before, button.bg-gradient-to-br::before {
+            content: '';
+            position: absolute; top: 0; left: -75%;
+            width: 50%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+            transform: skewX(-20deg);
+            transition: left .6s ease;
+        }
+        button.bg-gradient-to-r:hover::before, button.bg-gradient-to-br:hover::before { left: 125%; }
+
+        /* Gradient text accents for headings that opt in */
+        .text-gradient {
+            background: linear-gradient(90deg, #10b981, #f59e0b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
         /* Modern focus styling for every input/select/textarea site-wide,
@@ -111,11 +146,21 @@
         <div class="absolute inset-0 opacity-[0.07]" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 18px 18px;"></div>
         <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center relative">
             <div class="flex items-center space-x-4 mb-2 md:mb-0">
-                <div id="school-logo-container" class="bg-white p-2.5 rounded-2xl text-emerald-800 shadow-lg ring-4 ring-white/20 w-14 h-14 flex items-center justify-center overflow-hidden flex-shrink-0">
-                    <i class="fa-solid fa-graduation-cap fa-2x"></i>
+                <div id="school-logo-container" class="bg-white p-1.5 rounded-2xl text-emerald-800 shadow-lg ring-4 ring-white/20 w-14 h-14 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <defs>
+                            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#10b981"/>
+                                <stop offset="100%" stop-color="#065f46"/>
+                            </linearGradient>
+                        </defs>
+                        <circle cx="50" cy="50" r="47" fill="url(#logoGrad)" stroke="#fbbf24" stroke-width="4"/>
+                        <text x="50" y="47" font-family="Poppins, sans-serif" font-weight="800" font-size="27" fill="white" text-anchor="middle">GBM</text>
+                        <text x="50" y="67" font-family="Poppins, sans-serif" font-weight="700" font-size="9" fill="#fde68a" text-anchor="middle" letter-spacing="1.5">SCHOOL</text>
+                    </svg>
                 </div>
                 <div>
-                    <h1 class="text-xl md:text-2xl font-extrabold tracking-wide">GES BAIT MUGHAL</h1>
+                    <h1 class="text-xl md:text-2xl font-extrabold tracking-wide" style="background:linear-gradient(90deg,#ffffff,#fde68a); -webkit-background-clip:text; background-clip:text; color:transparent;">GES BAIT MUGHAL</h1>
                     <p class="text-emerald-200 text-xs">Government Elementary School | Smart Digital Management System</p>
                 </div>
             </div>
@@ -303,6 +348,13 @@
                             <span>Class Incharges List</span>
                         </h4>
                         <div id="home-incharges-list" class="space-y-1.5 text-xs"></div>
+                    </div>
+                    <div class="bg-gradient-to-br from-amber-50 to-white p-5 rounded-2xl shadow-sm border border-amber-200">
+                        <h4 class="font-bold text-slate-800 mb-3 flex items-center space-x-2 border-b border-amber-200 pb-2 text-sm">
+                            <i class="fa-solid fa-trophy text-amber-500"></i>
+                            <span>School Top Performers</span>
+                        </h4>
+                        <div id="home-top-performers" class="space-y-1.5 text-xs"></div>
                     </div>
                 </div>
             </div>
@@ -546,6 +598,15 @@
                     </div>
                 </div>
 
+                <!-- Top Performers (Teacher's Class) -->
+                <div class="bg-gradient-to-br from-amber-50 to-white p-5 rounded-2xl shadow-sm border border-amber-200 space-y-3">
+                    <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b border-amber-200 pb-2">
+                        <i class="fa-solid fa-trophy text-amber-500"></i>
+                        <span>Top Performers - This Class</span>
+                    </h3>
+                    <div id="teacher-top-performers" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+                </div>
+
                 <!-- Vacation Homework Control (Teacher) -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
                     <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
@@ -671,6 +732,9 @@
                         <form onsubmit="updateSchoolVideo(event)" class="bg-slate-50 p-3 rounded-xl border space-y-2">
                             <label class="block text-xs font-bold text-slate-700 uppercase">Upload School Video File</label>
                             <input type="file" id="input-video-file" accept="video/*" required class="w-full border p-1 rounded-xl text-xs bg-white">
+                            <p class="text-[10px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-1.5 leading-snug">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Max 150MB. Large videos use a LOT of free database bandwidth (10GB/month) every time a visitor opens the site - a smaller, compressed video (under 20MB) will keep the whole website fast and reliable for everyone.
+                            </p>
                             <button type="submit" class="bg-rose-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs w-full">Upload & Save Video</button>
                         </form>
                         <form onsubmit="updateAdmissionBanner(event)" class="bg-slate-50 p-3 rounded-xl border space-y-2">
@@ -1023,9 +1087,10 @@
 
             const logoContainer = document.getElementById('school-logo-container');
             const logo = DB.get('ges_school_logo');
+            const defaultLogoSVG = `<svg viewBox="0 0 100 100" class="w-full h-full"><defs><linearGradient id="logoGrad2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#065f46"/></linearGradient></defs><circle cx="50" cy="50" r="47" fill="url(#logoGrad2)" stroke="#fbbf24" stroke-width="4"/><text x="50" y="47" font-family="Poppins, sans-serif" font-weight="800" font-size="27" fill="white" text-anchor="middle">GBM</text><text x="50" y="67" font-family="Poppins, sans-serif" font-weight="700" font-size="9" fill="#fde68a" text-anchor="middle" letter-spacing="1.5">SCHOOL</text></svg>`;
             logoContainer.innerHTML = logo
                 ? `<img src="${logo}" class="w-full h-full object-cover rounded-xl">`
-                : `<i class="fa-solid fa-graduation-cap fa-2x"></i>`;
+                : defaultLogoSVG;
 
             applyVideoSrc(DB.get('ges_video'));
 
@@ -1048,6 +1113,7 @@
                 : '';
 
             renderHomeIncharges();
+            renderHomeTopPerformers();
             renderSlider();
             renderNews();
             renderRulesAndDocs();
@@ -1276,11 +1342,12 @@
         function downloadPDF(elementId, filename) {
             const element = document.getElementById(elementId);
             const opt = {
-                margin:       0.5,
+                margin:       0.4,
                 filename:     `${filename}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+                html2canvas:  { scale: 2, useCORS: true, scrollX: 0, scrollY: -window.scrollY, windowWidth: document.documentElement.scrollWidth },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' },
+                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
             };
             html2pdf().set(opt).from(element).save();
         }
@@ -1436,7 +1503,7 @@
             const fileInput = document.getElementById('input-video-file');
             if(fileInput.files.length > 0) {
                 const file = fileInput.files[0];
-                if (!checkFileSize(file, 25, 'video')) return;
+                if (!checkFileSize(file, 150, 'video')) return;
                 const videoBase64 = await fileToBase64(file);
                 DB.set('ges_video', videoBase64);
                 refreshAllUI();
@@ -1630,6 +1697,36 @@
                 item.innerHTML = `<span class="font-bold text-slate-700">${cls}:</span> <span class="text-emerald-700 font-semibold">${teacher}</span>`;
                 list.appendChild(item);
             }
+        }
+
+        // Small shared helper: builds the medal-styled leaderboard rows used
+        // by both the homepage (school-wide) and Teacher Portal (class-only)
+        // Top Performers cards.
+        function buildTopPerformersHTML(students, showClass) {
+            if (students.length === 0) {
+                return '<p class="text-xs text-slate-400 italic">No results recorded yet.</p>';
+            }
+            const medals = ['🥇', '🥈', '🥉'];
+            const ranked = students
+                .map(s => ({ ...s, perc: (s.obtained / s.total) * 100 }))
+                .sort((a, b) => b.perc - a.perc)
+                .slice(0, 3);
+            return ranked.map((s, i) => `
+                <div class="flex items-center gap-2 bg-white border border-amber-100 rounded-xl p-2 shadow-sm">
+                    <span class="text-lg">${medals[i]}</span>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-slate-800 text-xs truncate">${s.name}</p>
+                        <p class="text-[10px] text-slate-400">${showClass ? s.class + ' &middot; ' : ''}Roll #${s.roll}</p>
+                    </div>
+                    <span class="text-xs font-black text-amber-600">${s.perc.toFixed(1)}%</span>
+                </div>
+            `).join('');
+        }
+
+        function renderHomeTopPerformers() {
+            const students = JSON.parse(DB.get('ges_students')) || [];
+            const container = document.getElementById('home-top-performers');
+            if (container) container.innerHTML = buildTopPerformersHTML(students.filter(s => s.total > 0), true);
         }
 
         function renderNews() {
@@ -2013,6 +2110,9 @@
             tbody.innerHTML = '';
             document.getElementById('class-std-count').innerText = `${classStudents.length} Students`;
 
+            const topContainer = document.getElementById('teacher-top-performers');
+            if (topContainer) topContainer.innerHTML = buildTopPerformersHTML(classStudents.filter(s => s.total > 0), false);
+
             classStudents.sort((a,b) => a.roll - b.roll).forEach(s => {
                 const perc = ((s.obtained / s.total) * 100).toFixed(1);
                 const row = document.createElement('tr');
@@ -2208,13 +2308,26 @@
             `;
 
             const opt = {
-                margin:       0.5,
+                margin:       0.4,
                 filename:     `GES_Report_${selectedClass.replace(' ', '_')}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+                html2canvas:  { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' },
+                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
             };
-            html2pdf().set(opt).from(container).save();
+            // The report is built off-screen (not attached to the page), so it
+            // must be temporarily added to the document before html2canvas can
+            // capture it - otherwise it has no layout and the PDF comes out blank.
+            container.style.position = 'fixed';
+            container.style.left = '-9999px';
+            container.style.top = '0';
+            container.style.width = '750px';
+            document.body.appendChild(container);
+            html2pdf().set(opt).from(container).save().then(() => {
+                document.body.removeChild(container);
+            }).catch(() => {
+                document.body.removeChild(container);
+            });
         }
 
         function logout() {
