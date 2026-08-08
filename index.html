@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GES BAIT MUGHAL - Ultimate Smart Portal</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23047857'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='white'%3E%F0%9F%8E%93%3C/text%3E%3C/svg%3E">
+    <meta name="theme-color" content="#047857">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-cloudinary id content="0">
@@ -43,25 +45,73 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        html { scroll-behavior: smooth; }
         body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
-        .tab-content { display: none; }
+        .tab-content { display: none; animation: fadeIn .35s ease; }
         .tab-content.active { display: block; }
         .slide-fade { transition: opacity 0.8s ease-in-out; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Modern hover-lift for cards site-wide */
+        .rounded-2xl.shadow-sm, .rounded-2xl.shadow-md, .rounded-2xl.shadow-lg {
+            transition: box-shadow .25s ease, transform .25s ease;
+        }
+        .rounded-2xl.shadow-sm:hover {
+            box-shadow: 0 12px 24px -8px rgba(15, 23, 42, 0.12);
+            transform: translateY(-2px);
+        }
+
+        /* Buttons feel snappier */
+        button { transition: all .2s ease; }
+        .nav-btn { position: relative; }
+        .nav-btn:hover { transform: translateY(-1px); }
+        .nav-btn.bg-emerald-700::after {
+            content: '';
+            position: absolute;
+            bottom: -8px; left: 10%; right: 10%;
+            height: 2px;
+            background: #fbbf24;
+            border-radius: 2px;
+        }
+
+        /* Modern focus styling for every input/select/textarea site-wide,
+           even ones that don't already have their own focus classes */
+        input, select, textarea {
+            transition: box-shadow .2s ease, border-color .2s ease;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+            border-color: #10b981;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 9px; height: 9px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #047857; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
-    <!-- LOADING OVERLAY (shown until live data arrives from Firebase) -->
-    <div id="app-loading-overlay" class="fixed inset-0 bg-emerald-900 z-[9999] flex flex-col items-center justify-center text-white space-y-3">
-        <i class="fa-solid fa-graduation-cap fa-3x animate-pulse"></i>
-        <p id="app-loading-text" class="text-sm font-semibold">Connecting to school database...</p>
+    <!-- SLIM SYNC BAR (non-blocking - website is usable immediately even on slow networks) -->
+    <div id="app-loading-overlay" class="w-full bg-amber-400 text-slate-900 text-[11px] font-bold text-center py-1.5 shadow-md flex items-center justify-center gap-2">
+        <i class="fa-solid fa-arrows-rotate fa-spin"></i>
+        <span id="app-loading-text">Syncing latest updates...</span>
     </div>
 
+    <!-- SCROLL TO TOP BUTTON -->
+    <button id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="hidden fixed bottom-5 right-5 z-40 bg-emerald-700 hover:bg-emerald-800 text-white w-11 h-11 rounded-full shadow-lg items-center justify-center transition transform hover:scale-110">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
     <!-- TOP HEADER / BANNER -->
-    <header class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white shadow-xl">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
+    <header class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white shadow-xl relative overflow-hidden">
+        <div class="absolute inset-0 opacity-[0.07]" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 18px 18px;"></div>
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center relative">
             <div class="flex items-center space-x-4 mb-2 md:mb-0">
-                <div class="bg-white p-2.5 rounded-2xl text-emerald-800 shadow-lg">
+                <div id="school-logo-container" class="bg-white p-2.5 rounded-2xl text-emerald-800 shadow-lg ring-4 ring-white/20 w-14 h-14 flex items-center justify-center overflow-hidden flex-shrink-0">
                     <i class="fa-solid fa-graduation-cap fa-2x"></i>
                 </div>
                 <div>
@@ -70,11 +120,11 @@
                 </div>
             </div>
             <div class="flex items-center space-x-3">
-                <div id="connection-status-badge" class="bg-emerald-900/80 border border-emerald-600 px-3 py-1.5 rounded-xl text-xs flex items-center space-x-1.5">
+                <div id="connection-status-badge" class="bg-emerald-900/80 backdrop-blur border border-emerald-600 px-3 py-1.5 rounded-xl text-xs flex items-center space-x-1.5">
                     <span class="w-2 h-2 bg-slate-400 rounded-full inline-block"></span>
                     <span>Connecting...</span>
                 </div>
-                <div class="bg-emerald-900/80 border border-emerald-600 px-3 py-1.5 rounded-xl text-xs flex items-center space-x-2">
+                <div class="bg-emerald-900/80 backdrop-blur border border-emerald-600 px-3 py-1.5 rounded-xl text-xs flex items-center space-x-2">
                     <i class="fa-solid fa-user-shield text-amber-400"></i>
                     <span>Role: <strong id="current-role-badge" class="text-amber-300">Public Visitor</strong></span>
                 </div>
@@ -129,6 +179,39 @@
 
         <!-- ================= 1. HOME TAB ================= -->
         <section id="tab-home" class="tab-content active space-y-6">
+
+            <!-- QUICK STATS STRIP -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition">
+                    <div class="bg-emerald-100 text-emerald-700 w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-user-graduate"></i></div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Students</p>
+                        <p id="stat-students" class="text-xl font-extrabold text-slate-800">0</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition">
+                    <div class="bg-blue-100 text-blue-700 w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-chalkboard"></i></div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Classes</p>
+                        <p class="text-xl font-extrabold text-slate-800">1 - 8</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition">
+                    <div class="bg-amber-100 text-amber-700 w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-bullhorn"></i></div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Announcements</p>
+                        <p id="stat-news" class="text-xl font-extrabold text-slate-800">0</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition">
+                    <div class="bg-purple-100 text-purple-700 w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-images"></i></div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gallery Photos</p>
+                        <p id="stat-gallery" class="text-xl font-extrabold text-slate-800">0</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- AUTO IMAGE SLIDER -->
                 <div class="lg:col-span-2 bg-slate-900 rounded-2xl overflow-hidden shadow-lg relative h-64 md:h-80 border-2 border-emerald-600">
@@ -150,12 +233,16 @@
                         </button>
                     </div>
                     <div class="relative w-full flex-grow rounded-xl overflow-hidden bg-black flex items-center justify-center">
-                        <video id="school-video-player" class="w-full h-full object-cover" controls playsinline preload="metadata">
+                        <video id="school-video-player" class="w-full h-full object-cover" controls playsinline autoplay loop preload="auto">
                             <source src="" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
+                        <button id="video-unmute-overlay" onclick="unmuteSchoolVideo()" class="hidden absolute inset-0 bg-black/50 text-white flex-col items-center justify-center space-y-1 hover:bg-black/60 transition" style="display:none;">
+                            <i class="fa-solid fa-volume-xmark text-2xl"></i>
+                            <span class="text-xs font-bold">Tap for Sound</span>
+                        </button>
                     </div>
-                    <p class="text-[10px] text-slate-400 text-center mt-1">Click play to watch with sound</p>
+                    <p class="text-[10px] text-slate-400 text-center mt-1">Video plays automatically - tap the video if you don't hear sound</p>
                 </div>
             </div>
 
@@ -179,6 +266,18 @@
                 </div>
             </div>
 
+            <!-- ABOUT THE SCHOOL -->
+            <div class="bg-gradient-to-br from-emerald-800 to-teal-900 text-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row items-center gap-5 relative overflow-hidden">
+                <div class="absolute inset-0 opacity-[0.06]" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 16px 16px;"></div>
+                <div class="bg-white/10 border border-white/20 w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 relative">
+                    <i class="fa-solid fa-landmark text-2xl text-amber-300"></i>
+                </div>
+                <div class="relative">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-amber-300 mb-1">About Our School</h3>
+                    <p id="display-about-text" class="text-emerald-50 text-sm leading-relaxed">GES Bait Mughal is a government elementary school committed to quality education.</p>
+                </div>
+            </div>
+
             <!-- NEWS & INCHARGES -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 space-y-4">
@@ -189,6 +288,15 @@
                     <div id="news-feed" class="space-y-3"></div>
                 </div>
                 <div class="space-y-4">
+                    <div class="bg-gradient-to-br from-slate-800 to-slate-900 text-white p-5 rounded-2xl shadow-sm border border-slate-700 flex items-center gap-3">
+                        <div class="bg-amber-400 text-slate-900 w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-inner">
+                            <i class="fa-solid fa-user-gear text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Headmaster</p>
+                            <p id="display-head-name" class="text-base font-extrabold text-white">Headmaster</p>
+                        </div>
+                    </div>
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                         <h4 class="font-bold text-slate-800 mb-3 flex items-center space-x-2 border-b pb-2 text-sm">
                             <i class="fa-solid fa-chalkboard-user text-amber-500"></i>
@@ -332,10 +440,10 @@
 
         <!-- ================= 6. TEACHER / INCHARGE PORTAL ================= -->
         <section id="tab-incharge" class="tab-content space-y-6">
-            <div id="incharge-login-box" class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-lg border border-slate-200">
-                <div class="text-center mb-4">
-                    <div class="bg-blue-100 text-blue-700 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2 shadow">
-                        <i class="fa-solid fa-user-tie text-xl"></i>
+            <div id="incharge-login-box" class="max-w-md mx-auto bg-white p-7 rounded-2xl shadow-lg border border-slate-200">
+                <div class="text-center mb-5">
+                    <div class="bg-gradient-to-br from-blue-500 to-indigo-700 text-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg rotate-3">
+                        <i class="fa-solid fa-user-tie text-2xl"></i>
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Class Incharge Login</h3>
                     <p class="text-xs text-slate-500 mt-0.5">Select class & enter PIN provided by Headmaster</p>
@@ -344,7 +452,7 @@
                 <form onsubmit="handleInchargeLogin(event)" class="space-y-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Select Class</label>
-                        <select id="login-class-select" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs outline-none bg-slate-50">
+                        <select id="login-class-select" class="w-full border border-slate-300 rounded-xl p-2.5 text-xs outline-none bg-slate-50 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition">
                             <option value="Class 1">Class 1</option>
                             <option value="Class 2">Class 2</option>
                             <option value="Class 3">Class 3</option>
@@ -357,10 +465,15 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Incharge PIN</label>
-                        <input type="password" id="login-pin" placeholder="Enter PIN (Default: 1234)" required class="w-full border border-slate-300 rounded-xl p-2.5 text-xs outline-none">
+                        <div class="relative">
+                            <input type="password" id="login-pin" placeholder="Enter PIN (Default: 1234)" required class="w-full border border-slate-300 rounded-xl p-2.5 pr-9 text-xs outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition">
+                            <button type="button" onclick="togglePasswordVisibility('login-pin', this)" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow">
-                        Login to Class Portal
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-bold py-2.5 rounded-xl text-xs transition shadow">
+                        <i class="fa-solid fa-right-to-bracket mr-1"></i> Login to Class Portal
                     </button>
                 </form>
             </div>
@@ -461,10 +574,10 @@
 
         <!-- ================= 7. HEADMASTER CONTROL PANEL ================= -->
         <section id="tab-headmaster" class="tab-content space-y-6">
-            <div id="headmaster-login-box" class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-lg border border-slate-200">
-                <div class="text-center mb-4">
-                    <div class="bg-amber-100 text-amber-700 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2 shadow">
-                        <i class="fa-solid fa-user-gear text-xl"></i>
+            <div id="headmaster-login-box" class="max-w-md mx-auto bg-white p-7 rounded-2xl shadow-lg border border-slate-200">
+                <div class="text-center mb-5">
+                    <div class="bg-gradient-to-br from-amber-400 to-rose-600 text-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg -rotate-3">
+                        <i class="fa-solid fa-user-gear text-2xl"></i>
                     </div>
                     <h3 class="text-lg font-bold text-slate-800">Headmaster Admin Login</h3>
                     <p class="text-xs text-slate-500 mt-0.5">Full Central Control over Website</p>
@@ -473,15 +586,67 @@
                 <form onsubmit="handleHeadmasterLogin(event)" class="space-y-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Admin Password</label>
-                        <input type="password" id="head-pass" placeholder="Password (Default: head123)" required class="w-full border border-slate-300 rounded-xl p-2.5 text-xs outline-none">
+                        <div class="relative">
+                            <input type="password" id="head-pass" placeholder="Password (Default: head123)" required class="w-full border border-slate-300 rounded-xl p-2.5 pr-9 text-xs outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition">
+                            <button type="button" onclick="togglePasswordVisibility('head-pass', this)" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
-                    <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow">
-                        Access Admin Dashboard
+                    <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-600 hover:to-rose-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow">
+                        <i class="fa-solid fa-right-to-bracket mr-1"></i> Access Admin Dashboard
                     </button>
                 </form>
             </div>
 
             <div id="headmaster-dashboard" class="hidden space-y-6">
+                <!-- Headmaster Profile -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
+                        <i class="fa-solid fa-id-badge text-emerald-600"></i>
+                        <span>Headmaster Profile</span>
+                    </h3>
+                    <p class="text-xs text-slate-500">This name is shown publicly on the homepage. Only you (with the admin password) can change it.</p>
+                    <form onsubmit="updateHeadmasterName(event)" class="flex flex-col md:flex-row gap-2 bg-slate-50 p-3 rounded-xl border">
+                        <input type="text" id="hm-name-input" placeholder="Headmaster Full Name" required class="flex-1 border p-2 rounded-xl text-xs bg-white">
+                        <button type="submit" class="bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl text-xs">Update Name</button>
+                    </form>
+                </div>
+
+                <!-- School Logo Control -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
+                        <i class="fa-solid fa-image text-emerald-600"></i>
+                        <span>School Logo</span>
+                    </h3>
+                    <p class="text-xs text-slate-500">Appears in the website header for every visitor. Only you can change it.</p>
+                    <form onsubmit="updateSchoolLogo(event)" class="flex flex-col md:flex-row gap-2 bg-slate-50 p-3 rounded-xl border items-stretch md:items-center">
+                        <input type="file" id="school-logo-input" accept="image/*" class="flex-1 border p-1.5 rounded-xl text-xs bg-white w-full">
+                        <div class="flex gap-2">
+                            <button type="submit" class="flex-1 bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl text-xs whitespace-nowrap">Update Logo</button>
+                            <button type="button" onclick="removeSchoolLogo()" class="flex-1 bg-slate-400 hover:bg-slate-500 text-white font-bold px-4 py-2 rounded-xl text-xs whitespace-nowrap">Reset</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- About & Contact Info Control -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
+                        <i class="fa-solid fa-landmark text-emerald-600"></i>
+                        <span>About School & Contact Info</span>
+                    </h3>
+                    <p class="text-xs text-slate-500">Shown on the homepage "About" section and in the website footer.</p>
+                    <form onsubmit="updateAboutAndContact(event)" class="space-y-2 bg-slate-50 p-3 rounded-xl border">
+                        <textarea id="about-text-input" placeholder="About the school (mission statement)..." rows="3" class="w-full border p-2 rounded-xl text-xs bg-white"></textarea>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                            <input type="text" id="contact-address-input" placeholder="Address" class="border p-2 rounded-xl text-xs bg-white">
+                            <input type="text" id="contact-phone-input" placeholder="Phone Number (optional)" class="border p-2 rounded-xl text-xs bg-white">
+                            <input type="email" id="contact-email-input" placeholder="Email Address (optional)" class="border p-2 rounded-xl text-xs bg-white">
+                        </div>
+                        <button type="submit" class="bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl text-xs">Save Changes</button>
+                    </form>
+                </div>
+
                 <!-- Slider Control -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
                     <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
@@ -718,8 +883,33 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="bg-slate-900 text-slate-400 py-4 text-center text-xs border-t border-slate-800 mt-auto">
-        <p>© 2026 GES BAIT MUGHAL. All Rights Reserved.</p>
+    <footer class="bg-slate-900 text-slate-400 mt-auto relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500"></div>
+        <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-graduation-cap text-amber-400 text-lg"></i>
+                    <h4 class="text-white font-bold text-base">GES BAIT MUGHAL</h4>
+                </div>
+                <p class="text-xs leading-relaxed text-slate-400">Government Elementary School | Smart Digital Management System. Building a brighter future through quality education.</p>
+            </div>
+            <div class="space-y-2">
+                <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Quick Links</h4>
+                <button onclick="switchTab('home')" class="block text-slate-400 hover:text-amber-300 transition text-xs"><i class="fa-solid fa-chevron-right text-[9px] mr-1"></i>Home</button>
+                <button onclick="switchTab('student-result')" class="block text-slate-400 hover:text-amber-300 transition text-xs"><i class="fa-solid fa-chevron-right text-[9px] mr-1"></i>Check Result</button>
+                <button onclick="switchTab('homework')" class="block text-slate-400 hover:text-amber-300 transition text-xs"><i class="fa-solid fa-chevron-right text-[9px] mr-1"></i>Vacation Homework</button>
+                <button onclick="switchTab('gallery')" class="block text-slate-400 hover:text-amber-300 transition text-xs"><i class="fa-solid fa-chevron-right text-[9px] mr-1"></i>Gallery</button>
+            </div>
+            <div class="space-y-2">
+                <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Contact Us</h4>
+                <p id="footer-address" class="text-xs flex items-start gap-2"><i class="fa-solid fa-location-dot text-amber-400 mt-0.5"></i><span>GES Bait Mughal, Pakistan</span></p>
+                <p id="footer-phone-row" class="text-xs flex items-start gap-2 hidden"><i class="fa-solid fa-phone text-amber-400 mt-0.5"></i><span id="footer-phone"></span></p>
+                <p id="footer-email-row" class="text-xs flex items-start gap-2 hidden"><i class="fa-solid fa-envelope text-amber-400 mt-0.5"></i><span id="footer-email"></span></p>
+            </div>
+        </div>
+        <div class="border-t border-slate-800 py-4 text-center text-xs">
+            <p>&copy; <span id="footer-year">2026</span> GES BAIT MUGHAL. All Rights Reserved.</p>
+        </div>
     </footer>
 
     <!-- JAVASCRIPT LOGIC -->
@@ -748,7 +938,13 @@
                 DB_CACHE[key] = toStore; // update instantly for the current user
                 if (window.firebaseDB) {
                     const { ref, set, db } = window.firebaseDB;
-                    set(ref(db, 'gesData/' + key), toStore).catch(err => {
+                    // The school video is by far the largest item stored (it's a
+                    // base64 file). Keeping it on its own top-level path (instead
+                    // of bundled with everything else under gesData) means the
+                    // rest of the site's text/news/results load and appear
+                    // instantly, without waiting for the heavy video to download.
+                    const path = (key === 'ges_video') ? 'gesVideo' : ('gesData/' + key);
+                    set(ref(db, path), toStore).catch(err => {
                         console.error('Firebase save failed for', key, err);
                         alert('Warning: Could not save to the online database. Please check your internet connection and try again.');
                     });
@@ -762,12 +958,17 @@
         // DEFAULT_INCHARGES / DEFAULT_TEACHER_PINS / DEFAULT_SLIDES, which
         // are declared further down this script - by the time this actually
         // runs (after the whole script has executed once) they're ready.
+        // Note: ges_video is intentionally NOT included here - it lives on
+        // its own Firebase path (see DB.set above) and its own listener
+        // (see startFirebaseSync), so it never blocks or gets touched by
+        // the main sync/defaults cycle.
         function getDefaultDataValues() {
             return {
                 ges_news: [],
                 ges_students: [],
                 ges_homework: [],
                 ges_head_pass: 'head123',
+                ges_head_name: 'Headmaster',
                 ges_teacher_pins: DEFAULT_TEACHER_PINS,
                 ges_incharges: DEFAULT_INCHARGES,
                 ges_timings: '08:00 AM - 01:30 PM',
@@ -778,7 +979,9 @@
                 ges_adm_title: 'ADMISSIONS OPEN FOR SESSION 2026-2027',
                 ges_adm_desc: 'Admissions are open for Class 1 to 8. Contact school office for registration forms.',
                 ges_adm_img: '',
-                ges_video: ''
+                ges_school_logo: '',
+                ges_about: 'GES Bait Mughal is a government elementary school committed to providing quality education, strong moral values, and a safe learning environment for every child in our community.',
+                ges_contact: JSON.stringify({ address: 'GES Bait Mughal, Pakistan', phone: '', email: '' })
             };
         }
 
@@ -798,9 +1001,15 @@
         }
 
         function showLoadingError() {
+            const overlay = document.getElementById('app-loading-overlay');
             const textEl = document.getElementById('app-loading-text');
+            if (overlay) {
+                overlay.classList.remove('bg-amber-400', 'text-slate-900');
+                overlay.classList.add('bg-rose-600', 'text-white');
+                overlay.querySelector('i').className = 'fa-solid fa-triangle-exclamation';
+            }
             if (textEl) {
-                textEl.innerText = "Could not connect to the database. Please check your internet connection and reload the page.";
+                textEl.innerHTML = "Connection is slow or offline. <span class=\"underline cursor-pointer\" onclick=\"location.reload()\">Tap to retry</span>";
             }
         }
 
@@ -810,13 +1019,25 @@
         function refreshAllUI() {
             document.getElementById('display-school-timings').innerText = DB.get('ges_timings') || '';
             document.getElementById('header-notice-ticker').innerText = DB.get('ges_ticker') || '';
+            document.getElementById('display-head-name').innerText = DB.get('ges_head_name') || 'Headmaster';
 
-            const player = document.getElementById('school-video-player');
-            const videoSrc = DB.get('ges_video');
-            if (videoSrc && player.getAttribute('data-current-src') !== videoSrc) {
-                player.src = videoSrc;
-                player.setAttribute('data-current-src', videoSrc);
-            }
+            const logoContainer = document.getElementById('school-logo-container');
+            const logo = DB.get('ges_school_logo');
+            logoContainer.innerHTML = logo
+                ? `<img src="${logo}" class="w-full h-full object-cover rounded-xl">`
+                : `<i class="fa-solid fa-graduation-cap fa-2x"></i>`;
+
+            applyVideoSrc(DB.get('ges_video'));
+
+            document.getElementById('display-about-text').innerText = DB.get('ges_about') || '';
+            const contact = JSON.parse(DB.get('ges_contact') || '{}');
+            document.getElementById('footer-address').querySelector('span').innerText = contact.address || 'GES Bait Mughal, Pakistan';
+            const phoneRow = document.getElementById('footer-phone-row');
+            if (contact.phone) { document.getElementById('footer-phone').innerText = contact.phone; phoneRow.classList.remove('hidden'); }
+            else { phoneRow.classList.add('hidden'); }
+            const emailRow = document.getElementById('footer-email-row');
+            if (contact.email) { document.getElementById('footer-email').innerText = contact.email; emailRow.classList.remove('hidden'); }
+            else { emailRow.classList.add('hidden'); }
 
             document.getElementById('adm-banner-title').innerText = DB.get('ges_adm_title') || '';
             document.getElementById('adm-banner-desc').innerText = DB.get('ges_adm_desc') || '';
@@ -832,14 +1053,95 @@
             renderRulesAndDocs();
             renderGallery();
 
+            document.getElementById('stat-students').innerText = (JSON.parse(DB.get('ges_students')) || []).length;
+            document.getElementById('stat-news').innerText = (JSON.parse(DB.get('ges_news')) || []).length;
+            document.getElementById('stat-gallery').innerText = (JSON.parse(DB.get('ges_gallery')) || []).length;
+
             if (document.getElementById('tab-homework').classList.contains('active')) renderHomework();
             if (currentUserRole === 'incharge' && activeInchargeClass) { renderClassStudents(); renderTeacherHomeworkList(); }
             if (currentUserRole === 'headmaster') renderHeadmasterControls();
         }
 
+        // Applies a video source to the player and (re)attempts autoplay -
+        // used both by the main refresh cycle and by the video's own,
+        // separate real-time listener (see startFirebaseSync).
+        function applyVideoSrc(videoSrc) {
+            const player = document.getElementById('school-video-player');
+            if (!player || !videoSrc) return;
+            if (player.getAttribute('data-current-src') !== videoSrc) {
+                player.src = videoSrc;
+                player.setAttribute('data-current-src', videoSrc);
+                attemptVideoAutoplay();
+            }
+        }
+
         // Kick things off once the Firebase module (in <head>) has finished
         // initializing. It fires a 'firebase-ready' event; if it already
         // fired before we got here, window.firebaseDB will already exist.
+        // Tries to autoplay the school tour video WITH sound. Most browsers
+        // block unmuted autoplay for a visitor's very first visit to a site,
+        // so if that's blocked we fall back to a muted autoplay (which is
+        // always allowed) and show a "Tap for Sound" overlay. The moment the
+        // visitor taps anywhere on the page, sound turns on automatically.
+        function attemptVideoAutoplay() {
+            const player = document.getElementById('school-video-player');
+            const overlay = document.getElementById('video-unmute-overlay');
+            if (!player || !player.getAttribute('src')) return;
+
+            player.muted = false;
+            const playPromise = player.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    overlay.style.display = 'none';
+                }).catch(() => {
+                    // Browser blocked unmuted autoplay - fall back to muted autoplay
+                    player.muted = true;
+                    player.play().catch(() => {});
+                    overlay.style.display = 'flex';
+                    enableTapToUnmute();
+                });
+            }
+        }
+
+        function unmuteSchoolVideo() {
+            const player = document.getElementById('school-video-player');
+            const overlay = document.getElementById('video-unmute-overlay');
+            player.muted = false;
+            player.play().catch(() => {});
+            overlay.style.display = 'none';
+        }
+
+        let _tapToUnmuteBound = false;
+        function enableTapToUnmute() {
+            if (_tapToUnmuteBound) return;
+            _tapToUnmuteBound = true;
+            const handler = () => {
+                const player = document.getElementById('school-video-player');
+                if (player && player.muted) {
+                    player.muted = false;
+                    player.play().catch(() => {});
+                    document.getElementById('video-unmute-overlay').style.display = 'none';
+                }
+                document.removeEventListener('click', handler);
+                document.removeEventListener('touchstart', handler);
+                _tapToUnmuteBound = false;
+            };
+            document.addEventListener('click', handler, { once: true });
+            document.addEventListener('touchstart', handler, { once: true });
+        }
+
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-solid fa-eye';
+            }
+        }
+
         function updateConnectionBadge(isConnected) {
             const badge = document.getElementById('connection-status-badge');
             if (!badge) return;
@@ -850,20 +1152,69 @@
             }
         }
 
-        function startFirebaseSync() {
-            const { ref, onValue, db } = window.firebaseDB;
+        // ---- Speed optimization: instant paint from last-known-good data ----
+        // This is ONLY a perceived-speed trick, not a data source - it does
+        // NOT bring back the old per-device localStorage bug. Firebase is
+        // still the single source of truth for every visitor; this cache
+        // just lets a RETURNING visitor see content instantly (from their
+        // own last visit) while the real, authoritative data loads quietly
+        // in the background and then overwrites it within a moment or two.
+        const FAST_CACHE_KEY = 'ges_fast_cache_v1';
 
-            // Safety timeout: if nothing arrives in 12s, show a friendly error
+        function paintFromFastCache() {
+            try {
+                const cached = localStorage.getItem(FAST_CACHE_KEY);
+                if (!cached) return;
+                const parsed = JSON.parse(cached);
+                DB_CACHE = parsed.data || {};
+                ensureDefaultData();
+                DB_FIRST_LOAD_DONE = true;
+                hideLoadingOverlay();
+                startSlider();
+                refreshAllUI();
+            } catch (e) { /* corrupt/unavailable cache - safe to ignore */ }
+        }
+
+        function saveFastCache() {
+            try {
+                // Exclude the video (can be large) - no need to cache it locally,
+                // it already streams from its own fast Firebase path.
+                const { ges_video, ...rest } = DB_CACHE;
+                localStorage.setItem(FAST_CACHE_KEY, JSON.stringify({ data: rest }));
+            } catch (e) { /* storage full/unavailable - safe to ignore */ }
+        }
+
+        function startFirebaseSync() {
+            const { ref, onValue, set, remove, db } = window.firebaseDB;
+
+            // Safety timeout: if the (now much lighter/faster) main data
+            // hasn't arrived in 6s, show a friendly error with a retry link.
             const timeoutId = setTimeout(() => {
                 if (!DB_FIRST_LOAD_DONE) showLoadingError();
-            }, 12000);
+            }, 6000);
 
             onValue(ref(db, '.info/connected'), (snap) => {
                 updateConnectionBadge(snap.val() === true);
             });
 
+            // Main data (news, results, homework, settings etc.) - kept light
+            // and fast since the heavy video file lives on its own path below.
             onValue(ref(db, 'gesData'), (snapshot) => {
-                DB_CACHE = snapshot.val() || {};
+                const raw = snapshot.val() || {};
+
+                // One-time migration: earlier versions of this site stored the
+                // video inside gesData itself, which slowed everything else
+                // down. If we find it there, move it to its own fast path.
+                if (raw.ges_video) {
+                    set(ref(db, 'gesVideo'), raw.ges_video).catch(() => {});
+                    remove(ref(db, 'gesData/ges_video')).catch(() => {});
+                    delete raw.ges_video;
+                }
+
+                const existingVideo = DB_CACHE.ges_video; // from the dedicated video listener below
+                DB_CACHE = raw;
+                if (existingVideo !== undefined) DB_CACHE.ges_video = existingVideo;
+
                 ensureDefaultData();
 
                 if (!DB_FIRST_LOAD_DONE) {
@@ -873,17 +1224,47 @@
                     startSlider();
                 }
                 refreshAllUI();
+                saveFastCache();
             }, (error) => {
                 console.error('Firebase read failed:', error);
                 showLoadingError();
             });
+
+            // School tour video - loads independently in the background so it
+            // never delays the rest of the site from appearing.
+            onValue(ref(db, 'gesVideo'), (snapshot) => {
+                const videoData = snapshot.val() || '';
+                DB_CACHE.ges_video = videoData;
+                applyVideoSrc(videoData);
+            });
         }
+
+        // Instant paint from last-known-good local data (if this browser has
+        // visited before) so the site never sits on a loading state for a
+        // returning visitor - then Firebase quietly syncs the real, live
+        // data seconds later.
+        paintFromFastCache();
+
+        document.getElementById('footer-year').innerText = new Date().getFullYear();
 
         if (window.firebaseDB) {
             startFirebaseSync();
         } else {
             window.addEventListener('firebase-ready', startFirebaseSync, { once: true });
         }
+
+        // Scroll-to-top floating button
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('scroll-top-btn');
+            if (!btn) return;
+            if (window.scrollY > 400) {
+                btn.classList.remove('hidden');
+                btn.classList.add('flex');
+            } else {
+                btn.classList.add('hidden');
+                btn.classList.remove('flex');
+            }
+        });
 
         const fileToBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -975,7 +1356,7 @@
             const fileInput = document.getElementById('slide-file-input').files[0];
 
             if(fileInput) {
-                if (!checkFileSize(fileInput, 3, 'image')) return;
+                if (!checkFileSize(fileInput, 5, 'image')) return;
                 const img = await fileToBase64(fileInput);
                 let slides = JSON.parse(DB.get('ges_slides')) || [];
                 slides.unshift({ id: Date.now(), title, img });
@@ -1055,7 +1436,7 @@
             const fileInput = document.getElementById('input-video-file');
             if(fileInput.files.length > 0) {
                 const file = fileInput.files[0];
-                if (!checkFileSize(file, 15, 'video')) return;
+                if (!checkFileSize(file, 25, 'video')) return;
                 const videoBase64 = await fileToBase64(file);
                 DB.set('ges_video', videoBase64);
                 refreshAllUI();
@@ -1073,7 +1454,7 @@
             DB.set('ges_adm_title', title);
             DB.set('ges_adm_desc', desc);
             if(imgFile) {
-                if (!checkFileSize(imgFile, 3, 'image')) return;
+                if (!checkFileSize(imgFile, 5, 'image')) return;
                 const base64Img = await fileToBase64(imgFile);
                 DB.set('ges_adm_img', base64Img);
             }
@@ -1107,7 +1488,7 @@
             const fileInput = document.getElementById('doc-file-input').files[0];
 
             if(fileInput) {
-                if (!checkFileSize(fileInput, 8, 'document')) return;
+                if (!checkFileSize(fileInput, 12, 'document')) return;
                 const fileData = await fileToBase64(fileInput);
                 let docs = JSON.parse(DB.get('ges_docs')) || [];
                 docs.unshift({ id: Date.now(), title, fileData });
@@ -1166,7 +1547,7 @@
             const fileInput = document.getElementById('gal-file-input').files[0];
 
             if(fileInput) {
-                if (!checkFileSize(fileInput, 3, 'image')) return;
+                if (!checkFileSize(fileInput, 5, 'image')) return;
                 const fileData = await fileToBase64(fileInput);
                 let gallery = JSON.parse(DB.get('ges_gallery')) || [];
                 gallery.unshift({ id: Date.now(), caption, fileData });
@@ -1282,8 +1663,8 @@
             const docFile = document.getElementById('news-doc-file').files[0];
             const date = new Date().toISOString().split('T')[0];
 
-            if (imgFile && !checkFileSize(imgFile, 3, 'image')) return;
-            if (docFile && !checkFileSize(docFile, 8, 'attachment')) return;
+            if (imgFile && !checkFileSize(imgFile, 5, 'image')) return;
+            if (docFile && !checkFileSize(docFile, 12, 'attachment')) return;
 
             let imgData = imgFile ? await fileToBase64(imgFile) : '';
             let fileData = docFile ? await fileToBase64(docFile) : '';
@@ -1402,7 +1783,7 @@
             let fileData = '';
             if (fileInput && fileInput.files && fileInput.files[0]) {
                 const file = fileInput.files[0];
-                if (!checkFileSize(file, 8, 'attachment')) return false;
+                if (!checkFileSize(file, 12, 'attachment')) return false;
                 fileData = await fileToBase64(file);
             }
             let list = JSON.parse(DB.get('ges_homework')) || [];
@@ -1683,6 +2064,62 @@
             renderHeadmasterGalleryList();
             renderHeadmasterSliderList();
             renderHeadmasterHomeworkList();
+            const nameInput = document.getElementById('hm-name-input');
+            if (nameInput && document.activeElement !== nameInput) {
+                nameInput.value = DB.get('ges_head_name') || '';
+            }
+            const aboutInput = document.getElementById('about-text-input');
+            if (aboutInput && document.activeElement !== aboutInput) {
+                aboutInput.value = DB.get('ges_about') || '';
+            }
+            const addrInput = document.getElementById('contact-address-input');
+            if (addrInput && document.activeElement !== addrInput) {
+                const contact = JSON.parse(DB.get('ges_contact') || '{}');
+                addrInput.value = contact.address || '';
+                document.getElementById('contact-phone-input').value = contact.phone || '';
+                document.getElementById('contact-email-input').value = contact.email || '';
+            }
+        }
+
+        function updateHeadmasterName(e) {
+            e.preventDefault();
+            const name = document.getElementById('hm-name-input').value.trim();
+            if (!name) return;
+            DB.set('ges_head_name', name);
+            refreshAllUI();
+            alert('Headmaster Name Updated!');
+        }
+
+        async function updateSchoolLogo(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('school-logo-input');
+            if (!fileInput.files[0]) { alert('Please choose an image first.'); return; }
+            if (!checkFileSize(fileInput.files[0], 3, 'logo image')) return;
+            const base64 = await fileToBase64(fileInput.files[0]);
+            DB.set('ges_school_logo', base64);
+            refreshAllUI();
+            fileInput.value = '';
+            alert('School Logo Updated!');
+        }
+
+        function removeSchoolLogo() {
+            if (!confirm('Remove the custom logo and go back to the default icon?')) return;
+            DB.set('ges_school_logo', '');
+            refreshAllUI();
+        }
+
+        function updateAboutAndContact(e) {
+            e.preventDefault();
+            const about = document.getElementById('about-text-input').value.trim();
+            const contact = {
+                address: document.getElementById('contact-address-input').value.trim(),
+                phone: document.getElementById('contact-phone-input').value.trim(),
+                email: document.getElementById('contact-email-input').value.trim()
+            };
+            if (about) DB.set('ges_about', about);
+            DB.set('ges_contact', JSON.stringify(contact));
+            refreshAllUI();
+            alert('About & Contact Info Updated!');
         }
 
         function changeHeadmasterPassword(e) {
