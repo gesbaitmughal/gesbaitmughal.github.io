@@ -223,45 +223,18 @@
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
 
         <!-- ================= 1. HOME TAB ================= -->
-        <section id="tab-home" class="tab-content active space-y-6">
+        <section id="tab-home" class="tab-content active space-y-8">
 
-            <!-- QUICK STATS STRIP -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition">
-                    <div class="bg-emerald-100 text-emerald-700 w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-user-graduate"></i></div>
-                    <div>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Students</p>
-                        <p id="stat-students" class="text-xl font-extrabold text-slate-800">0</p>
-                    </div>
-                </div>
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition">
-                    <div class="bg-blue-100 text-blue-700 w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-chalkboard"></i></div>
-                    <div>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Classes</p>
-                        <p class="text-xl font-extrabold text-slate-800">1 - 8</p>
-                    </div>
-                </div>
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition">
-                    <div class="bg-amber-100 text-amber-700 w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-bullhorn"></i></div>
-                    <div>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Announcements</p>
-                        <p id="stat-news" class="text-xl font-extrabold text-slate-800">0</p>
-                    </div>
-                </div>
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition">
-                    <div class="bg-purple-100 text-purple-700 w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-images"></i></div>
-                    <div>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gallery Photos</p>
-                        <p id="stat-gallery" class="text-xl font-extrabold text-slate-800">0</p>
-                    </div>
-                </div>
-            </div>
-
+            <!-- HERO: SLIDER + VIDEO -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- AUTO IMAGE SLIDER -->
                 <div class="lg:col-span-2 bg-slate-900 rounded-2xl overflow-hidden shadow-lg relative h-64 md:h-80 border-2 border-emerald-600">
                     <div id="home-slider-container" class="w-full h-full relative">
                         <div class="absolute inset-0 flex items-center justify-center text-white text-xs">Loading Slides...</div>
+                    </div>
+                    <div class="absolute top-3 left-3 z-20 bg-emerald-600/90 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
+                        <i class="fa-solid fa-star text-amber-300"></i>
+                        <span>Welcome to GES Bait Mughal</span>
                     </div>
                     <div class="absolute bottom-2 left-0 right-0 flex justify-center space-x-2 z-10" id="slider-dots"></div>
                 </div>
@@ -291,39 +264,89 @@
                 </div>
             </div>
 
-            <!-- ADMISSION & TIMINGS ROW -->
+            <!-- ADMISSION BANNER (standalone call-to-action, placed high for visibility) -->
+            <div id="admission-banner-box" class="bg-gradient-to-r from-amber-500 to-rose-600 text-white p-5 rounded-2xl shadow-md border border-amber-300 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div class="space-y-1">
+                    <span class="bg-slate-900 text-amber-300 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Admission Notice</span>
+                    <h3 id="adm-banner-title" class="text-xl md:text-2xl font-black">ADMISSIONS OPEN FOR SESSION 2026-2027</h3>
+                    <p id="adm-banner-desc" class="text-xs text-amber-100">Admissions are open for Class 1 to 8. Contact school office for registration forms.</p>
+                </div>
+                <div id="adm-banner-img-container" class="flex-shrink-0"></div>
+            </div>
+
+            <!-- QUICK STATS STRIP -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition">
+                    <div class="bg-gradient-to-br from-emerald-400 to-emerald-600 text-white w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md shadow-emerald-200"><i class="fa-solid fa-user-graduate"></i></div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Students</p>
+                        <p id="stat-students" class="text-xl font-extrabold text-slate-800">0</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition">
+                    <div class="bg-gradient-to-br from-blue-400 to-blue-600 text-white w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md shadow-blue-200"><i class="fa-solid fa-chalkboard"></i></div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Classes</p>
+                        <p class="text-xl font-extrabold text-slate-800">1 - 8</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition">
+                    <div class="bg-gradient-to-br from-amber-400 to-orange-500 text-white w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md shadow-amber-200"><i class="fa-solid fa-bullhorn"></i></div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Announcements</p>
+                        <p id="stat-news" class="text-xl font-extrabold text-slate-800">0</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition">
+                    <div class="bg-gradient-to-br from-purple-400 to-pink-500 text-white w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md shadow-purple-200"><i class="fa-solid fa-images"></i></div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gallery Photos</p>
+                        <p id="stat-gallery" class="text-xl font-extrabold text-slate-800">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUICK ACTIONS -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <button onclick="switchTab('student-result')" class="bg-gradient-to-br from-rose-500 to-rose-600 text-white rounded-2xl p-4 flex flex-col items-center justify-center gap-1.5 shadow-md hover:shadow-lg transition">
+                    <i class="fa-solid fa-file-lines text-xl"></i>
+                    <span class="text-xs font-bold">Check Result</span>
+                </button>
+                <button onclick="switchTab('homework')" class="bg-gradient-to-br from-teal-500 to-teal-600 text-white rounded-2xl p-4 flex flex-col items-center justify-center gap-1.5 shadow-md hover:shadow-lg transition">
+                    <i class="fa-solid fa-book-open text-xl"></i>
+                    <span class="text-xs font-bold">Homework</span>
+                </button>
+                <button onclick="switchTab('gallery')" class="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-2xl p-4 flex flex-col items-center justify-center gap-1.5 shadow-md hover:shadow-lg transition">
+                    <i class="fa-solid fa-images text-xl"></i>
+                    <span class="text-xs font-bold">Gallery</span>
+                </button>
+                <button onclick="switchTab('rules')" class="bg-gradient-to-br from-slate-600 to-slate-700 text-white rounded-2xl p-4 flex flex-col items-center justify-center gap-1.5 shadow-md hover:shadow-lg transition">
+                    <i class="fa-solid fa-file-shield text-xl"></i>
+                    <span class="text-xs font-bold">Rules & Docs</span>
+                </button>
+            </div>
+
+            <!-- ABOUT THE SCHOOL + TIMINGS -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div id="admission-banner-box" class="md:col-span-2 bg-gradient-to-r from-amber-500 to-rose-600 text-white p-5 rounded-2xl shadow-md border border-amber-300 flex justify-between items-center">
-                    <div class="space-y-1">
-                        <span class="bg-slate-900 text-amber-300 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Admission Notice</span>
-                        <h3 id="adm-banner-title" class="text-xl md:text-2xl font-black">ADMISSIONS OPEN FOR SESSION 2026-2027</h3>
-                        <p id="adm-banner-desc" class="text-xs text-amber-100">Admissions are open for Class 1 to 8. Contact school office for registration forms.</p>
+                <div class="md:col-span-2 bg-gradient-to-br from-emerald-800 to-teal-900 text-white rounded-2xl shadow-lg p-6 flex flex-col sm:flex-row items-center gap-5 relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-[0.06]" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 16px 16px;"></div>
+                    <div class="bg-white/10 border border-white/20 w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 relative">
+                        <i class="fa-solid fa-landmark text-2xl text-amber-300"></i>
                     </div>
-                    <div id="adm-banner-img-container" class="hidden sm:block ml-2"></div>
+                    <div class="relative">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-amber-300 mb-1">About Our School</h3>
+                        <p id="display-about-text" class="text-emerald-50 text-sm leading-relaxed">GES Bait Mughal is a government elementary school committed to quality education.</p>
+                    </div>
                 </div>
 
-                <div class="bg-gradient-to-br from-emerald-800 to-teal-900 text-white p-5 rounded-2xl shadow-md flex items-center justify-around border border-emerald-600">
-                    <i class="fa-solid fa-clock text-4xl text-amber-300"></i>
-                    <div class="text-right">
-                        <p class="text-[10px] uppercase font-bold text-emerald-200 tracking-wider">School Timings</p>
-                        <p id="display-school-timings" class="text-lg font-extrabold text-white mt-0.5">08:00 AM - 01:30 PM</p>
-                    </div>
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 text-white p-5 rounded-2xl shadow-md flex flex-col items-center justify-center text-center border border-slate-700">
+                    <i class="fa-solid fa-clock text-3xl text-amber-300 mb-2"></i>
+                    <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">School Timings</p>
+                    <p id="display-school-timings" class="text-lg font-extrabold text-white mt-0.5">08:00 AM - 01:30 PM</p>
                 </div>
             </div>
 
-            <!-- ABOUT THE SCHOOL -->
-            <div class="bg-gradient-to-br from-emerald-800 to-teal-900 text-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row items-center gap-5 relative overflow-hidden">
-                <div class="absolute inset-0 opacity-[0.06]" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 16px 16px;"></div>
-                <div class="bg-white/10 border border-white/20 w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 relative">
-                    <i class="fa-solid fa-landmark text-2xl text-amber-300"></i>
-                </div>
-                <div class="relative">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-amber-300 mb-1">About Our School</h3>
-                    <p id="display-about-text" class="text-emerald-50 text-sm leading-relaxed">GES Bait Mughal is a government elementary school committed to quality education.</p>
-                </div>
-            </div>
-
-            <!-- NEWS & INCHARGES -->
+            <!-- NEWS & SCHOOL LEADERSHIP -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 space-y-4">
                     <h3 class="text-lg font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
@@ -333,28 +356,23 @@
                     <div id="news-feed" class="space-y-3"></div>
                 </div>
                 <div class="space-y-4">
-                    <div class="bg-gradient-to-br from-slate-800 to-slate-900 text-white p-5 rounded-2xl shadow-sm border border-slate-700 flex items-center gap-3">
-                        <div class="bg-amber-400 text-slate-900 w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-inner">
-                            <i class="fa-solid fa-user-gear text-lg"></i>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-gradient-to-br from-slate-800 to-slate-900 text-white p-5 flex items-center gap-3">
+                            <div class="bg-amber-400 text-slate-900 w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-inner">
+                                <i class="fa-solid fa-user-gear text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Headmaster</p>
+                                <p id="display-head-name" class="text-base font-extrabold text-white">Headmaster</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Headmaster</p>
-                            <p id="display-head-name" class="text-base font-extrabold text-white">Headmaster</p>
+                        <div class="p-5">
+                            <h4 class="font-bold text-slate-800 mb-3 flex items-center space-x-2 border-b pb-2 text-sm">
+                                <i class="fa-solid fa-chalkboard-user text-amber-500"></i>
+                                <span>Class Incharges List</span>
+                            </h4>
+                            <div id="home-incharges-list" class="space-y-1.5 text-xs"></div>
                         </div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                        <h4 class="font-bold text-slate-800 mb-3 flex items-center space-x-2 border-b pb-2 text-sm">
-                            <i class="fa-solid fa-chalkboard-user text-amber-500"></i>
-                            <span>Class Incharges List</span>
-                        </h4>
-                        <div id="home-incharges-list" class="space-y-1.5 text-xs"></div>
-                    </div>
-                    <div class="bg-gradient-to-br from-amber-50 to-white p-5 rounded-2xl shadow-sm border border-amber-200">
-                        <h4 class="font-bold text-slate-800 mb-3 flex items-center space-x-2 border-b border-amber-200 pb-2 text-sm">
-                            <i class="fa-solid fa-trophy text-amber-500"></i>
-                            <span>School Top Performers</span>
-                        </h4>
-                        <div id="home-top-performers" class="space-y-1.5 text-xs"></div>
                     </div>
                 </div>
             </div>
@@ -598,15 +616,6 @@
                     </div>
                 </div>
 
-                <!-- Top Performers (Teacher's Class) -->
-                <div class="bg-gradient-to-br from-amber-50 to-white p-5 rounded-2xl shadow-sm border border-amber-200 space-y-3">
-                    <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b border-amber-200 pb-2">
-                        <i class="fa-solid fa-trophy text-amber-500"></i>
-                        <span>Top Performers - This Class</span>
-                    </h3>
-                    <div id="teacher-top-performers" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
-                </div>
-
                 <!-- Vacation Homework Control (Teacher) -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
                     <h3 class="text-md font-bold text-slate-800 flex items-center space-x-2 border-b pb-2">
@@ -733,7 +742,7 @@
                             <label class="block text-xs font-bold text-slate-700 uppercase">Upload School Video File</label>
                             <input type="file" id="input-video-file" accept="video/*" required class="w-full border p-1 rounded-xl text-xs bg-white">
                             <p class="text-[10px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-1.5 leading-snug">
-                                <i class="fa-solid fa-triangle-exclamation"></i> Max 150MB. Large videos use a LOT of free database bandwidth (10GB/month) every time a visitor opens the site - a smaller, compressed video (under 20MB) will keep the whole website fast and reliable for everyone.
+                                <i class="fa-solid fa-triangle-exclamation"></i> Max 50MB. Large videos use a LOT of free database bandwidth (10GB/month) every time a visitor opens the site - a compressed video (ideally 15-30MB) keeps the whole website fast and reliable for everyone.
                             </p>
                             <button type="submit" class="bg-rose-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs w-full">Upload & Save Video</button>
                         </form>
@@ -1113,7 +1122,6 @@
                 : '';
 
             renderHomeIncharges();
-            renderHomeTopPerformers();
             renderSlider();
             renderNews();
             renderRulesAndDocs();
@@ -1503,7 +1511,7 @@
             const fileInput = document.getElementById('input-video-file');
             if(fileInput.files.length > 0) {
                 const file = fileInput.files[0];
-                if (!checkFileSize(file, 150, 'video')) return;
+                if (!checkFileSize(file, 50, 'video')) return;
                 const videoBase64 = await fileToBase64(file);
                 DB.set('ges_video', videoBase64);
                 refreshAllUI();
@@ -1697,36 +1705,6 @@
                 item.innerHTML = `<span class="font-bold text-slate-700">${cls}:</span> <span class="text-emerald-700 font-semibold">${teacher}</span>`;
                 list.appendChild(item);
             }
-        }
-
-        // Small shared helper: builds the medal-styled leaderboard rows used
-        // by both the homepage (school-wide) and Teacher Portal (class-only)
-        // Top Performers cards.
-        function buildTopPerformersHTML(students, showClass) {
-            if (students.length === 0) {
-                return '<p class="text-xs text-slate-400 italic">No results recorded yet.</p>';
-            }
-            const medals = ['🥇', '🥈', '🥉'];
-            const ranked = students
-                .map(s => ({ ...s, perc: (s.obtained / s.total) * 100 }))
-                .sort((a, b) => b.perc - a.perc)
-                .slice(0, 3);
-            return ranked.map((s, i) => `
-                <div class="flex items-center gap-2 bg-white border border-amber-100 rounded-xl p-2 shadow-sm">
-                    <span class="text-lg">${medals[i]}</span>
-                    <div class="flex-1 min-w-0">
-                        <p class="font-bold text-slate-800 text-xs truncate">${s.name}</p>
-                        <p class="text-[10px] text-slate-400">${showClass ? s.class + ' &middot; ' : ''}Roll #${s.roll}</p>
-                    </div>
-                    <span class="text-xs font-black text-amber-600">${s.perc.toFixed(1)}%</span>
-                </div>
-            `).join('');
-        }
-
-        function renderHomeTopPerformers() {
-            const students = JSON.parse(DB.get('ges_students')) || [];
-            const container = document.getElementById('home-top-performers');
-            if (container) container.innerHTML = buildTopPerformersHTML(students.filter(s => s.total > 0), true);
         }
 
         function renderNews() {
@@ -2109,9 +2087,6 @@
             const tbody = document.getElementById('class-result-tbody');
             tbody.innerHTML = '';
             document.getElementById('class-std-count').innerText = `${classStudents.length} Students`;
-
-            const topContainer = document.getElementById('teacher-top-performers');
-            if (topContainer) topContainer.innerHTML = buildTopPerformersHTML(classStudents.filter(s => s.total > 0), false);
 
             classStudents.sort((a,b) => a.roll - b.roll).forEach(s => {
                 const perc = ((s.obtained / s.total) * 100).toFixed(1);
