@@ -743,7 +743,7 @@
                             <label class="block text-xs font-bold text-slate-700 uppercase">Upload School Video File</label>
                             <input type="file" id="input-video-file" accept="video/*" required class="w-full border p-1 rounded-xl text-xs bg-white">
                             <p class="text-[10px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-1.5 leading-snug">
-                                <i class="fa-solid fa-triangle-exclamation"></i> Max 40MB. Large videos use a LOT of free database bandwidth (10GB/month) every time a visitor opens the site - a compressed video (ideally 15-30MB) keeps the whole website fast and reliable for everyone.
+                                <i class="fa-solid fa-triangle-exclamation"></i> Max 7MB - Firebase has a hard 10MB-per-file limit (this is not adjustable). For a longer/higher-quality video, upload it to YouTube instead and use a video link.
                             </p>
                             <button type="submit" id="video-upload-btn" class="bg-rose-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs w-full disabled:opacity-60">Upload & Save Video</button>
                         </form>
@@ -1535,7 +1535,7 @@
             if(fileInput.files.length === 0) return;
 
             const file = fileInput.files[0];
-            if (!checkFileSize(file, 40, 'video')) return;
+            if (!checkFileSize(file, 7, 'video (Firebase has a hard 10MB-per-file limit, so the video itself must be under ~7MB)')) return;
 
             const originalBtnText = btn.innerText;
             btn.disabled = true;
@@ -1543,6 +1543,18 @@
 
             try {
                 const videoBase64 = await fileToBase64(file);
+
+                // Firebase Realtime Database hard-rejects any single value over
+                // 10,485,760 bytes (10MB) - this is a platform limit, not
+                // something this app can raise. Catch it here with a clear
+                // message instead of letting Firebase's own cryptic error
+                // through after the person has already waited for the upload.
+                const encoder = new TextEncoder();
+                const byteLength = encoder.encode(videoBase64).length;
+                if (byteLength > 10485760) {
+                    throw new Error(`This video is still too large after conversion (${(byteLength/1024/1024).toFixed(1)}MB - Firebase's absolute limit is 10MB). Please use a smaller/shorter video, or host it on YouTube and use a video link instead.`);
+                }
+
                 btn.innerText = 'Uploading... please wait (this can take a few minutes for large videos, do not close this page)';
                 DB_CACHE.ges_video = videoBase64; // instant local preview
                 await setVideoInFirebase(videoBase64);
