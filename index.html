@@ -3,36 +3,15 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GES Bait Mughal · Official School Website</title>
+    <title>GES Bait Mughal · VIP School</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23047857'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='white'%3E%F0%9F%8E%93%3C/text%3E%3C/svg%3E" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
-    <!-- Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getDatabase, ref, set, get, update, remove, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCUp1jNM0VyMly5m4Zq8h-zbE6Hqnr5Zyg",
-            authDomain: "ges-bait-mughal.firebaseapp.com",
-            databaseURL: "https://ges-bait-mughal-default-rtdb.firebaseio.com",
-            projectId: "ges-bait-mughal",
-            storageBucket: "ges-bait-mughal.appspot.com",
-            messagingSenderId: "5737837063",
-            appId: "1:5737837063:web:dffc601015ffde68cac32"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        window.firebaseDB = { db, ref, set, get, update, remove, child, onValue };
-        window.dispatchEvent(new Event('firebase-ready'));
-    </script>
-
     <style>
         /* ================================================================
-                   ROOT VARIABLES & RESET
+                   ROOT VARIABLES
                 ================================================================ */
         :root {
             --primary: #0f5e3a;
@@ -42,17 +21,17 @@
             --gold: #f5a623;
             --gold-light: #fde68a;
             --gray: #f1f5f9;
-            --gray-dark: #64748b;
             --text: #0f172a;
-            --text-light: #475569;
+            --text-light: #64748b;
             --bg: #f8fafc;
             --card-bg: #ffffff;
             --border: #e2e8f0;
             --shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 20px 60px -12px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 20px 60px -12px rgba(0, 0, 0, 0.15);
+            --shadow-xl: 0 30px 80px -15px rgba(0, 0, 0, 0.2);
             --radius: 16px;
             --radius-lg: 24px;
-            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
@@ -62,7 +41,6 @@
             --primary-dark: #065f46;
             --primary-bg: #064e3b;
             --gray: #1e293b;
-            --gray-dark: #94a3b8;
             --text: #f1f5f9;
             --text-light: #cbd5e1;
             --bg: #0f172a;
@@ -70,6 +48,7 @@
             --border: #334155;
             --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
             --shadow-lg: 0 20px 60px -12px rgba(0, 0, 0, 0.4);
+            --shadow-xl: 0 30px 80px -15px rgba(0, 0, 0, 0.5);
         }
 
         * {
@@ -95,46 +74,37 @@
                    SCROLLBAR
                 ================================================================ */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: var(--gray); }
+        ::-webkit-scrollbar-track { background: var(--gray); border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
 
         /* ================================================================
-                   LOADING SKELETON
+                   GLASSMORPHISM
                 ================================================================ */
-        .skeleton {
-            animation: shimmer 1.5s ease-in-out infinite;
-            background: linear-gradient(90deg, var(--gray) 25%, var(--border) 50%, var(--gray) 75%);
-            background-size: 200% 100%;
-            border-radius: 8px;
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+        [data-theme="dark"] .glass {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         /* ================================================================
-                   THEME TOGGLE
+                   3D HOVER EFFECTS
                 ================================================================ */
-        .theme-toggle {
-            background: var(--gray);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text);
-            font-size: 18px;
-            transition: var(--transition);
+        .card-3d {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+            transform-style: preserve-3d;
+            perspective: 800px;
         }
 
-        .theme-toggle:hover {
-            transform: rotate(30deg);
-            background: var(--border);
+        .card-3d:hover {
+            transform: translateY(-6px) rotateX(2deg) rotateY(2deg) scale(1.01);
+            box-shadow: var(--shadow-xl);
         }
 
         /* ================================================================
@@ -160,12 +130,12 @@
         .top-bar a {
             color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
-            margin: 0 6px;
             transition: var(--transition);
         }
 
         .top-bar a:hover {
             color: var(--gold);
+            transform: translateY(-1px);
         }
 
         .top-bar .social-icons {
@@ -188,10 +158,11 @@
         .top-bar .social-icons a:hover {
             background: rgba(255, 255, 255, 0.15);
             color: var(--gold);
+            transform: translateY(-2px) scale(1.1);
         }
 
         /* ================================================================
-                   HEADER / BANNER
+                   BANNER
                 ================================================================ */
         .banner {
             background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
@@ -209,6 +180,7 @@
             height: 500px;
             background: rgba(255, 255, 255, 0.04);
             border-radius: 50%;
+            animation: floatBanner 20s ease-in-out infinite;
         }
 
         .banner::after {
@@ -220,6 +192,12 @@
             height: 400px;
             background: rgba(255, 255, 255, 0.03);
             border-radius: 50%;
+            animation: floatBanner 25s ease-in-out infinite reverse;
+        }
+
+        @keyframes floatBanner {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.1); }
         }
 
         .banner .container {
@@ -252,9 +230,13 @@
             font-weight: 900;
             color: white;
             border: 2px solid rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(4px);
             flex-shrink: 0;
             overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .banner-logo:hover {
+            transform: rotate(-5deg) scale(1.05);
         }
 
         .banner-logo img {
@@ -269,6 +251,10 @@
             color: white;
             letter-spacing: -0.5px;
             line-height: 1.1;
+            background: linear-gradient(90deg, #ffffff, var(--gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .banner-title .sub {
@@ -298,6 +284,12 @@
             font-size: 12px;
             font-weight: 600;
             border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: var(--transition);
+        }
+
+        .banner-badge:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .banner-badge i {
@@ -348,26 +340,46 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            position: relative;
         }
 
         .nav-btn:hover {
             background: var(--gray);
             color: var(--text);
+            transform: translateY(-1px);
         }
 
         .nav-btn.active {
             background: var(--primary);
             color: white;
+            box-shadow: 0 4px 20px rgba(15, 94, 58, 0.3);
         }
 
         .nav-btn.active i {
             color: var(--gold);
         }
 
+        .nav-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: var(--transition);
+            transform: translateX(-50%);
+        }
+
+        .nav-btn.active::after {
+            width: 60%;
+        }
+
         .nav-actions {
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .role-badge {
@@ -377,6 +389,143 @@
             padding: 4px 12px;
             border-radius: 40px;
             font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .role-badge:hover {
+            transform: scale(1.05);
+        }
+
+        .theme-toggle {
+            background: var(--gray);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(60deg) scale(1.1);
+            background: var(--border);
+        }
+
+        /* ================================================================
+                   HERO SLIDER
+                ================================================================ */
+        .hero-slider {
+            position: relative;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            height: 340px;
+            background: var(--primary-dark);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .hero-slider .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            transform: scale(1.02);
+        }
+
+        .hero-slider .slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .hero-slider .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-slider .slide .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%);
+            display: flex;
+            align-items: flex-end;
+            padding: 30px;
+        }
+
+        .hero-slider .slide .overlay h2 {
+            color: white;
+            font-size: 26px;
+            font-weight: 800;
+            text-shadow: 0 2px 30px rgba(0, 0, 0, 0.4);
+            animation: slideText 0.8s ease;
+        }
+
+        @keyframes slideText {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-slider .dots {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .hero-slider .dots button {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .hero-slider .dots button.active {
+            background: var(--gold);
+            width: 30px;
+            border-radius: 10px;
+        }
+
+        .hero-slider .dots button:hover {
+            transform: scale(1.2);
+        }
+
+        .hero-slider .controls {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 16px;
+            z-index: 10;
+        }
+
+        .hero-slider .controls button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 18px;
+            backdrop-filter: blur(4px);
+        }
+
+        .hero-slider .controls button:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: scale(1.1);
         }
 
         /* ================================================================
@@ -390,7 +539,7 @@
 
         .tab-content {
             display: none;
-            animation: fadeIn 0.4s ease;
+            animation: fadeIn 0.5s ease;
         }
 
         .tab-content.active {
@@ -398,7 +547,7 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -412,11 +561,29 @@
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--gold), var(--primary));
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .card:hover::before {
+            opacity: 1;
         }
 
         .card:hover {
             box-shadow: var(--shadow-lg);
-            transform: translateY(-2px);
+            transform: translateY(-4px);
         }
 
         .card-header {
@@ -441,25 +608,11 @@
         }
 
         /* ================================================================
-                   GRID LAYOUTS
+                   GRID
                 ================================================================ */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 24px;
-        }
-
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-
-        .grid-4 {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-        }
+        .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 
         @media (max-width: 1024px) {
             .grid-2 { grid-template-columns: 1fr; }
@@ -473,70 +626,6 @@
         }
 
         /* ================================================================
-                   VIDEO SECTION
-                ================================================================ */
-        .video-wrapper {
-            border-radius: 12px;
-            overflow: hidden;
-            background: #0a0a0a;
-            position: relative;
-        }
-
-        .video-wrapper video,
-        .video-wrapper iframe {
-            width: 100%;
-            display: block;
-            aspect-ratio: 16/9;
-            border: none;
-        }
-
-        .video-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 16px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            font-size: 12px;
-        }
-
-        .video-controls button {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: white;
-            padding: 3px 14px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-size: 11px;
-            transition: var(--transition);
-        }
-
-        .video-controls button:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .video-source-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
-            color: white;
-            font-size: 10px;
-            font-weight: 600;
-            padding: 4px 12px;
-            border-radius: 30px;
-            z-index: 5;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .video-source-badge i {
-            color: var(--gold);
-        }
-
-        /* ================================================================
                    STATS
                 ================================================================ */
         .stat-box {
@@ -545,17 +634,23 @@
             padding: 16px;
             text-align: center;
             transition: var(--transition);
+            cursor: default;
         }
 
         .stat-box:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow);
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: var(--shadow-lg);
         }
 
         .stat-box .num {
             font-size: 28px;
             font-weight: 900;
             color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .stat-box:hover .num {
+            color: var(--gold);
         }
 
         .stat-box .label {
@@ -570,6 +665,12 @@
             color: var(--primary);
             margin-bottom: 4px;
             display: block;
+            transition: var(--transition);
+        }
+
+        .stat-box:hover i {
+            transform: scale(1.2) rotate(-10deg);
+            color: var(--gold);
         }
 
         /* ================================================================
@@ -581,6 +682,13 @@
             gap: 14px;
             padding: 12px 0;
             border-bottom: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .announce-item:hover {
+            background: var(--gray);
+            padding: 12px 8px;
+            border-radius: 8px;
         }
 
         .announce-item:last-child {
@@ -597,6 +705,11 @@
             justify-content: center;
             color: var(--primary);
             flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .announce-item:hover .icon {
+            transform: scale(1.1) rotate(-10deg);
         }
 
         .announce-item .content .title {
@@ -618,78 +731,9 @@
             flex-shrink: 0;
         }
 
-        .announce-item .badge.urgent {
-            background: #fde8e8;
-            color: #c0392b;
-        }
-        .announce-item .badge.event {
-            background: #d6eaf8;
-            color: #2471a3;
-        }
-        .announce-item .badge.important {
-            background: #fdebd0;
-            color: #d35400;
-        }
-
-        /* ================================================================
-                   BOOKS / HOMEWORK
-                ================================================================ */
-        .book-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
-        }
-
-        .book-item {
-            background: var(--gray);
-            border-radius: 12px;
-            padding: 16px 12px;
-            text-align: center;
-            transition: var(--transition);
-            border: 1px solid transparent;
-            cursor: pointer;
-        }
-
-        .book-item:hover {
-            border-color: var(--primary);
-            background: var(--card-bg);
-            transform: translateY(-4px);
-            box-shadow: var(--shadow);
-        }
-
-        .book-item i {
-            font-size: 28px;
-            color: var(--primary);
-            margin-bottom: 6px;
-        }
-
-        .book-item .book-title {
-            font-weight: 600;
-            font-size: 13px;
-        }
-
-        .book-item .book-class {
-            font-size: 11px;
-            color: var(--text-light);
-        }
-
-        .book-item .download-btn {
-            display: inline-block;
-            margin-top: 6px;
-            padding: 3px 16px;
-            background: var(--primary);
-            color: white;
-            border-radius: 30px;
-            font-size: 10px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .book-item .download-btn:hover {
-            background: var(--primary-dark);
-        }
+        .announce-item .badge.urgent { background: #fde8e8; color: #c0392b; }
+        .announce-item .badge.event { background: #d6eaf8; color: #2471a3; }
+        .announce-item .badge.important { background: #fdebd0; color: #d35400; }
 
         /* ================================================================
                    TIMINGS
@@ -700,6 +744,13 @@
             padding: 8px 0;
             border-bottom: 1px solid var(--border);
             font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .timing-row:hover {
+            background: var(--gray);
+            padding: 8px 12px;
+            border-radius: 8px;
         }
 
         .timing-row:last-child {
@@ -716,62 +767,6 @@
         }
 
         /* ================================================================
-                   FREE BADGE
-                ================================================================ */
-        .free-badge {
-            background: #d5f5e3;
-            color: var(--primary-dark);
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 13px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .free-badge i {
-            color: var(--primary);
-        }
-
-        /* ================================================================
-                   TOAST
-                ================================================================ */
-        .toast-container {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 99999;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .toast {
-            background: var(--text);
-            color: var(--bg);
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 600;
-            box-shadow: var(--shadow-lg);
-            animation: slideUp 0.3s ease;
-            max-width: 400px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .toast.success { background: var(--primary); color: white; }
-        .toast.error { background: #dc2626; color: white; }
-        .toast.warning { background: var(--gold); color: var(--text); }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ================================================================
                    BUTTONS
                 ================================================================ */
         .btn {
@@ -785,17 +780,54 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: width 0.6s, height 0.6s;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn:active::after {
+            width: 300px;
+            height: 300px;
         }
 
         .btn-primary {
             background: var(--primary);
             color: white;
         }
-
         .btn-primary:hover {
             background: var(--primary-dark);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(15, 94, 58, 0.3);
+        }
+
+        .btn-gold {
+            background: var(--gold);
+            color: var(--text);
+        }
+        .btn-gold:hover {
+            background: #d4920a;
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #b91c1c;
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(15, 94, 58, 0.25);
         }
 
         .btn-outline {
@@ -803,19 +835,10 @@
             color: var(--primary);
             border: 2px solid var(--primary);
         }
-
         .btn-outline:hover {
             background: var(--primary);
             color: white;
-        }
-
-        .btn-danger {
-            background: #dc2626;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #b91c1c;
+            transform: translateY(-2px);
         }
 
         .btn-sm {
@@ -857,6 +880,168 @@
             border-color: var(--primary);
             outline: none;
             box-shadow: 0 0 0 4px rgba(15, 94, 58, 0.08);
+            transform: scale(1.01);
+        }
+
+        /* ================================================================
+                   REPORT CARD
+                ================================================================ */
+        .report-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            border: 2px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .report-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 300px;
+            height: 300px;
+            background: var(--primary-bg);
+            border-radius: 50%;
+            opacity: 0.2;
+            animation: floatReport 15s ease-in-out infinite;
+        }
+
+        @keyframes floatReport {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-20px, 20px) scale(1.1); }
+        }
+
+        .report-card .header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .report-card .header h2 {
+            font-size: 24px;
+            color: var(--primary);
+            font-weight: 900;
+        }
+
+        .report-card .header p {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .report-card .student-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: var(--gray);
+            border-radius: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .report-card .marks-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .report-card .marks-table th {
+            background: var(--primary);
+            color: white;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        .report-card .marks-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .report-card .marks-table tr:nth-child(even) {
+            background: var(--gray);
+        }
+
+        .report-card .marks-table tr:hover {
+            background: var(--primary-bg);
+        }
+
+        .report-card .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 2px solid var(--border);
+            position: relative;
+            z-index: 1;
+        }
+
+        .report-card .summary .item {
+            text-align: center;
+            padding: 12px;
+            background: var(--gray);
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .report-card .summary .item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+
+        .report-card .summary .item .label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .report-card .summary .item .value {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        /* ================================================================
+                   TOAST
+                ================================================================ */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: var(--shadow-xl);
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.success { background: var(--primary); color: white; }
+        .toast.error { background: #dc2626; color: white; }
+        .toast.warning { background: var(--gold); color: var(--text); }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         /* ================================================================
@@ -867,7 +1052,7 @@
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(6px);
+            backdrop-filter: blur(8px);
             z-index: 9999;
             justify-content: center;
             align-items: center;
@@ -886,12 +1071,12 @@
             max-height: 90vh;
             overflow-y: auto;
             padding: 28px 32px;
-            box-shadow: var(--shadow-lg);
-            animation: modalIn 0.3s ease;
+            box-shadow: var(--shadow-xl);
+            animation: modalIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            from { opacity: 0; transform: scale(0.9) translateY(30px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
@@ -909,10 +1094,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        .modal-header h2 i {
-            color: var(--primary);
         }
 
         .modal-close {
@@ -948,15 +1129,11 @@
         }
 
         @media (max-width: 768px) {
-            .footer .container {
-                grid-template-columns: 1fr 1fr;
-            }
+            .footer .container { grid-template-columns: 1fr 1fr; }
         }
 
         @media (max-width: 480px) {
-            .footer .container {
-                grid-template-columns: 1fr;
-            }
+            .footer .container { grid-template-columns: 1fr; }
         }
 
         .footer h4 {
@@ -979,10 +1156,12 @@
             line-height: 2;
             text-decoration: none;
             display: block;
+            transition: var(--transition);
         }
 
         .footer a:hover {
             color: var(--primary);
+            transform: translateX(4px);
         }
 
         .footer-bottom {
@@ -1006,179 +1185,40 @@
                    RESPONSIVE
                 ================================================================ */
         @media (max-width: 640px) {
-            .banner-title h1 {
-                font-size: 20px;
-            }
-            .banner-logo {
-                width: 48px;
-                height: 48px;
-                font-size: 20px;
-            }
-            .banner {
-                padding: 20px 16px;
-            }
-            .banner-right {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            .nav-bar .container {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .nav-links {
-                justify-content: center;
-            }
-            .nav-actions {
-                justify-content: center;
-            }
-            .main-content {
-                padding: 16px 12px;
-            }
-            .card {
-                padding: 16px;
-            }
-            .modal-content {
-                padding: 20px 16px;
-            }
-            .video-controls {
-                flex-wrap: wrap;
-                gap: 6px;
-                justify-content: center;
-            }
+            .banner-title h1 { font-size: 20px; }
+            .banner-logo { width: 48px; height: 48px; font-size: 20px; }
+            .banner { padding: 20px 16px; }
+            .banner-right { width: 100%; justify-content: flex-start; }
+            .nav-bar .container { flex-direction: column; align-items: stretch; }
+            .nav-links { justify-content: center; }
+            .nav-actions { justify-content: center; }
+            .main-content { padding: 16px 12px; }
+            .card { padding: 16px; }
+            .modal-content { padding: 20px 16px; }
+            .hero-slider { height: 200px; }
+            .hero-slider .slide .overlay h2 { font-size: 16px; }
+            .report-card .student-info { grid-template-columns: 1fr; }
+            .report-card .summary { grid-template-columns: 1fr; }
+            .report-card { padding: 16px; }
         }
 
         /* ================================================================
                    PRINT STYLES
                 ================================================================ */
         @media print {
-            .top-bar,
-            .nav-bar,
-            .video-controls,
-            .btn,
-            .no-print {
+            .top-bar, .nav-bar, .no-print, .hero-slider .controls,
+            .hero-slider .dots, .btn, .video-controls {
                 display: none !important;
             }
-            .card {
-                box-shadow: none !important;
-                border: 1px solid #ddd !important;
-                transform: none !important;
-            }
-            body {
-                background: white !important;
-            }
-            .tab-content {
-                display: block !important;
-            }
-            .tab-content:not(.active) {
-                display: none !important;
-            }
+            .card { box-shadow: none !important; border: 1px solid #ddd !important; transform: none !important; }
+            body { background: white !important; }
+            .tab-content { display: block !important; }
+            .tab-content:not(.active) { display: none !important; }
+            .report-card { border: 2px solid #000 !important; }
         }
 
         /* ================================================================
-                   GLOBAL SEARCH
-                ================================================================ */
-        .search-box {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--bg);
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            padding: 4px 12px;
-            transition: var(--transition);
-        }
-
-        .search-box:focus-within {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(15, 94, 58, 0.08);
-        }
-
-        .search-box input {
-            border: none;
-            background: transparent;
-            padding: 8px 0;
-            font-size: 13px;
-            color: var(--text);
-            width: 180px;
-            outline: none;
-        }
-
-        .search-box input::placeholder {
-            color: var(--text-light);
-        }
-
-        .search-box button {
-            background: none;
-            border: none;
-            color: var(--text-light);
-            cursor: pointer;
-            padding: 4px;
-        }
-
-        .search-box button:hover {
-            color: var(--primary);
-        }
-
-        /* ================================================================
-                   CONTACT FORM
-                ================================================================ */
-        .contact-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .contact-form .full-width {
-            grid-column: 1 / -1;
-        }
-
-        @media (max-width: 640px) {
-            .contact-form {
-                grid-template-columns: 1fr;
-            }
-            .contact-form .full-width {
-                grid-column: 1;
-            }
-        }
-
-        /* ================================================================
-                   STUDENT / TEACHER PROFILE
-                ================================================================ */
-        .profile-card {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 16px;
-            background: var(--gray);
-            border-radius: 12px;
-        }
-
-        .profile-card .avatar {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-
-        .profile-card .info .name {
-            font-weight: 700;
-            font-size: 16px;
-        }
-
-        .profile-card .info .role {
-            font-size: 12px;
-            color: var(--text-light);
-        }
-
-        /* ================================================================
-                   SCROLL TO TOP
+                   SCROLL TOP
                 ================================================================ */
         .scroll-top {
             position: fixed;
@@ -1205,8 +1245,69 @@
         }
 
         .scroll-top:hover {
-            transform: translateY(-4px) scale(1.05);
+            transform: translateY(-4px) scale(1.1);
             background: var(--primary-dark);
+        }
+
+        /* ================================================================
+                   FREE BADGE
+                ================================================================ */
+        .free-badge {
+            background: #d5f5e3;
+            color: var(--primary-dark);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .free-badge:hover {
+            transform: scale(1.05);
+        }
+
+        /* ================================================================
+                   VIDEO WRAPPER
+                ================================================================ */
+        .video-wrapper {
+            border-radius: 12px;
+            overflow: hidden;
+            background: #0a0a0a;
+            position: relative;
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            display: block;
+            aspect-ratio: 16/9;
+        }
+
+        .video-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 16px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 12px;
+        }
+
+        .video-controls button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 3px 14px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: var(--transition);
+        }
+
+        .video-controls button:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
     </style>
 </head>
@@ -1218,15 +1319,14 @@
     <div class="top-bar">
         <div class="container">
             <div>
-                <i class="fas fa-phone-alt"></i> +92 300 1234567 &nbsp;|&nbsp;
-                <i class="fas fa-envelope"></i> info@gesbait.edu
+                <i class="fas fa-phone-alt"></i> <span id="topPhone">+92 300 1234567</span> &nbsp;|&nbsp;
+                <i class="fas fa-envelope"></i> <span id="topEmail">info@gesbait.edu</span>
             </div>
             <div class="social-icons">
-                <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
-                <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-whatsapp"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
     </div>
@@ -1237,7 +1337,7 @@
     <header class="banner">
         <div class="container">
             <div class="banner-left">
-                <div class="banner-logo" id="schoolLogoContainer">
+                <div class="banner-logo" id="schoolLogo">
                     <svg viewBox="0 0 100 100" class="w-full h-full">
                         <defs>
                             <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -1259,7 +1359,7 @@
                 </div>
             </div>
             <div class="banner-right">
-                <span class="banner-badge"><i class="fas fa-star"></i> Smart Campus</span>
+                <span class="banner-badge"><i class="fas fa-crown"></i> VIP Campus</span>
                 <span class="banner-badge"><i class="fas fa-graduation-cap"></i> Free Education</span>
             </div>
         </div>
@@ -1272,20 +1372,15 @@
         <div class="container">
             <div class="nav-links">
                 <button class="nav-btn active" data-tab="home"><i class="fas fa-home"></i> Home</button>
-                <button class="nav-btn" data-tab="result"><i class="fas fa-chart-bar"></i> Results</button>
+                <button class="nav-btn" data-tab="results"><i class="fas fa-chart-bar"></i> Results</button>
+                <button class="nav-btn" data-tab="report-card"><i class="fas fa-id-card"></i> Report Card</button>
                 <button class="nav-btn" data-tab="homework"><i class="fas fa-book-open"></i> Homework</button>
                 <button class="nav-btn" data-tab="gallery"><i class="fas fa-images"></i> Gallery</button>
                 <button class="nav-btn" data-tab="teacher"><i class="fas fa-user-tie"></i> Teacher</button>
                 <button class="nav-btn" data-tab="admin"><i class="fas fa-user-gear"></i> Admin</button>
             </div>
             <div class="nav-actions">
-                <div class="search-box">
-                    <input type="text" id="globalSearch" placeholder="Search..." />
-                    <button onclick="performSearch()"><i class="fas fa-search"></i></button>
-                </div>
-                <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
-                    <i class="fas fa-moon"></i>
-                </button>
+                <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
                 <span class="role-badge" id="roleBadge">Visitor</span>
             </div>
         </div>
@@ -1301,35 +1396,62 @@
         ============================================================ -->
         <section id="tab-home" class="tab-content active">
 
-            <!-- Welcome + Video -->
-            <div class="grid-2">
-                <!-- Video -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-play-circle"></i> School Tour</h3>
-                        <span class="video-source-badge" id="videoSourceBadge">
-                            <i class="fas fa-video"></i> Video
-                        </span>
+            <!-- HERO SLIDER -->
+            <div class="hero-slider" id="heroSlider">
+                <div class="slides" id="sliderSlides">
+                    <div class="slide active">
+                        <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80" alt="School" />
+                        <div class="overlay"><h2>🏫 Welcome to GES Bait Mughal</h2></div>
                     </div>
-                    <div class="video-wrapper" id="videoWrapper">
-                        <video id="schoolVideo" controls playsinline preload="metadata">
-                            <source src="" type="video/mp4" />
-                        </video>
-                        <div class="video-controls">
-                            <span><i class="fas fa-volume-mute" id="volumeIcon"></i> <span id="volumeText">Tap for sound</span></span>
-                            <button onclick="toggleFullscreen()"><i class="fas fa-expand"></i> Full Screen</button>
-                        </div>
+                    <div class="slide">
+                        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80" alt="Education" />
+                        <div class="overlay"><h2>📚 Quality Education for All</h2></div>
+                    </div>
+                    <div class="slide">
+                        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80" alt="Students" />
+                        <div class="overlay"><h2>🌟 Empowering Young Minds</h2></div>
                     </div>
                 </div>
+                <div class="controls">
+                    <button onclick="prevSlide()"><i class="fas fa-chevron-left"></i></button>
+                    <button onclick="nextSlide()"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="dots" id="sliderDots"></div>
+            </div>
 
-                <!-- About + Quick Stats -->
-                <div class="card">
+            <!-- Quick Stats -->
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:24px;">
+                <div class="stat-box">
+                    <i class="fas fa-user-graduate"></i>
+                    <span class="num" id="statStudents">0</span>
+                    <span class="label">Students</span>
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-chalkboard"></i>
+                    <span class="num">1-8</span>
+                    <span class="label">Classes</span>
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-bullhorn"></i>
+                    <span class="num" id="statNews">0</span>
+                    <span class="label">Announcements</span>
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-images"></i>
+                    <span class="num" id="statGallery">0</span>
+                    <span class="label">Gallery</span>
+                </div>
+            </div>
+
+            <!-- About + Timings -->
+            <div class="grid-2" style="margin-top:24px;">
+                <div class="card card-3d">
                     <div class="card-header">
                         <h3><i class="fas fa-info-circle"></i> About School</h3>
                     </div>
                     <p id="aboutText" style="font-size:14px; line-height:1.8; color:var(--text-light);">
                         GES Bait Mughal is a government elementary school dedicated to providing free quality education,
-                        strong moral values, and a safe, nurturing environment for every child.
+                        strong moral values, and a safe, nurturing environment for every child in the Bait Mughal community.
                     </p>
                     <div style="background:var(--primary-bg); padding:12px 16px; border-radius:12px; margin-top:12px; border-left:4px solid var(--primary);">
                         <i class="fas fa-quote-left" style="color:var(--primary); opacity:0.5; margin-right:6px;"></i>
@@ -1338,37 +1460,9 @@
                     <div class="free-badge" style="margin-top:12px;">
                         <i class="fas fa-graduation-cap"></i> 100% Free Education – No Fees
                     </div>
-
-                    <!-- Stats -->
-                    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:16px;">
-                        <div class="stat-box">
-                            <i class="fas fa-user-graduate"></i>
-                            <span class="num" id="statStudents">0</span>
-                            <span class="label">Students</span>
-                        </div>
-                        <div class="stat-box">
-                            <i class="fas fa-chalkboard"></i>
-                            <span class="num">1-8</span>
-                            <span class="label">Classes</span>
-                        </div>
-                        <div class="stat-box">
-                            <i class="fas fa-bullhorn"></i>
-                            <span class="num" id="statNews">0</span>
-                            <span class="label">News</span>
-                        </div>
-                        <div class="stat-box">
-                            <i class="fas fa-images"></i>
-                            <span class="num" id="statGallery">0</span>
-                            <span class="label">Photos</span>
-                        </div>
-                    </div>
                 </div>
-            </div>
 
-            <!-- Timings + Announcements -->
-            <div style="display:grid; grid-template-columns:1fr 2fr; gap:24px; margin-top:24px;">
-                <!-- Timings -->
-                <div class="card">
+                <div class="card card-3d">
                     <div class="card-header">
                         <h3><i class="fas fa-clock"></i> School Timings</h3>
                     </div>
@@ -1389,61 +1483,38 @@
                         <span class="value" id="headmasterName">Headmaster</span>
                     </div>
                 </div>
+            </div>
 
-                <!-- Announcements -->
-                <div class="card">
+            <!-- Announcements + Incharges -->
+            <div class="grid-2" style="margin-top:24px;">
+                <div class="card card-3d">
                     <div class="card-header">
                         <h3><i class="fas fa-bullhorn"></i> Announcements</h3>
-                        <span style="font-size:11px; color:var(--text-light);">Latest Updates</span>
                     </div>
-                    <div id="announcementList">
-                        <div class="announce-item">
-                            <div class="icon"><i class="fas fa-futbol"></i></div>
-                            <div class="content">
-                                <div class="title">Sports Day – All students must participate</div>
-                                <div class="date"><i class="far fa-calendar-alt"></i> 25 Aug 2026</div>
-                            </div>
-                            <span class="badge urgent">Urgent</span>
-                        </div>
-                        <div class="announce-item">
-                            <div class="icon"><i class="fas fa-handshake"></i></div>
-                            <div class="content">
-                                <div class="title">Parent-Teacher Meeting</div>
-                                <div class="date"><i class="far fa-calendar-alt"></i> 30 Aug 2026</div>
-                            </div>
-                            <span class="badge important">Important</span>
-                        </div>
-                        <div class="announce-item">
-                            <div class="icon"><i class="fas fa-flag"></i></div>
-                            <div class="content">
-                                <div class="title">Independence Day Celebrations</div>
-                                <div class="date"><i class="far fa-calendar-alt"></i> 14 Aug 2026</div>
-                            </div>
-                            <span class="badge event">Event</span>
-                        </div>
+                    <div id="announcementList"></div>
+                </div>
+
+                <div class="card card-3d">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chalkboard-user"></i> Class Incharges</h3>
                     </div>
+                    <div id="inchargeList" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
                 </div>
             </div>
 
-            <!-- Class Incharges -->
-            <div class="card" style="margin-top:24px;">
+            <!-- Video Section -->
+            <div class="card card-3d" style="margin-top:24px;">
                 <div class="card-header">
-                    <h3><i class="fas fa-chalkboard-user"></i> Class Incharges</h3>
+                    <h3><i class="fas fa-play-circle"></i> School Tour Video</h3>
+                    <span style="font-size:11px; color:var(--text-light);" id="videoStatus">Video</span>
                 </div>
-                <div id="inchargeList" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:8px;">
-                    <div class="profile-card">
-                        <div class="avatar">C1</div>
-                        <div class="info">
-                            <div class="name">Ms. Fatima</div>
-                            <div class="role">Class 1 Incharge</div>
-                        </div>
-                    </div>
-                    <div class="profile-card">
-                        <div class="avatar">C2</div>
-                        <div class="info">
-                            <div class="name">Mr. Ahmed</div>
-                            <div class="role">Class 2 Incharge</div>
-                        </div>
+                <div class="video-wrapper">
+                    <video id="schoolVideo" controls playsinline preload="metadata">
+                        <source src="" type="video/mp4" />
+                    </video>
+                    <div class="video-controls">
+                        <span><i class="fas fa-volume-mute" id="volumeIcon"></i> <span id="volumeText">Tap for sound</span></span>
+                        <button onclick="toggleFullscreen()"><i class="fas fa-expand"></i> Full Screen</button>
                     </div>
                 </div>
             </div>
@@ -1453,8 +1524,8 @@
         <!-- ============================================================
         RESULTS TAB
         ============================================================ -->
-        <section id="tab-result" class="tab-content">
-            <div class="card" style="max-width:600px; margin:0 auto;">
+        <section id="tab-results" class="tab-content">
+            <div class="card card-3d" style="max-width:600px; margin:0 auto;">
                 <div class="card-header">
                     <h3><i class="fas fa-search"></i> Search Student Result</h3>
                 </div>
@@ -1481,25 +1552,93 @@
             </div>
 
             <div id="resultDisplay" style="display:none; margin-top:24px;">
-                <div class="card" id="resultCard">
-                    <div style="text-align:center; border-bottom:2px solid var(--border); padding-bottom:12px; margin-bottom:16px;">
-                        <h2 style="color:var(--primary); font-size:22px;">GES BAIT MUGHAL</h2>
-                        <p style="font-size:12px; color:var(--text-light);">Student Performance Card</p>
+                <div class="report-card" id="resultCard">
+                    <div class="header">
+                        <h2>GES BAIT MUGHAL</h2>
+                        <p>Student Performance Report</p>
                     </div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:14px;">
+                    <div class="student-info">
                         <div><strong>Class:</strong> <span id="resClass">-</span></div>
                         <div><strong>Roll No:</strong> <span id="resRoll">-</span></div>
-                        <div><strong>Name:</strong> <span id="resName">-</span></div>
+                        <div><strong>Student:</strong> <span id="resName">-</span></div>
                         <div><strong>Incharge:</strong> <span id="resIncharge">-</span></div>
                     </div>
-                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px;">
-                        <div class="stat-box"><span class="num" id="resTotal">0</span><span class="label">Total</span></div>
-                        <div class="stat-box" style="background:var(--primary-bg);"><span class="num" id="resObtained">0</span><span class="label">Obtained</span></div>
-                        <div class="stat-box" style="background:#fef3c7;"><span class="num" id="resPercentage">0%</span><span class="label">Percentage</span></div>
+                    <table class="marks-table">
+                        <thead><tr><th>Subject</th><th>Marks</th></tr></thead>
+                        <tbody id="resSubjects"></tbody>
+                    </table>
+                    <div class="summary">
+                        <div class="item"><span class="label">Total</span><span class="value" id="resTotal">0</span></div>
+                        <div class="item"><span class="label">Obtained</span><span class="value" id="resObtained">0</span></div>
+                        <div class="item"><span class="label">Percentage</span><span class="value" id="resPercentage">0%</span></div>
                     </div>
-                    <button onclick="downloadResultPDF()" class="btn btn-primary" style="margin-top:12px; width:100%; justify-content:center;">
-                        <i class="fas fa-file-pdf"></i> Download PDF
-                    </button>
+                    <div class="no-print" style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
+                        <button onclick="downloadResultPDF()" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Download PDF</button>
+                        <button onclick="window.print()" class="btn btn-gold"><i class="fas fa-print"></i> Print</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+        REPORT CARD TAB
+        ============================================================ -->
+        <section id="tab-report-card" class="tab-content">
+            <div id="studentLogin" class="card card-3d" style="max-width:420px; margin:0 auto;">
+                <div style="text-align:center; margin-bottom:20px;">
+                    <div style="width:60px; height:60px; background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; color:white; font-size:28px;">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3 style="font-size:20px; font-weight:800;">Student Report Card</h3>
+                    <p style="font-size:13px; color:var(--text-light);">Enter your roll number to view report card</p>
+                </div>
+                <form onsubmit="studentLogin(event)" style="display:flex; flex-direction:column; gap:12px;">
+                    <div class="form-group">
+                        <label>Class</label>
+                        <select id="studentLoginClass">
+                            <option value="Class 1">Class 1</option>
+                            <option value="Class 2">Class 2</option>
+                            <option value="Class 3">Class 3</option>
+                            <option value="Class 4">Class 4</option>
+                            <option value="Class 5">Class 5</option>
+                            <option value="Class 6">Class 6</option>
+                            <option value="Class 7">Class 7</option>
+                            <option value="Class 8">Class 8</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Roll Number</label>
+                        <input type="number" id="studentLoginRoll" placeholder="Enter roll number" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary">View Report Card</button>
+                </form>
+            </div>
+
+            <div id="studentReportCard" style="display:none; margin-top:24px;">
+                <div class="report-card" id="reportCardContent">
+                    <div class="header">
+                        <h2>GES BAIT MUGHAL</h2>
+                        <p>Official Student Report Card</p>
+                    </div>
+                    <div class="student-info">
+                        <div><strong>Class:</strong> <span id="rcClass">-</span></div>
+                        <div><strong>Roll No:</strong> <span id="rcRoll">-</span></div>
+                        <div><strong>Student:</strong> <span id="rcName">-</span></div>
+                        <div><strong>Incharge:</strong> <span id="rcIncharge">-</span></div>
+                    </div>
+                    <table class="marks-table">
+                        <thead><tr><th>Subject</th><th>Marks</th></tr></thead>
+                        <tbody id="rcSubjects"></tbody>
+                    </table>
+                    <div class="summary">
+                        <div class="item"><span class="label">Total</span><span class="value" id="rcTotal">0</span></div>
+                        <div class="item"><span class="label">Obtained</span><span class="value" id="rcObtained">0</span></div>
+                        <div class="item"><span class="label">Percentage</span><span class="value" id="rcPercentage">0%</span></div>
+                    </div>
+                    <div class="no-print" style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
+                        <button onclick="downloadReportCard()" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Download PDF</button>
+                        <button onclick="window.print()" class="btn btn-gold"><i class="fas fa-print"></i> Print</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1508,7 +1647,7 @@
         HOMEWORK TAB
         ============================================================ -->
         <section id="tab-homework" class="tab-content">
-            <div class="card">
+            <div class="card card-3d">
                 <div class="card-header">
                     <h3><i class="fas fa-book-open"></i> Vacation Homework</h3>
                     <div style="display:flex; gap:8px; align-items:center;">
@@ -1526,7 +1665,7 @@
                         </select>
                     </div>
                 </div>
-                <div id="homeworkGrid" class="book-grid"></div>
+                <div id="homeworkGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px;"></div>
             </div>
         </section>
 
@@ -1534,11 +1673,11 @@
         GALLERY TAB
         ============================================================ -->
         <section id="tab-gallery" class="tab-content">
-            <div class="card">
+            <div class="card card-3d">
                 <div class="card-header">
                     <h3><i class="fas fa-images"></i> Photo Gallery</h3>
                 </div>
-                <div id="galleryGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px;"></div>
+                <div id="galleryGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px;"></div>
             </div>
         </section>
 
@@ -1546,7 +1685,7 @@
         TEACHER TAB
         ============================================================ -->
         <section id="tab-teacher" class="tab-content">
-            <div id="teacherLogin" class="card" style="max-width:420px; margin:0 auto;">
+            <div id="teacherLogin" class="card card-3d" style="max-width:420px; margin:0 auto;">
                 <div style="text-align:center; margin-bottom:20px;">
                     <div style="width:60px; height:60px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; color:white; font-size:28px;">
                         <i class="fas fa-user-tie"></i>
@@ -1577,7 +1716,7 @@
             </div>
 
             <div id="teacherDashboard" style="display:none;">
-                <div class="card" style="margin-bottom:20px;">
+                <div class="card card-3d" style="margin-bottom:20px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                         <div>
                             <h3 style="font-size:18px; font-weight:800;"><i class="fas fa-chalkboard-user" style="color:var(--primary);"></i> <span id="teacherClassName">Class</span> Portal</h3>
@@ -1587,8 +1726,8 @@
                     </div>
                 </div>
 
-                <!-- Add/Edit Student -->
-                <div class="card" style="margin-bottom:20px;">
+                <!-- Add Student -->
+                <div class="card card-3d" style="margin-bottom:20px;">
                     <div class="card-header">
                         <h3><i class="fas fa-user-plus"></i> <span id="studentFormTitle">Add Student Result</span></h3>
                     </div>
@@ -1618,7 +1757,7 @@
                 </div>
 
                 <!-- Student List -->
-                <div class="card" style="margin-bottom:20px;">
+                <div class="card card-3d" style="margin-bottom:20px;">
                     <div class="card-header">
                         <h3><i class="fas fa-users"></i> Class Students</h3>
                         <span style="font-size:12px; background:var(--gray); padding:2px 12px; border-radius:40px;" id="studentCount">0 students</span>
@@ -1640,8 +1779,8 @@
                     </div>
                 </div>
 
-                <!-- Teacher Homework -->
-                <div class="card">
+                <!-- Homework -->
+                <div class="card card-3d">
                     <div class="card-header">
                         <h3><i class="fas fa-book-open"></i> Add Homework</h3>
                     </div>
@@ -1677,7 +1816,7 @@
         ADMIN TAB
         ============================================================ -->
         <section id="tab-admin" class="tab-content">
-            <div id="adminLogin" class="card" style="max-width:420px; margin:0 auto;">
+            <div id="adminLogin" class="card card-3d" style="max-width:420px; margin:0 auto;">
                 <div style="text-align:center; margin-bottom:20px;">
                     <div style="width:60px; height:60px; background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; color:white; font-size:28px;">
                         <i class="fas fa-user-gear"></i>
@@ -1695,7 +1834,7 @@
             </div>
 
             <div id="adminDashboard" style="display:none;">
-                <div class="card" style="margin-bottom:20px;">
+                <div class="card card-3d" style="margin-bottom:20px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                         <div>
                             <h3 style="font-size:18px; font-weight:800;"><i class="fas fa-crown" style="color:var(--gold);"></i> Headmaster Control Panel</h3>
@@ -1705,8 +1844,9 @@
                     </div>
                 </div>
 
-                <!-- Quick Actions Grid -->
-                <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; margin-bottom:20px;">
+                <!-- Quick Actions -->
+                <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin-bottom:20px;">
+                    <button onclick="scrollToSection('adminSlider')" class="btn btn-primary" style="justify-content:center;">🖼️ Slider</button>
                     <button onclick="scrollToSection('adminTimings')" class="btn btn-primary" style="justify-content:center;">⏰ Timings</button>
                     <button onclick="scrollToSection('adminVideo')" class="btn btn-primary" style="justify-content:center;">🎬 Video</button>
                     <button onclick="scrollToSection('adminAnnouncements')" class="btn btn-primary" style="justify-content:center;">📢 Announcements</button>
@@ -1715,10 +1855,30 @@
                     <button onclick="scrollToSection('adminIncharges')" class="btn btn-primary" style="justify-content:center;">👨‍🏫 Incharges</button>
                     <button onclick="scrollToSection('adminSecurity')" class="btn btn-primary" style="justify-content:center;">🔐 Security</button>
                     <button onclick="scrollToSection('adminAbout')" class="btn btn-primary" style="justify-content:center;">📝 About</button>
+                    <button onclick="downloadAllResults()" class="btn btn-gold" style="justify-content:center;">📊 Download All Results</button>
+                </div>
+
+                <!-- Slider -->
+                <div class="card card-3d" style="margin-bottom:20px;" id="adminSlider">
+                    <div class="card-header"><h3><i class="fas fa-images"></i> Hero Slider Control</h3></div>
+                    <form onsubmit="addSlide(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group" style="margin:0; grid-column:1/-1;">
+                            <label>Slide Title</label>
+                            <input type="text" id="slideTitle" placeholder="Slide caption" required />
+                        </div>
+                        <div class="form-group" style="margin:0; grid-column:1/-1;">
+                            <label>Image URL</label>
+                            <input type="text" id="slideImage" placeholder="https://example.com/image.jpg" required />
+                        </div>
+                        <div style="grid-column:1/-1;">
+                            <button type="submit" class="btn btn-primary">Add Slide</button>
+                        </div>
+                    </form>
+                    <div id="adminSliderList" style="margin-top:16px; display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px;"></div>
                 </div>
 
                 <!-- Timings -->
-                <div class="card" style="margin-bottom:20px;" id="adminTimings">
+                <div class="card card-3d" style="margin-bottom:20px;" id="adminTimings">
                     <div class="card-header"><h3><i class="fas fa-clock"></i> School Timings</h3></div>
                     <form onsubmit="updateTimings(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                         <div class="form-group" style="margin:0;">
@@ -1736,28 +1896,19 @@
                 </div>
 
                 <!-- Video -->
-                <div class="card" style="margin-bottom:20px;" id="adminVideo">
+                <div class="card card-3d" style="margin-bottom:20px;" id="adminVideo">
                     <div class="card-header"><h3><i class="fas fa-video"></i> School Video</h3></div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                        <form onsubmit="uploadVideo(event)" style="grid-column:1/-1; display:grid; gap:8px;">
-                            <div class="form-group" style="margin:0;">
-                                <label>Upload Video File (MP4, < 7MB recommended)</label>
-                                <input type="file" id="videoFile" accept="video/*" />
-                            </div>
-                            <div style="display:flex; gap:8px;">
-                                <button type="submit" class="btn btn-primary" id="videoUploadBtn">Upload Video</button>
-                                <button type="button" onclick="useYouTubeVideo()" class="btn btn-outline">Use YouTube URL</button>
-                            </div>
-                        </form>
-                        <div style="grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap;">
-                            <input type="text" id="youtubeUrl" placeholder="https://www.youtube.com/embed/..." style="flex:1; padding:8px 14px; border:2px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text);" />
-                            <button onclick="setYouTubeVideo()" class="btn btn-primary">Set YouTube Video</button>
+                    <form onsubmit="uploadVideo(event)" style="display:grid; gap:12px;">
+                        <div class="form-group" style="margin:0;">
+                            <label>Upload Video (MP4, < 7MB)</label>
+                            <input type="file" id="videoFile" accept="video/*" />
                         </div>
-                    </div>
+                        <button type="submit" class="btn btn-primary">Upload Video</button>
+                    </form>
                 </div>
 
                 <!-- Announcements -->
-                <div class="card" style="margin-bottom:20px;" id="adminAnnouncements">
+                <div class="card card-3d" style="margin-bottom:20px;" id="adminAnnouncements">
                     <div class="card-header"><h3><i class="fas fa-bullhorn"></i> Add Announcement</h3></div>
                     <form onsubmit="addAnnouncement(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
@@ -1780,16 +1931,16 @@
                                 <option value="event">Event</option>
                             </select>
                         </div>
-                        <div style="grid-column:1/-1; display:flex; gap:8px;">
+                        <div style="grid-column:1/-1;">
                             <button type="submit" class="btn btn-primary">Publish</button>
                         </div>
                     </form>
                     <div id="adminAnnouncementList" style="margin-top:16px; display:flex; flex-direction:column; gap:8px;"></div>
                 </div>
 
-                <!-- Homework (Admin) -->
-                <div class="card" style="margin-bottom:20px;" id="adminHomework">
-                    <div class="card-header"><h3><i class="fas fa-book-open"></i> Manage Homework (All Classes)</h3></div>
+                <!-- Homework Admin -->
+                <div class="card card-3d" style="margin-bottom:20px;" id="adminHomework">
+                    <div class="card-header"><h3><i class="fas fa-book-open"></i> Manage Homework</h3></div>
                     <form onsubmit="adminAddHomework(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                         <input type="hidden" id="adminEditHwId" />
                         <div class="form-group" style="margin:0;">
@@ -1830,7 +1981,7 @@
                 </div>
 
                 <!-- Gallery -->
-                <div class="card" style="margin-bottom:20px;" id="adminGallery">
+                <div class="card card-3d" style="margin-bottom:20px;" id="adminGallery">
                     <div class="card-header"><h3><i class="fas fa-images"></i> Manage Gallery</h3></div>
                     <form onsubmit="adminAddGallery(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
@@ -1849,7 +2000,7 @@
                 </div>
 
                 <!-- Incharges -->
-                <div class="card" style="margin-bottom:20px;" id="adminIncharges">
+                <div class="card card-3d" style="margin-bottom:20px;" id="adminIncharges">
                     <div class="card-header"><h3><i class="fas fa-chalkboard-user"></i> Assign Class Incharges</h3></div>
                     <form onsubmit="assignIncharge(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                         <div class="form-group" style="margin:0;">
@@ -1877,7 +2028,7 @@
                 </div>
 
                 <!-- Security -->
-                <div class="card" style="margin-bottom:20px;" id="adminSecurity">
+                <div class="card card-3d" style="margin-bottom:20px;" id="adminSecurity">
                     <div class="card-header"><h3><i class="fas fa-key"></i> Security Settings</h3></div>
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
                         <div>
@@ -1908,7 +2059,7 @@
                 </div>
 
                 <!-- About -->
-                <div class="card" style="margin-bottom:20px;" id="adminAbout">
+                <div class="card card-3d" style="margin-bottom:20px;" id="adminAbout">
                     <div class="card-header"><h3><i class="fas fa-info-circle"></i> About School & Contact</h3></div>
                     <form onsubmit="updateAbout(event)" style="display:grid; gap:12px;">
                         <div class="form-group" style="margin:0;">
@@ -1952,7 +2103,8 @@
             <div>
                 <h4><i class="fas fa-link"></i> Quick Links</h4>
                 <a href="#" onclick="switchTab('home')">Home</a>
-                <a href="#" onclick="switchTab('result')">Results</a>
+                <a href="#" onclick="switchTab('results')">Results</a>
+                <a href="#" onclick="switchTab('report-card')">Report Card</a>
                 <a href="#" onclick="switchTab('homework')">Homework</a>
                 <a href="#" onclick="switchTab('gallery')">Gallery</a>
             </div>
@@ -1967,15 +2119,15 @@
                 <p id="footerPhone"><i class="fas fa-phone-alt"></i> +92 300 1234567</p>
                 <p id="footerEmail"><i class="fas fa-envelope"></i> info@gesbait.edu</p>
                 <div style="display:flex; gap:8px; margin-top:8px;">
-                    <a href="#" style="display:inline-block; width:32px; height:32px; background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text);"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" style="display:inline-block; width:32px; height:32px; background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text);"><i class="fab fa-youtube"></i></a>
-                    <a href="#" style="display:inline-block; width:32px; height:32px; background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text);"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" style="display:inline-block; width:32px; height:32px; background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text); transition:var(--transition);"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" style="display:inline-block; width:32px; height:32px; background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text); transition:var(--transition);"><i class="fab fa-youtube"></i></a>
+                    <a href="#" style="display:inline-block; width:32px; height:32px; background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text); transition:var(--transition);"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
             <span>&copy; <span id="footerYear">2026</span> GES Bait Mughal. All Rights Reserved.</span>
-            <span><i class="fas fa-shield-alt"></i> Smart School v5.0</span>
+            <span><i class="fas fa-shield-alt"></i> VIP School v6.0</span>
         </div>
     </footer>
 
@@ -2004,13 +2156,13 @@
             announcements: [],
             gallery: [],
             incharges: {},
+            slides: [],
             timings: '08:00 AM – 01:30 PM',
             breakTime: '10:30 AM – 11:00 AM',
             headmaster: 'Headmaster',
             about: 'GES Bait Mughal is a government elementary school dedicated to providing free quality education, strong moral values, and a safe, nurturing environment for every child.',
             video: '',
-            youtubeUrl: '',
-            adminPass: 'head123',
+            adminPass: 'admin123',
             teacherPins: {
                 'Class 1': '1234',
                 'Class 2': '1234',
@@ -2021,7 +2173,6 @@
                 'Class 7': '1234',
                 'Class 8': '1234'
             },
-            logo: '',
             contact: { address: 'Bait Mughal, Jalal Pur Pir Wala, Punjab', phone: '+92 300 1234567',
             email: 'info@gesbait.edu' }
         };
@@ -2032,8 +2183,6 @@
         const $ = id => document.getElementById(id);
         const toastContainer = $('toastContainer');
         const video = $('schoolVideo');
-        const volumeIcon = $('volumeIcon');
-        const volumeText = $('volumeText');
 
         // ================================================================
         // TOAST
@@ -2075,7 +2224,8 @@
         const navBtns = document.querySelectorAll('.nav-btn');
         const tabs = {
             home: $('tab-home'),
-            result: $('tab-result'),
+            results: $('tab-results'),
+            'report-card': $('tab-report-card'),
             homework: $('tab-homework'),
             gallery: $('tab-gallery'),
             teacher: $('tab-teacher'),
@@ -2106,8 +2256,8 @@
         video.addEventListener('click', () => {
             video.muted = !video.muted;
             const icon = video.muted ? 'fa-volume-mute' : 'fa-volume-up';
-            volumeIcon.className = `fas ${icon}`;
-            volumeText.textContent = video.muted ? 'Muted' : 'Sound on';
+            $('volumeIcon').className = `fas ${icon}`;
+            $('volumeText').textContent = video.muted ? 'Muted' : 'Sound on';
         });
 
         function toggleFullscreen() {
@@ -2124,44 +2274,71 @@
         });
 
         // ================================================================
-        // SEARCH
+        // SLIDER
         // ================================================================
-        function performSearch() {
-            const query = $('globalSearch').value.toLowerCase().trim();
-            if (!query) { showToast('Please enter a search term', 'warning'); return; }
+        let currentSlide = 0;
+        let sliderInterval;
 
-            let results = [];
-            DB.students.forEach(s => {
-                if (s.name.toLowerCase().includes(query) || s.class.toLowerCase().includes(query)) {
-                    results.push(`📚 ${s.name} (${s.class}, Roll: ${s.roll})`);
-                }
-            });
-            DB.homework.forEach(h => {
-                if (h.title.toLowerCase().includes(query) || h.subject.toLowerCase().includes(query)) {
-                    results.push(`📖 ${h.title} (${h.class}, ${h.subject})`);
-                }
-            });
-            DB.announcements.forEach(a => {
-                if (a.title.toLowerCase().includes(query)) {
-                    results.push(`📢 ${a.title}`);
-                }
-            });
+        function renderSlider() {
+            const slides = DB.slides.length > 0 ? DB.slides : [
+                { title: '🏫 Welcome to GES Bait Mughal', img: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80' },
+                { title: '📚 Quality Education for All', img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80' },
+                { title: '🌟 Empowering Young Minds', img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80' }
+            ];
 
-            if (results.length === 0) {
-                showToast('No results found for "' + query + '"', 'warning');
-            } else {
-                showToast(`Found ${results.length} result(s): ${results.slice(0,3).join(', ')}${results.length > 3 ? '...' : ''}`, 'success');
-            }
+            const container = $('sliderSlides');
+            container.innerHTML = slides.map((s, i) => `
+                        <div class="slide ${i === currentSlide ? 'active' : ''}">
+                            <img src="${s.img}" alt="${s.title}" />
+                            <div class="overlay"><h2>${s.title}</h2></div>
+                        </div>
+                    `).join('');
+
+            const dots = $('sliderDots');
+            dots.innerHTML = slides.map((_, i) => `
+                        <button class="${i === currentSlide ? 'active' : ''}" onclick="goToSlide(${i})"></button>
+                    `).join('');
+
+            if (currentSlide >= slides.length) currentSlide = 0;
         }
 
-        $('globalSearch').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') performSearch();
-        });
+        function goToSlide(index) {
+            currentSlide = index;
+            renderSlider();
+            resetSliderInterval();
+        }
+
+        function nextSlide() {
+            const slides = DB.slides.length > 0 ? DB.slides : [];
+            const total = slides.length > 0 ? slides.length : 3;
+            currentSlide = (currentSlide + 1) % total;
+            renderSlider();
+            resetSliderInterval();
+        }
+
+        function prevSlide() {
+            const slides = DB.slides.length > 0 ? DB.slides : [];
+            const total = slides.length > 0 ? slides.length : 3;
+            currentSlide = (currentSlide - 1 + total) % total;
+            renderSlider();
+            resetSliderInterval();
+        }
+
+        function resetSliderInterval() {
+            if (sliderInterval) clearInterval(sliderInterval);
+            sliderInterval = setInterval(nextSlide, 4000);
+        }
 
         // ================================================================
-        // FIREBASE SYNC
+        // SAVE/LOAD
         // ================================================================
-        function loadFromFirebase() {
+        function saveData() {
+            try {
+                localStorage.setItem('gesData', JSON.stringify(DB));
+            } catch (e) {}
+        }
+
+        function loadData() {
             try {
                 const saved = localStorage.getItem('gesData');
                 if (saved) {
@@ -2170,12 +2347,6 @@
                 }
             } catch (e) {}
             renderAll();
-        }
-
-        function saveToFirebase() {
-            try {
-                localStorage.setItem('gesData', JSON.stringify(DB));
-            } catch (e) {}
         }
 
         // ================================================================
@@ -2187,7 +2358,7 @@
             renderGallery();
             renderTeacherUI();
             renderAdminUI();
-            saveToFirebase();
+            saveData();
         }
 
         function renderHome() {
@@ -2211,32 +2382,18 @@
             // Contact
             $('footerPhone').innerHTML = `<i class="fas fa-phone-alt"></i> ${DB.contact.phone || '+92 300 1234567'}`;
             $('footerEmail').innerHTML = `<i class="fas fa-envelope"></i> ${DB.contact.email || 'info@gesbait.edu'}`;
-
-            // Logo
-            if (DB.logo) {
-                $('schoolLogoContainer').innerHTML = `<img src="${DB.logo}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;" />`;
-            }
+            $('topPhone').textContent = DB.contact.phone || '+92 300 1234567';
+            $('topEmail').textContent = DB.contact.email || 'info@gesbait.edu';
 
             // Video
-            if (DB.youtubeUrl) {
-                const wrapper = $('videoWrapper');
-                wrapper.innerHTML = `
-                    <iframe src="${DB.youtubeUrl}" allowfullscreen loading="lazy"></iframe>
-                    <div class="video-controls">
-                        <span><i class="fab fa-youtube" style="color:#ff0000;"></i> YouTube Video</span>
-                        <button onclick="toggleFullscreen()"><i class="fas fa-expand"></i> Full Screen</button>
-                    </div>
-                `;
-                $('videoSourceBadge').innerHTML = '<i class="fab fa-youtube" style="color:#ff0000;"></i> YouTube';
-            } else if (DB.video) {
+            if (DB.video) {
                 video.src = DB.video;
                 video.load();
                 video.play().catch(() => {});
-                $('videoWrapper').querySelector('.video-controls').innerHTML = `
-                    <span><i class="fas fa-volume-mute" id="volumeIcon"></i> <span id="volumeText">Tap for sound</span></span>
-                    <button onclick="toggleFullscreen()"><i class="fas fa-expand"></i> Full Screen</button>
-                `;
-                $('videoSourceBadge').innerHTML = '<i class="fas fa-video"></i> Uploaded';
+                $('videoStatus').textContent = '📹 Uploaded Video';
+            } else {
+                video.src = '';
+                $('videoStatus').textContent = '🎬 No video uploaded';
             }
 
             // Announcements
@@ -2247,13 +2404,13 @@
                 div.className = 'announce-item';
                 const icons = { urgent: 'fa-exclamation-triangle', important: 'fa-handshake', event: 'fa-flag' };
                 div.innerHTML = `
-                    <div class="icon"><i class="fas ${icons[a.type] || 'fa-bullhorn'}"></i></div>
-                    <div class="content">
-                        <div class="title">${a.title}</div>
-                        <div class="date"><i class="far fa-calendar-alt"></i> ${a.date || 'Today'}</div>
-                    </div>
-                    <span class="badge ${a.type || 'important'}">${a.type || 'Important'}</span>
-                `;
+                            <div class="icon"><i class="fas ${icons[a.type] || 'fa-bullhorn'}"></i></div>
+                            <div class="content">
+                                <div class="title">${a.title}</div>
+                                <div class="date"><i class="far fa-calendar-alt"></i> ${a.date || 'Today'}</div>
+                            </div>
+                            <span class="badge ${a.type || 'important'}">${a.type || 'Important'}</span>
+                        `;
                 list.appendChild(div);
             });
 
@@ -2264,18 +2421,19 @@
                 const name = DB.incharges[cls];
                 if (name && name !== 'Not Assigned') {
                     const div = document.createElement('div');
-                    div.className = 'profile-card';
-                    const initial = cls.replace('Class ', 'C');
+                    div.style.cssText =
+                        'display:flex; align-items:center; gap:8px; padding:8px 12px; background:var(--gray); border-radius:8px;';
                     div.innerHTML = `
-                        <div class="avatar">${initial}</div>
-                        <div class="info">
-                            <div class="name">${name}</div>
-                            <div class="role">${cls} Incharge</div>
-                        </div>
-                    `;
+                                <div style="width:32px; height:32px; border-radius:50%; background:var(--primary); color:white; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;">${cls.replace('Class ','C')}</div>
+                                <div><strong>${name}</strong> <span style="font-size:11px; color:var(--text-light);">${cls}</span></div>
+                            `;
                     inchargeList.appendChild(div);
                 }
             });
+
+            // Slider
+            renderSlider();
+            resetSliderInterval();
         }
 
         function renderHomework() {
@@ -2286,20 +2444,24 @@
             if (filter !== 'ALL') list = list.filter(h => h.class === filter);
 
             if (list.length === 0) {
-                grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:14px; padding:20px;">No homework uploaded yet.</p>';
+                grid.innerHTML =
+                    '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:14px; padding:20px;">No homework uploaded yet.</p>';
                 return;
             }
 
             list.forEach(h => {
                 const div = document.createElement('div');
-                div.className = 'book-item';
+                div.className = 'card card-3d';
+                div.style.cssText = 'padding:16px;';
                 div.innerHTML = `
-                    <i class="fas fa-book-open"></i>
-                    <div class="book-title">${h.title}</div>
-                    <div class="book-class">${h.class} · ${h.subject}</div>
-                    <p style="font-size:11px; color:var(--text-light); margin:4px 0;">${h.desc}</p>
-                    ${h.file ? `<button class="download-btn" onclick="downloadFile('${h.file}','${h.title}')"><i class="fas fa-download"></i> Download</button>` : ''}
-                `;
+                            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:8px;">
+                                <span style="font-size:11px; font-weight:700; background:var(--primary-bg); padding:2px 10px; border-radius:12px;">${h.class}</span>
+                                <span style="font-size:11px; font-weight:600; color:var(--primary);">${h.subject}</span>
+                            </div>
+                            <h4 style="font-size:15px; font-weight:700;">${h.title}</h4>
+                            <p style="font-size:13px; color:var(--text-light); margin-top:4px;">${h.desc}</p>
+                            ${h.file ? `<button onclick="downloadFile('${h.file}','${h.title}')" class="btn btn-primary btn-sm" style="margin-top:8px;"><i class="fas fa-download"></i> Download</button>` : ''}
+                        `;
                 grid.appendChild(div);
             });
         }
@@ -2309,11 +2471,12 @@
             grid.innerHTML = '';
             DB.gallery.forEach(img => {
                 const div = document.createElement('div');
-                div.className = 'book-item';
+                div.className = 'card card-3d';
+                div.style.cssText = 'padding:8px; overflow:hidden;';
                 div.innerHTML = `
-                    <img src="${img.file}" style="width:100%; height:150px; object-fit:cover; border-radius:8px; margin-bottom:8px;" />
-                    <div class="book-title">${img.caption}</div>
-                `;
+                            <img src="${img.file}" style="width:100%; height:160px; object-fit:cover; border-radius:8px;" />
+                            <p style="font-size:13px; font-weight:600; text-align:center; padding:8px 0;">${img.caption}</p>
+                        `;
                 grid.appendChild(div);
             });
         }
@@ -2344,16 +2507,16 @@
                 const tr = document.createElement('tr');
                 const perc = ((s.obtained / s.total) * 100).toFixed(1);
                 tr.innerHTML = `
-                    <td style="padding:6px 12px;">${s.roll}</td>
-                    <td style="padding:6px 12px;">${s.name}</td>
-                    <td style="padding:6px 12px;">${s.obtained}</td>
-                    <td style="padding:6px 12px;">${s.total}</td>
-                    <td style="padding:6px 12px; font-weight:700; color:var(--primary);">${perc}%</td>
-                    <td style="padding:6px 12px;">
-                        <button onclick="editStudent('${s.class}',${s.roll})" class="btn btn-primary btn-sm">Edit</button>
-                        <button onclick="deleteStudent('${s.class}',${s.roll})" class="btn btn-danger btn-sm">Delete</button>
-                    </td>
-                `;
+                            <td style="padding:6px 12px;">${s.roll}</td>
+                            <td style="padding:6px 12px;">${s.name}</td>
+                            <td style="padding:6px 12px;">${s.obtained}</td>
+                            <td style="padding:6px 12px;">${s.total}</td>
+                            <td style="padding:6px 12px; font-weight:700; color:var(--primary);">${perc}%</td>
+                            <td style="padding:6px 12px;">
+                                <button onclick="editStudent('${s.class}',${s.roll})" class="btn btn-primary btn-sm">Edit</button>
+                                <button onclick="deleteStudent('${s.class}',${s.roll})" class="btn btn-danger btn-sm">Delete</button>
+                            </td>
+                        `;
                 tbody.appendChild(tr);
             });
         }
@@ -2372,15 +2535,15 @@
                 div.style.cssText =
                     'display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--gray); border-radius:8px;';
                 div.innerHTML = `
-                    <div>
-                        <strong>${h.subject}:</strong> ${h.title}
-                        <p style="font-size:12px; color:var(--text-light);">${h.desc}</p>
-                    </div>
-                    <div>
-                        <button onclick="editHomework('${h.id}')" class="btn btn-primary btn-sm">Edit</button>
-                        <button onclick="deleteHomework('${h.id}')" class="btn btn-danger btn-sm">Delete</button>
-                    </div>
-                `;
+                            <div>
+                                <strong>${h.subject}:</strong> ${h.title}
+                                <p style="font-size:12px; color:var(--text-light);">${h.desc}</p>
+                            </div>
+                            <div>
+                                <button onclick="editHomework('${h.id}')" class="btn btn-primary btn-sm">Edit</button>
+                                <button onclick="deleteHomework('${h.id}')" class="btn btn-danger btn-sm">Delete</button>
+                            </div>
+                        `;
                 container.appendChild(div);
             });
         }
@@ -2394,7 +2557,7 @@
                 renderAdminHomework();
                 renderAdminGallery();
                 renderAdminIncharges();
-                // Populate form fields
+                renderAdminSlider();
                 $('inputSchoolTime').value = DB.timings;
                 $('inputBreakTime').value = DB.breakTime;
                 $('aboutInput').value = DB.about;
@@ -2415,12 +2578,12 @@
                 div.style.cssText =
                     'display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--gray); border-radius:8px;';
                 div.innerHTML = `
-                    <div>
-                        <strong>${a.title}</strong>
-                        <p style="font-size:12px; color:var(--text-light);">${a.desc || ''}</p>
-                    </div>
-                    <button onclick="deleteAnnouncement('${a.id}')" class="btn btn-danger btn-sm">Delete</button>
-                `;
+                            <div>
+                                <strong>${a.title}</strong>
+                                <p style="font-size:12px; color:var(--text-light);">${a.desc || ''}</p>
+                            </div>
+                            <button onclick="deleteAnnouncement('${a.id}')" class="btn btn-danger btn-sm">Delete</button>
+                        `;
                 container.appendChild(div);
             });
         }
@@ -2433,15 +2596,15 @@
                 div.style.cssText =
                     'display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--gray); border-radius:8px;';
                 div.innerHTML = `
-                    <div>
-                        <span style="font-size:11px; font-weight:700; background:var(--primary-bg); padding:2px 8px; border-radius:12px;">${h.class}</span>
-                        <strong>${h.subject}:</strong> ${h.title}
-                    </div>
-                    <div>
-                        <button onclick="editAdminHomework('${h.id}')" class="btn btn-primary btn-sm">Edit</button>
-                        <button onclick="deleteAdminHomework('${h.id}')" class="btn btn-danger btn-sm">Delete</button>
-                    </div>
-                `;
+                            <div>
+                                <span style="font-size:11px; font-weight:700; background:var(--primary-bg); padding:2px 8px; border-radius:12px;">${h.class}</span>
+                                <strong>${h.subject}:</strong> ${h.title}
+                            </div>
+                            <div>
+                                <button onclick="editAdminHomework('${h.id}')" class="btn btn-primary btn-sm">Edit</button>
+                                <button onclick="deleteAdminHomework('${h.id}')" class="btn btn-danger btn-sm">Delete</button>
+                            </div>
+                        `;
                 container.appendChild(div);
             });
         }
@@ -2453,12 +2616,12 @@
                 const div = document.createElement('div');
                 div.style.cssText = 'border-radius:8px; overflow:hidden; background:var(--gray);';
                 div.innerHTML = `
-                    <img src="${img.file}" style="width:100%; height:100px; object-fit:cover;" />
-                    <div style="padding:4px 8px; display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-size:11px; font-weight:600;">${img.caption}</span>
-                        <button onclick="deleteGallery('${img.id}')" class="btn btn-danger btn-sm">×</button>
-                    </div>
-                `;
+                            <img src="${img.file}" style="width:100%; height:100px; object-fit:cover;" />
+                            <div style="padding:4px 8px; display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:11px; font-weight:600;">${img.caption}</span>
+                                <button onclick="deleteGallery('${img.id}')" class="btn btn-danger btn-sm">×</button>
+                            </div>
+                        `;
                 container.appendChild(div);
             });
         }
@@ -2472,9 +2635,31 @@
                 div.style.cssText =
                     'display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--gray); border-radius:8px;';
                 div.innerHTML = `
-                    <span><strong>${cls}:</strong> ${name}</span>
-                    <button onclick="removeIncharge('${cls}')" class="btn btn-danger btn-sm">Remove</button>
-                `;
+                            <span><strong>${cls}:</strong> ${name}</span>
+                            <button onclick="removeIncharge('${cls}')" class="btn btn-danger btn-sm">Remove</button>
+                        `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderAdminSlider() {
+            const container = $('adminSliderList');
+            container.innerHTML = '';
+            const slides = DB.slides.length > 0 ? DB.slides : [
+                { title: '🏫 Welcome to GES Bait Mughal', img: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80' },
+                { title: '📚 Quality Education for All', img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80' },
+                { title: '🌟 Empowering Young Minds', img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80' }
+            ];
+            slides.forEach((s, i) => {
+                const div = document.createElement('div');
+                div.style.cssText = 'border-radius:8px; overflow:hidden; background:var(--gray); position:relative;';
+                div.innerHTML = `
+                            <img src="${s.img}" style="width:100%; height:80px; object-fit:cover;" />
+                            <div style="padding:4px 8px; display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:10px; font-weight:600;">${s.title}</span>
+                                <button onclick="deleteSlide(${i})" class="btn btn-danger btn-sm">×</button>
+                            </div>
+                        `;
                 container.appendChild(div);
             });
         }
@@ -2513,11 +2698,9 @@
             const editRoll = $('editStudentRoll').value;
 
             if (editRoll) {
-                // Edit mode
                 DB.students = DB.students.filter(s => !(s.class === cls && s.roll === parseInt(editRoll)));
                 showToast('Student updated!', 'success');
             } else {
-                // Check duplicate
                 if (DB.students.some(s => s.class === cls && s.roll === roll)) {
                     showToast('Roll number already exists!', 'error');
                     return;
@@ -2533,7 +2716,7 @@
             $('studentSubmitBtn').textContent = 'Save Student';
             $('studentCancelBtn').style.display = 'none';
             $('studentFormTitle').textContent = 'Add Student Result';
-            saveToFirebase();
+            saveData();
             renderTeacherStudents();
             renderHome();
         }
@@ -2565,7 +2748,7 @@
         function deleteStudent(cls, roll) {
             if (confirm('Delete this student record?')) {
                 DB.students = DB.students.filter(s => !(s.class === cls && s.roll === roll));
-                saveToFirebase();
+                saveData();
                 renderTeacherStudents();
                 renderHome();
                 showToast('Student deleted', 'warning');
@@ -2581,14 +2764,6 @@
             const desc = $('hwDesc').value;
             const fileInput = $('hwFile');
 
-            if (id && !$('editHomeworkId').value) {
-                // New
-                if (DB.homework.some(h => h.id === id)) {
-                    showToast('Duplicate entry!', 'error');
-                    return;
-                }
-            }
-
             let file = '';
             if (fileInput.files[0]) {
                 const reader = new FileReader();
@@ -2598,7 +2773,6 @@
                 };
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
-                // Check if editing and keep existing file
                 const existing = DB.homework.find(h => h.id === id);
                 file = existing ? existing.file : '';
                 saveHomework(id, cls, subject, title, desc, file);
@@ -2606,10 +2780,9 @@
         }
 
         function saveHomework(id, cls, subject, title, desc, file) {
-            // Remove existing if editing
             DB.homework = DB.homework.filter(h => h.id !== id);
             DB.homework.push({ id, class: cls, subject, title, desc, file });
-            saveToFirebase();
+            saveData();
             $('hwSubject').value = '';
             $('hwTitle').value = '';
             $('hwDesc').value = '';
@@ -2647,7 +2820,7 @@
         function deleteHomework(id) {
             if (confirm('Delete this homework?')) {
                 DB.homework = DB.homework.filter(h => h.id !== id);
-                saveToFirebase();
+                saveData();
                 renderTeacherHomework();
                 renderHomework();
                 showToast('Homework deleted', 'warning');
@@ -2679,7 +2852,7 @@
             e.preventDefault();
             DB.timings = $('inputSchoolTime').value;
             DB.breakTime = $('inputBreakTime').value;
-            saveToFirebase();
+            saveData();
             renderHome();
             showToast('Timings updated!', 'success');
         }
@@ -2693,41 +2866,17 @@
             }
             const file = fileInput.files[0];
             if (file.size > 7 * 1024 * 1024) {
-                showToast('Video too large! Please use under 7MB or use YouTube URL.', 'error');
+                showToast('Video too large! Please use under 7MB.', 'error');
                 return;
             }
             const reader = new FileReader();
             reader.onload = function(e) {
                 DB.video = e.target.result;
-                DB.youtubeUrl = '';
-                saveToFirebase();
+                saveData();
                 renderHome();
                 showToast('Video uploaded successfully!', 'success');
             };
             reader.readAsDataURL(file);
-        }
-
-        function useYouTubeVideo() {
-            const url = prompt('Enter YouTube embed URL (e.g. https://www.youtube.com/embed/VIDEO_ID)');
-            if (url) {
-                DB.youtubeUrl = url;
-                DB.video = '';
-                saveToFirebase();
-                renderHome();
-                showToast('YouTube video set!', 'success');
-            }
-        }
-
-        function setYouTubeVideo() {
-            const url = $('youtubeUrl').value.trim();
-            if (url) {
-                DB.youtubeUrl = url;
-                DB.video = '';
-                saveToFirebase();
-                renderHome();
-                showToast('YouTube video set!', 'success');
-                $('youtubeUrl').value = '';
-            }
         }
 
         function addAnnouncement(e) {
@@ -2739,7 +2888,7 @@
             const id = Date.now().toString();
 
             DB.announcements.unshift({ id, title, desc, date, type });
-            saveToFirebase();
+            saveData();
             $('announceTitle').value = '';
             $('announceDesc').value = '';
             renderHome();
@@ -2750,7 +2899,7 @@
         function deleteAnnouncement(id) {
             if (confirm('Delete this announcement?')) {
                 DB.announcements = DB.announcements.filter(a => a.id !== id);
-                saveToFirebase();
+                saveData();
                 renderHome();
                 renderAdminAnnouncements();
                 showToast('Announcement deleted', 'warning');
@@ -2781,7 +2930,7 @@
         function saveAdminHomework(id, cls, subject, title, desc, file) {
             DB.homework = DB.homework.filter(h => h.id !== id);
             DB.homework.push({ id, class: cls, subject, title, desc, file });
-            saveToFirebase();
+            saveData();
             $('adminHwSubject').value = '';
             $('adminHwTitle').value = '';
             $('adminHwDesc').value = '';
@@ -2820,7 +2969,7 @@
         function deleteAdminHomework(id) {
             if (confirm('Delete this homework?')) {
                 DB.homework = DB.homework.filter(h => h.id !== id);
-                saveToFirebase();
+                saveData();
                 renderHomework();
                 renderAdminHomework();
                 showToast('Homework deleted', 'warning');
@@ -2836,7 +2985,7 @@
                 reader.onload = function(e) {
                     const id = Date.now().toString();
                     DB.gallery.push({ id, caption, file: e.target.result });
-                    saveToFirebase();
+                    saveData();
                     $('galleryCaption').value = '';
                     $('galleryFile').value = '';
                     renderGallery();
@@ -2850,7 +2999,7 @@
         function deleteGallery(id) {
             if (confirm('Delete this photo?')) {
                 DB.gallery = DB.gallery.filter(g => g.id !== id);
-                saveToFirebase();
+                saveData();
                 renderGallery();
                 renderAdminGallery();
                 showToast('Photo deleted', 'warning');
@@ -2862,7 +3011,7 @@
             const cls = $('inchargeClass').value;
             const name = $('inchargeName').value;
             DB.incharges[cls] = name;
-            saveToFirebase();
+            saveData();
             $('inchargeName').value = '';
             renderHome();
             renderAdminIncharges();
@@ -2872,7 +3021,7 @@
         function removeIncharge(cls) {
             if (confirm(`Remove incharge for ${cls}?`)) {
                 DB.incharges[cls] = 'Not Assigned';
-                saveToFirebase();
+                saveData();
                 renderHome();
                 renderAdminIncharges();
                 showToast('Incharge removed', 'warning');
@@ -2887,7 +3036,7 @@
                 return;
             }
             DB.adminPass = newPass;
-            saveToFirebase();
+            saveData();
             $('newAdminPass').value = '';
             showToast('Admin password updated!', 'success');
         }
@@ -2901,7 +3050,7 @@
                 return;
             }
             DB.teacherPins[cls] = pin;
-            saveToFirebase();
+            saveData();
             $('newTeacherPin').value = '';
             showToast(`PIN for ${cls} updated!`, 'success');
         }
@@ -2912,9 +3061,34 @@
             DB.headmaster = $('headmasterInput').value;
             DB.contact.address = $('contactAddress').value;
             DB.contact.phone = $('contactPhone').value;
-            saveToFirebase();
+            saveData();
             renderHome();
             showToast('About & Contact updated!', 'success');
+        }
+
+        function addSlide(e) {
+            e.preventDefault();
+            const title = $('slideTitle').value;
+            const img = $('slideImage').value;
+            if (title && img) {
+                DB.slides.push({ title, img });
+                saveData();
+                $('slideTitle').value = '';
+                $('slideImage').value = '';
+                renderHome();
+                renderAdminSlider();
+                showToast('Slide added!', 'success');
+            }
+        }
+
+        function deleteSlide(index) {
+            if (confirm('Delete this slide?')) {
+                DB.slides.splice(index, 1);
+                saveData();
+                renderHome();
+                renderAdminSlider();
+                showToast('Slide deleted', 'warning');
+            }
         }
 
         function scrollToSection(id) {
@@ -2944,6 +3118,9 @@
             $('resTotal').textContent = student.total;
             $('resObtained').textContent = student.obtained;
             $('resPercentage').textContent = ((student.obtained / student.total) * 100).toFixed(1) + '%';
+            $('resSubjects').innerHTML = `
+                        <tr><td>Total</td><td>${student.obtained} / ${student.total}</td></tr>
+                    `;
             $('resultDisplay').style.display = 'block';
             showToast('Result found!', 'success');
         }
@@ -2960,6 +3137,104 @@
             html2pdf().set(opt).from(element).save();
         }
 
+        // ================================================================
+        // STUDENT REPORT CARD
+        // ================================================================
+        function studentLogin(e) {
+            e.preventDefault();
+            const cls = $('studentLoginClass').value;
+            const roll = parseInt($('studentLoginRoll').value);
+            const student = DB.students.find(s => s.class === cls && s.roll === roll);
+
+            if (!student) {
+                showToast('No student found!', 'error');
+                $('studentReportCard').style.display = 'none';
+                return;
+            }
+
+            $('rcClass').textContent = student.class;
+            $('rcRoll').textContent = student.roll;
+            $('rcName').textContent = student.name;
+            $('rcIncharge').textContent = DB.incharges[student.class] || 'Not Assigned';
+            $('rcTotal').textContent = student.total;
+            $('rcObtained').textContent = student.obtained;
+            $('rcPercentage').textContent = ((student.obtained / student.total) * 100).toFixed(1) + '%';
+            $('rcSubjects').innerHTML = `
+                        <tr><td>Total</td><td>${student.obtained} / ${student.total}</td></tr>
+                    `;
+            $('studentReportCard').style.display = 'block';
+            $('studentLogin').style.display = 'none';
+            showToast('Welcome ' + student.name + '!', 'success');
+        }
+
+        function downloadReportCard() {
+            const element = $('reportCardContent');
+            const opt = {
+                margin: 0.4,
+                filename: 'Report_Card.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // ================================================================
+        // DOWNLOAD ALL RESULTS (Headmaster)
+        // ================================================================
+        function downloadAllResults() {
+            if (DB.students.length === 0) {
+                showToast('No student records to download!', 'warning');
+                return;
+            }
+
+            const container = document.createElement('div');
+            container.style.cssText = 'padding:30px; background:white; max-width:1200px; margin:auto;';
+            container.innerHTML = `
+                        <div style="text-align:center; margin-bottom:20px;">
+                            <h2 style="font-size:24px; color:#065f46;">GES BAIT MUGHAL</h2>
+                            <p style="font-size:14px; color:#475569;">Complete Student Results Report</p>
+                            <p style="font-size:12px; color:#94a3b8;">Generated on ${new Date().toLocaleDateString()}</p>
+                        </div>
+                        <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                            <thead>
+                                <tr style="background:#f1f5f9;">
+                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Class</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Roll</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Name</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Obtained</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Total</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Percentage</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Incharge</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${DB.students.map(s => `
+                                    <tr>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.class}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.roll}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.name}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.obtained}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.total}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px; font-weight:700; color:#065f46;">${((s.obtained/s.total)*100).toFixed(1)}%</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${DB.incharges[s.class] || 'N/A'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+
+            const opt = {
+                margin: 0.4,
+                filename: 'All_Students_Results.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+            };
+            html2pdf().set(opt).from(container).save();
+            showToast('Downloading all results...', 'success');
+        }
+
         function downloadFile(data, name) {
             const link = document.createElement('a');
             link.href = data;
@@ -2970,15 +3245,14 @@
         // ================================================================
         // INIT
         // ================================================================
-        loadFromFirebase();
+        loadData();
         $('footerYear').textContent = new Date().getFullYear();
         $('announceDate').value = new Date().toISOString().split('T')[0];
 
-        // Auto-login demo (remove for production)
-        console.log('🔑 Demo Credentials:');
-        console.log('  Admin Password: head123');
-        console.log('  Teacher PIN: 1234 (all classes)');
-        console.log('  Student Search: Class 1, Roll 101');
+        console.log('🎓 GES Bait Mughal - VIP School Management System');
+        console.log('🔑 Admin Password: admin123');
+        console.log('🔑 Teacher PIN: 1234 (all classes)');
+        console.log('📚 Sample Student: Class 1, Roll 101');
     </script>
 
 </body>
