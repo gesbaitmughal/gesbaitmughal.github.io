@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GES Bait Mughal · VIP School</title>
+    <title>GES Bait Mughal · Official School</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23047857'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='white'%3E%F0%9F%8E%93%3C/text%3E%3C/svg%3E" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -68,6 +68,56 @@
             line-height: 1.6;
             transition: background 0.3s, color 0.3s;
             min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ================================================================
+                   FLOATING 3D SHAPES BACKGROUND
+                ================================================================ */
+        .bg-shapes {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-shapes .shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.04;
+            animation: floatShape 20s ease-in-out infinite;
+        }
+
+        .bg-shapes .shape:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            top: -50px;
+            right: -50px;
+            animation-delay: 0s;
+        }
+        .bg-shapes .shape:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            background: var(--gold);
+            bottom: -30px;
+            left: -30px;
+            animation-delay: -5s;
+        }
+        .bg-shapes .shape:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            background: #3b82f6;
+            top: 50%;
+            left: 50%;
+            animation-delay: -10s;
+        }
+
+        @keyframes floatShape {
+            0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            33% { transform: translate(30px, -30px) scale(1.1) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) scale(0.9) rotate(240deg); }
         }
 
         /* ================================================================
@@ -79,7 +129,7 @@
         ::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
 
         /* ================================================================
-                   GLASSMORPHISM
+                   GLASSMORPHISM + 3D
                 ================================================================ */
         .glass {
             background: rgba(255, 255, 255, 0.7);
@@ -93,18 +143,27 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* ================================================================
-                   3D HOVER EFFECTS
-                ================================================================ */
         .card-3d {
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease;
             transform-style: preserve-3d;
             perspective: 800px;
         }
 
         .card-3d:hover {
-            transform: translateY(-6px) rotateX(2deg) rotateY(2deg) scale(1.01);
+            transform: translateY(-8px) rotateX(3deg) rotateY(3deg) scale(1.02);
             box-shadow: var(--shadow-xl);
+        }
+
+        /* ================================================================
+                   GLOW ANIMATION
+                ================================================================ */
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(15, 94, 58, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(15, 94, 58, 0.5), 0 0 60px rgba(245, 166, 35, 0.2); }
+        }
+
+        .glow {
+            animation: glow 3s ease-in-out infinite;
         }
 
         /* ================================================================
@@ -115,6 +174,8 @@
             color: rgba(255, 255, 255, 0.85);
             padding: 6px 0;
             font-size: 12px;
+            position: relative;
+            z-index: 10;
         }
 
         .top-bar .container {
@@ -169,6 +230,7 @@
             padding: 28px 20px 24px;
             position: relative;
             overflow: hidden;
+            z-index: 1;
         }
 
         .banner::before {
@@ -178,7 +240,7 @@
             right: -20%;
             width: 500px;
             height: 500px;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 50%;
             animation: floatBanner 20s ease-in-out infinite;
         }
@@ -529,12 +591,55 @@
         }
 
         /* ================================================================
+                   VIDEO WRAPPER
+                ================================================================ */
+        .video-wrapper {
+            border-radius: 12px;
+            overflow: hidden;
+            background: #0a0a0a;
+            position: relative;
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            display: block;
+            aspect-ratio: 16/9;
+        }
+
+        .video-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 16px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 12px;
+        }
+
+        .video-controls button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 3px 14px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: var(--transition);
+        }
+
+        .video-controls button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ================================================================
                    MAIN CONTENT
                 ================================================================ */
         .main-content {
             max-width: 1280px;
             margin: 0 auto;
             padding: 24px 20px;
+            position: relative;
+            z-index: 1;
         }
 
         .tab-content {
@@ -605,24 +710,6 @@
 
         .card-header h3 i {
             color: var(--primary);
-        }
-
-        /* ================================================================
-                   GRID
-                ================================================================ */
-        .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-
-        @media (max-width: 1024px) {
-            .grid-2 { grid-template-columns: 1fr; }
-            .grid-3 { grid-template-columns: 1fr 1fr; }
-            .grid-4 { grid-template-columns: 1fr 1fr; }
-        }
-
-        @media (max-width: 640px) {
-            .grid-3 { grid-template-columns: 1fr; }
-            .grid-4 { grid-template-columns: 1fr; }
         }
 
         /* ================================================================
@@ -1270,48 +1357,29 @@
         }
 
         /* ================================================================
-                   VIDEO WRAPPER
+                   3D ROTATE ON HOVER FOR SPECIFIC ELEMENTS
                 ================================================================ */
-        .video-wrapper {
-            border-radius: 12px;
-            overflow: hidden;
-            background: #0a0a0a;
-            position: relative;
+        .rotate-3d {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            perspective: 600px;
         }
 
-        .video-wrapper video {
-            width: 100%;
-            display: block;
-            aspect-ratio: 16/9;
-        }
-
-        .video-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 16px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            font-size: 12px;
-        }
-
-        .video-controls button {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: white;
-            padding: 3px 14px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-size: 11px;
-            transition: var(--transition);
-        }
-
-        .video-controls button:hover {
-            background: rgba(255, 255, 255, 0.2);
+        .rotate-3d:hover {
+            transform: rotateY(8deg) rotateX(4deg) scale(1.02);
         }
     </style>
 </head>
 <body>
+
+    <!-- ================================================================
+    FLOATING 3D SHAPES BACKGROUND
+    ================================================================ -->
+    <div class="bg-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
 
     <!-- ================================================================
     TOP BAR
@@ -1359,7 +1427,7 @@
                 </div>
             </div>
             <div class="banner-right">
-                <span class="banner-badge"><i class="fas fa-crown"></i> VIP Campus</span>
+                <span class="banner-badge"><i class="fas fa-star"></i> Smart Campus</span>
                 <span class="banner-badge"><i class="fas fa-graduation-cap"></i> Free Education</span>
             </div>
         </div>
@@ -1444,8 +1512,8 @@
             </div>
 
             <!-- About + Timings -->
-            <div class="grid-2" style="margin-top:24px;">
-                <div class="card card-3d">
+            <div class="grid-2" style="display:grid; grid-template-columns:2fr 1fr; gap:24px; margin-top:24px;">
+                <div class="card card-3d rotate-3d">
                     <div class="card-header">
                         <h3><i class="fas fa-info-circle"></i> About School</h3>
                     </div>
@@ -1462,7 +1530,7 @@
                     </div>
                 </div>
 
-                <div class="card card-3d">
+                <div class="card card-3d rotate-3d">
                     <div class="card-header">
                         <h3><i class="fas fa-clock"></i> School Timings</h3>
                     </div>
@@ -1486,15 +1554,15 @@
             </div>
 
             <!-- Announcements + Incharges -->
-            <div class="grid-2" style="margin-top:24px;">
-                <div class="card card-3d">
+            <div style="display:grid; grid-template-columns:2fr 1fr; gap:24px; margin-top:24px;">
+                <div class="card card-3d rotate-3d">
                     <div class="card-header">
                         <h3><i class="fas fa-bullhorn"></i> Announcements</h3>
                     </div>
                     <div id="announcementList"></div>
                 </div>
 
-                <div class="card card-3d">
+                <div class="card card-3d rotate-3d">
                     <div class="card-header">
                         <h3><i class="fas fa-chalkboard-user"></i> Class Incharges</h3>
                     </div>
@@ -1503,17 +1571,18 @@
             </div>
 
             <!-- Video Section -->
-            <div class="card card-3d" style="margin-top:24px;">
+            <div class="card card-3d rotate-3d" style="margin-top:24px;">
                 <div class="card-header">
                     <h3><i class="fas fa-play-circle"></i> School Tour Video</h3>
-                    <span style="font-size:11px; color:var(--text-light);" id="videoStatus">Video</span>
+                    <span style="font-size:11px; color:var(--text-light);" id="videoStatus">▶️ Playing</span>
                 </div>
                 <div class="video-wrapper">
-                    <video id="schoolVideo" controls playsinline preload="metadata">
+                    <video id="schoolVideo" controls playsinline preload="auto" muted>
                         <source src="" type="video/mp4" />
+                        Your browser does not support the video tag.
                     </video>
                     <div class="video-controls">
-                        <span><i class="fas fa-volume-mute" id="volumeIcon"></i> <span id="volumeText">Tap for sound</span></span>
+                        <span><i class="fas fa-volume-up" id="volumeIcon"></i> <span id="volumeText">Click to unmute</span></span>
                         <button onclick="toggleFullscreen()"><i class="fas fa-expand"></i> Full Screen</button>
                     </div>
                 </div>
@@ -1525,7 +1594,7 @@
         RESULTS TAB
         ============================================================ -->
         <section id="tab-results" class="tab-content">
-            <div class="card card-3d" style="max-width:600px; margin:0 auto;">
+            <div class="card card-3d rotate-3d" style="max-width:600px; margin:0 auto;">
                 <div class="card-header">
                     <h3><i class="fas fa-search"></i> Search Student Result</h3>
                 </div>
@@ -1584,7 +1653,7 @@
         REPORT CARD TAB
         ============================================================ -->
         <section id="tab-report-card" class="tab-content">
-            <div id="studentLogin" class="card card-3d" style="max-width:420px; margin:0 auto;">
+            <div id="studentLogin" class="card card-3d rotate-3d" style="max-width:420px; margin:0 auto;">
                 <div style="text-align:center; margin-bottom:20px;">
                     <div style="width:60px; height:60px; background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; color:white; font-size:28px;">
                         <i class="fas fa-user-graduate"></i>
@@ -1647,7 +1716,7 @@
         HOMEWORK TAB
         ============================================================ -->
         <section id="tab-homework" class="tab-content">
-            <div class="card card-3d">
+            <div class="card card-3d rotate-3d">
                 <div class="card-header">
                     <h3><i class="fas fa-book-open"></i> Vacation Homework</h3>
                     <div style="display:flex; gap:8px; align-items:center;">
@@ -1673,7 +1742,7 @@
         GALLERY TAB
         ============================================================ -->
         <section id="tab-gallery" class="tab-content">
-            <div class="card card-3d">
+            <div class="card card-3d rotate-3d">
                 <div class="card-header">
                     <h3><i class="fas fa-images"></i> Photo Gallery</h3>
                 </div>
@@ -1685,7 +1754,7 @@
         TEACHER TAB
         ============================================================ -->
         <section id="tab-teacher" class="tab-content">
-            <div id="teacherLogin" class="card card-3d" style="max-width:420px; margin:0 auto;">
+            <div id="teacherLogin" class="card card-3d rotate-3d" style="max-width:420px; margin:0 auto;">
                 <div style="text-align:center; margin-bottom:20px;">
                     <div style="width:60px; height:60px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; color:white; font-size:28px;">
                         <i class="fas fa-user-tie"></i>
@@ -1716,7 +1785,7 @@
             </div>
 
             <div id="teacherDashboard" style="display:none;">
-                <div class="card card-3d" style="margin-bottom:20px;">
+                <div class="card card-3d rotate-3d" style="margin-bottom:20px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                         <div>
                             <h3 style="font-size:18px; font-weight:800;"><i class="fas fa-chalkboard-user" style="color:var(--primary);"></i> <span id="teacherClassName">Class</span> Portal</h3>
@@ -1727,7 +1796,7 @@
                 </div>
 
                 <!-- Add Student -->
-                <div class="card card-3d" style="margin-bottom:20px;">
+                <div class="card card-3d rotate-3d" style="margin-bottom:20px;">
                     <div class="card-header">
                         <h3><i class="fas fa-user-plus"></i> <span id="studentFormTitle">Add Student Result</span></h3>
                     </div>
@@ -1757,7 +1826,7 @@
                 </div>
 
                 <!-- Student List -->
-                <div class="card card-3d" style="margin-bottom:20px;">
+                <div class="card card-3d rotate-3d" style="margin-bottom:20px;">
                     <div class="card-header">
                         <h3><i class="fas fa-users"></i> Class Students</h3>
                         <span style="font-size:12px; background:var(--gray); padding:2px 12px; border-radius:40px;" id="studentCount">0 students</span>
@@ -1780,7 +1849,7 @@
                 </div>
 
                 <!-- Homework -->
-                <div class="card card-3d">
+                <div class="card card-3d rotate-3d">
                     <div class="card-header">
                         <h3><i class="fas fa-book-open"></i> Add Homework</h3>
                     </div>
@@ -1816,7 +1885,7 @@
         ADMIN TAB
         ============================================================ -->
         <section id="tab-admin" class="tab-content">
-            <div id="adminLogin" class="card card-3d" style="max-width:420px; margin:0 auto;">
+            <div id="adminLogin" class="card card-3d rotate-3d" style="max-width:420px; margin:0 auto;">
                 <div style="text-align:center; margin-bottom:20px;">
                     <div style="width:60px; height:60px; background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; color:white; font-size:28px;">
                         <i class="fas fa-user-gear"></i>
@@ -1834,7 +1903,7 @@
             </div>
 
             <div id="adminDashboard" style="display:none;">
-                <div class="card card-3d" style="margin-bottom:20px;">
+                <div class="card card-3d rotate-3d" style="margin-bottom:20px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                         <div>
                             <h3 style="font-size:18px; font-weight:800;"><i class="fas fa-crown" style="color:var(--gold);"></i> Headmaster Control Panel</h3>
@@ -1859,7 +1928,7 @@
                 </div>
 
                 <!-- Slider -->
-                <div class="card card-3d" style="margin-bottom:20px;" id="adminSlider">
+                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminSlider">
                     <div class="card-header"><h3><i class="fas fa-images"></i> Hero Slider Control</h3></div>
                     <form onsubmit="addSlide(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
@@ -1878,7 +1947,7 @@
                 </div>
 
                 <!-- Timings -->
-                <div class="card card-3d" style="margin-bottom:20px;" id="adminTimings">
+                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminTimings">
                     <div class="card-header"><h3><i class="fas fa-clock"></i> School Timings</h3></div>
                     <form onsubmit="updateTimings(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                         <div class="form-group" style="margin:0;">
@@ -1896,7 +1965,7 @@
                 </div>
 
                 <!-- Video -->
-                <div class="card card-3d" style="margin-bottom:20px;" id="adminVideo">
+                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminVideo">
                     <div class="card-header"><h3><i class="fas fa-video"></i> School Video</h3></div>
                     <form onsubmit="uploadVideo(event)" style="display:grid; gap:12px;">
                         <div class="form-group" style="margin:0;">
@@ -1908,7 +1977,7 @@
                 </div>
 
                 <!-- Announcements -->
-                <div class="card card-3d" style="margin-bottom:20px;" id="adminAnnouncements">
+                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminAnnouncements">
                     <div class="card-header"><h3><i class="fas fa-bullhorn"></i> Add Announcement</h3></div>
                     <form onsubmit="addAnnouncement(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
@@ -1939,7 +2008,7 @@
                 </div>
 
                 <!-- Homework Admin -->
-                <div class="card card-3d" style="margin-bottom:20px;" id="adminHomework">
+                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminHomework">
                     <div class="card-header"><h3><i class="fas fa-book-open"></i> Manage Homework</h3></div>
                     <form onsubmit="adminAddHomework(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                         <input type="hidden" id="adminEditHwId" />
@@ -1981,7 +2050,7 @@
                 </div>
 
                 <!-- Gallery -->
-                <div class="card card-3d" style="margin-bottom:20px;" id="adminGallery">
+                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminGallery">
                     <div class="card-header"><h3><i class="fas fa-images"></i> Manage Gallery</h3></div>
                     <form onsubmit="adminAddGallery(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
@@ -2000,7 +2069,7 @@
                 </div>
 
                 <!-- Incharges -->
-                <div class="card card-3d" style="margin-bottom:20px;" id="adminIncharges">
+                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminIncharges">
                     <div class="card-header"><h3><i class="fas fa-chalkboard-user"></i> Assign Class Incharges</h3></div>
                     <form onsubmit="assignIncharge(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                         <div class="form-group" style="margin:0;">
@@ -2028,7 +2097,7 @@
                 </div>
 
                 <!-- Security -->
-                <div class="card card-3d" style="margin-bottom:20px;" id="adminSecurity">
+                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminSecurity">
                     <div class="card-header"><h3><i class="fas fa-key"></i> Security Settings</h3></div>
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
                         <div>
@@ -2059,7 +2128,7 @@
                 </div>
 
                 <!-- About -->
-                <div class="card card-3d" style="margin-bottom:20px;" id="adminAbout">
+                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminAbout">
                     <div class="card-header"><h3><i class="fas fa-info-circle"></i> About School & Contact</h3></div>
                     <form onsubmit="updateAbout(event)" style="display:grid; gap:12px;">
                         <div class="form-group" style="margin:0;">
@@ -2127,7 +2196,7 @@
         </div>
         <div class="footer-bottom">
             <span>&copy; <span id="footerYear">2026</span> GES Bait Mughal. All Rights Reserved.</span>
-            <span><i class="fas fa-shield-alt"></i> VIP School v6.0</span>
+            <span><i class="fas fa-shield-alt"></i> Smart School v7.0</span>
         </div>
     </footer>
 
@@ -2389,11 +2458,22 @@
             if (DB.video) {
                 video.src = DB.video;
                 video.load();
-                video.play().catch(() => {});
-                $('videoStatus').textContent = '📹 Uploaded Video';
+                // Try to play with sound, fallback to muted
+                video.muted = false;
+                video.play().then(() => {
+                    $('videoStatus').textContent = '▶️ Playing with sound';
+                    $('volumeText').textContent = 'Sound on';
+                    $('volumeIcon').className = 'fas fa-volume-up';
+                }).catch(() => {
+                    video.muted = true;
+                    video.play();
+                    $('videoStatus').textContent = '🔇 Muted (click to unmute)';
+                    $('volumeText').textContent = 'Click to unmute';
+                    $('volumeIcon').className = 'fas fa-volume-mute';
+                });
             } else {
                 video.src = '';
-                $('videoStatus').textContent = '🎬 No video uploaded';
+                $('videoStatus').textContent = '📹 No video uploaded';
             }
 
             // Announcements
@@ -2451,7 +2531,7 @@
 
             list.forEach(h => {
                 const div = document.createElement('div');
-                div.className = 'card card-3d';
+                div.className = 'card card-3d rotate-3d';
                 div.style.cssText = 'padding:16px;';
                 div.innerHTML = `
                             <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:8px;">
@@ -2471,7 +2551,7 @@
             grid.innerHTML = '';
             DB.gallery.forEach(img => {
                 const div = document.createElement('div');
-                div.className = 'card card-3d';
+                div.className = 'card card-3d rotate-3d';
                 div.style.cssText = 'padding:8px; overflow:hidden;';
                 div.innerHTML = `
                             <img src="${img.file}" style="width:100%; height:160px; object-fit:cover; border-radius:8px;" />
