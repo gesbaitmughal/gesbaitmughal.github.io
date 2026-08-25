@@ -669,7 +669,7 @@
         }
 
         /* ================================================================
-                   STATS - 2x2 Grid (Proper)
+                   STATS - 2x2 Grid
                 ================================================================ */
         .stats-grid {
             display: grid;
@@ -687,10 +687,21 @@
             transition: var(--transition);
             cursor: default;
             width: 100%;
+            animation: statFloat 3s ease-in-out infinite;
+        }
+
+        .stat-box:nth-child(1) { animation-delay: 0s; }
+        .stat-box:nth-child(2) { animation-delay: 0.5s; }
+        .stat-box:nth-child(3) { animation-delay: 1s; }
+        .stat-box:nth-child(4) { animation-delay: 1.5s; }
+
+        @keyframes statFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
         .stat-box:hover {
-            transform: translateY(-6px) scale(1.02);
+            transform: translateY(-8px) scale(1.02);
             box-shadow: var(--shadow-lg);
         }
 
@@ -771,33 +782,6 @@
         }
 
         /* ================================================================
-                   MAIN CONTENT
-                ================================================================ */
-        .main-content {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: clamp(10px, 1.5vw, 24px) clamp(8px, 1.2vw, 20px);
-            position: relative;
-            z-index: 1;
-            width: 100%;
-        }
-
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.5s ease;
-            width: 100%;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(16px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ================================================================
                    CARDS
                 ================================================================ */
         .card {
@@ -867,6 +851,16 @@
 
         @media (min-width: 640px) {
             .grid-2 { grid-template-columns: 2fr 1fr; }
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(10px, 1.5vw, 16px);
+        }
+
+        @media (min-width: 640px) {
+            .grid-3 { grid-template-columns: repeat(3, 1fr); }
         }
 
         /* ================================================================
@@ -1283,72 +1277,6 @@
         }
 
         /* ================================================================
-                   MODAL
-                ================================================================ */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(6px);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            padding: 16px;
-        }
-
-        .modal-overlay.open {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            border-radius: var(--radius-lg);
-            max-width: 500px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: clamp(16px, 2.5vw, 28px);
-            box-shadow: var(--shadow-xl);
-            animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.9) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: clamp(10px, 1.2vw, 16px);
-            padding-bottom: clamp(8px, 1vw, 12px);
-            border-bottom: 2px solid var(--border);
-        }
-
-        .modal-header h2 {
-            font-size: clamp(16px, 1.8vw, 20px);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: clamp(18px, 2vw, 24px);
-            color: var(--text-light);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .modal-close:hover {
-            color: #dc2626;
-            transform: rotate(90deg);
-        }
-
-        /* ================================================================
                    FOOTER
                 ================================================================ */
         .footer {
@@ -1492,6 +1420,7 @@
             .report-card { padding: 10px; }
             .incharge-grid { grid-template-columns: 1fr; }
             .grid-2 { grid-template-columns: 1fr; }
+            .grid-3 { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 360px) {
@@ -1633,7 +1562,7 @@
                 <div class="dots" id="sliderDots"></div>
             </div>
 
-            <!-- Stats - 2x2 Grid (Properly Responsive) -->
+            <!-- Stats - 2x2 Grid -->
             <div class="stats-grid">
                 <div class="stat-box">
                     <i class="fas fa-user-graduate"></i>
@@ -2042,7 +1971,7 @@
         </section>
 
         <!-- ============================================================
-        ADMIN TAB
+        ADMIN TAB (Headmaster)
         ============================================================ -->
         <section id="tab-admin" class="tab-content">
             <div id="adminLogin" class="card" style="max-width:380px; margin:0 auto;">
@@ -2063,11 +1992,12 @@
             </div>
 
             <div id="adminDashboard" style="display:none;">
+                <!-- Dashboard Header -->
                 <div class="card" style="margin-bottom:12px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                         <div>
-                            <h3 style="font-size:clamp(14px, 1.6vw, 18px); font-weight:800;"><i class="fas fa-crown" style="color:var(--gold);"></i> Headmaster Control</h3>
-                            <p style="font-size:clamp(10px, 1vw, 13px); color:var(--text-light);">Manage everything</p>
+                            <h3 style="font-size:clamp(14px, 1.6vw, 18px); font-weight:800;"><i class="fas fa-crown" style="color:var(--gold);"></i> Headmaster Control Panel</h3>
+                            <p style="font-size:clamp(10px, 1vw, 13px); color:var(--text-light);">Complete School Management</p>
                         </div>
                         <button onclick="adminLogout()" class="btn btn-danger btn-sm">Logout</button>
                     </div>
@@ -2104,25 +2034,65 @@
                     <button onclick="scrollToSection('adminIncharges')" class="btn btn-primary btn-sm" style="justify-content:center;">👨‍🏫 Incharges</button>
                     <button onclick="scrollToSection('adminSecurity')" class="btn btn-primary btn-sm" style="justify-content:center;">🔐 Security</button>
                     <button onclick="scrollToSection('adminAbout')" class="btn btn-primary btn-sm" style="justify-content:center;">📝 About</button>
-                    <button onclick="downloadAllResults()" class="btn btn-gold btn-sm" style="justify-content:center;">📊 All Results</button>
+                    <button onclick="scrollToSection('adminReport')" class="btn btn-gold btn-sm" style="justify-content:center;">📊 Result Report</button>
+                    <button onclick="downloadAllResults()" class="btn btn-gold btn-sm" style="justify-content:center;">📥 All Results</button>
                     <button onclick="bulkImportStudents()" class="btn btn-primary btn-sm" style="justify-content:center;">📥 Bulk Import</button>
-                    <button onclick="exportClassReport()" class="btn btn-gold btn-sm" style="justify-content:center;">📤 Class Report</button>
+                </div>
+
+                <!-- Result Report Section -->
+                <div class="card" style="margin-bottom:12px;" id="adminReport">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-bar"></i> Student Result Report</h3>
+                        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                            <select id="reportClassFilter" style="padding:4px 10px; border:2px solid var(--border); border-radius:6px; font-size:clamp(9px, 0.9vw, 12px); background:var(--bg); color:var(--text);">
+                                <option value="ALL">All Classes</option>
+                                <option value="Class 1">Class 1</option>
+                                <option value="Class 2">Class 2</option>
+                                <option value="Class 3">Class 3</option>
+                                <option value="Class 4">Class 4</option>
+                                <option value="Class 5">Class 5</option>
+                                <option value="Class 6">Class 6</option>
+                                <option value="Class 7">Class 7</option>
+                                <option value="Class 8">Class 8</option>
+                            </select>
+                            <button onclick="renderResultReport()" class="btn btn-primary btn-sm">View Report</button>
+                            <button onclick="downloadResultReport()" class="btn btn-gold btn-sm"><i class="fas fa-file-pdf"></i> PDF</button>
+                        </div>
+                    </div>
+                    <div id="resultReportContainer" style="overflow-x:auto; max-height:400px; overflow-y:auto;">
+                        <table style="width:100%; font-size:clamp(10px, 1vw, 13px); border-collapse:collapse;">
+                            <thead style="background:var(--gray); position:sticky; top:0; z-index:5;">
+                                <tr>
+                                    <th style="padding:6px 10px; text-align:left;">#</th>
+                                    <th style="padding:6px 10px; text-align:left;">Class</th>
+                                    <th style="padding:6px 10px; text-align:left;">Roll</th>
+                                    <th style="padding:6px 10px; text-align:left;">Student</th>
+                                    <th style="padding:6px 10px; text-align:left;">Obtained</th>
+                                    <th style="padding:6px 10px; text-align:left;">Total</th>
+                                    <th style="padding:6px 10px; text-align:left;">%</th>
+                                    <th style="padding:6px 10px; text-align:left;">Grade</th>
+                                    <th style="padding:6px 10px; text-align:left;">Incharge</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- Slider -->
                 <div class="card" style="margin-bottom:12px;" id="adminSlider">
-                    <div class="card-header"><h3><i class="fas fa-images"></i> Slider Control</h3></div>
-                    <form onsubmit="addSlide(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <div class="card-header"><h3><i class="fas fa-images"></i> Slider Control (Upload Images)</h3></div>
+                    <form onsubmit="addSlideImage(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
                             <label>Slide Title</label>
                             <input type="text" id="slideTitle" placeholder="Slide caption" required />
                         </div>
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
-                            <label>Image URL</label>
-                            <input type="text" id="slideImage" placeholder="https://example.com/image.jpg" required />
+                            <label>Upload Image</label>
+                            <input type="file" id="slideImageFile" accept="image/*" required />
                         </div>
                         <div style="grid-column:1/-1;">
-                            <button type="submit" class="btn btn-primary btn-sm">Add Slide</button>
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-upload"></i> Upload Slide</button>
                         </div>
                     </form>
                     <div id="adminSliderList" style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;"></div>
@@ -2378,7 +2348,7 @@
         </div>
         <div class="footer-bottom">
             <span>&copy; <span id="footerYear">2026</span> GES Bait Mughal</span>
-            <span><i class="fas fa-shield-alt"></i> Smart School v10.0</span>
+            <span><i class="fas fa-shield-alt"></i> Smart School v11.0</span>
         </div>
     </footer>
 
@@ -2395,7 +2365,7 @@
     </button>
 
     <!-- ================================================================
-    JAVASCRIPT (Full functionality)
+    JAVASCRIPT
     ================================================================ -->
     <script>
         // ================================================================
@@ -2836,6 +2806,7 @@
                 $('headmasterInput').value = DB.headmaster;
                 $('contactAddress').value = DB.contact.address || '';
                 $('contactPhone').value = DB.contact.phone || '';
+                renderResultReport();
             } else {
                 $('adminLogin').style.display = 'block';
                 $('adminDashboard').style.display = 'none';
@@ -2848,6 +2819,127 @@
             $('aStatTeachers').textContent = teachers.size;
             $('aStatHomework').textContent = DB.homework.length;
             $('aStatAnnounce').textContent = DB.announcements.length;
+        }
+
+        // ================================================================
+        // RESULT REPORT (HEAD)
+        // ================================================================
+        function renderResultReport() {
+            const filter = $('reportClassFilter').value;
+            let students = DB.students;
+            if (filter !== 'ALL') {
+                students = students.filter(s => s.class === filter);
+            }
+
+            const tbody = $('reportTableBody');
+            tbody.innerHTML = '';
+
+            if (students.length === 0) {
+                tbody.innerHTML =
+                    '<tr><td colspan="9" style="text-align:center; padding:20px; color:var(--text-light);">No student records found.</td></tr>';
+                return;
+            }
+
+            // Sort by class then roll
+            students.sort((a, b) => {
+                if (a.class !== b.class) return a.class.localeCompare(b.class);
+                return a.roll - b.roll;
+            });
+
+            students.forEach((s, index) => {
+                const perc = ((s.obtained / s.total) * 100);
+                const percFixed = perc.toFixed(1);
+                let grade = '';
+                if (perc >= 90) grade = 'A+';
+                else if (perc >= 80) grade = 'A';
+                else if (perc >= 70) grade = 'B';
+                else if (perc >= 60) grade = 'C';
+                else if (perc >= 50) grade = 'D';
+                else grade = 'F';
+
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = '1px solid var(--border)';
+                tr.innerHTML = `
+                            <td style="padding:6px 10px;">${index + 1}</td>
+                            <td style="padding:6px 10px; font-weight:600;">${s.class}</td>
+                            <td style="padding:6px 10px;">${s.roll}</td>
+                            <td style="padding:6px 10px; font-weight:500;">${s.name}</td>
+                            <td style="padding:6px 10px; font-weight:700; color:var(--primary);">${s.obtained}</td>
+                            <td style="padding:6px 10px;">${s.total}</td>
+                            <td style="padding:6px 10px; font-weight:700; color:var(--gold);">${percFixed}%</td>
+                            <td style="padding:6px 10px; font-weight:700; color:${perc >= 70 ? 'var(--primary)' : '#dc2626'};">${grade}</td>
+                            <td style="padding:6px 10px;">${DB.incharges[s.class] || 'Not Assigned'}</td>
+                        `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function downloadResultReport() {
+            const filter = $('reportClassFilter').value;
+            let students = DB.students;
+            if (filter !== 'ALL') {
+                students = students.filter(s => s.class === filter);
+            }
+
+            if (students.length === 0) {
+                showToast('No students to export!', 'warning');
+                return;
+            }
+
+            const container = document.createElement('div');
+            container.style.cssText = 'padding:30px; background:white; max-width:1200px; margin:auto; font-family:Inter,sans-serif;';
+            container.innerHTML = `
+                        <div style="text-align:center; margin-bottom:20px; border-bottom:2px solid #065f46; padding-bottom:16px;">
+                            <h2 style="font-size:24px; color:#065f46; font-weight:900;">GES BAIT MUGHAL</h2>
+                            <p style="font-size:14px; color:#475569;">Complete Student Results Report</p>
+                            <p style="font-size:12px; color:#94a3b8;">${filter === 'ALL' ? 'All Classes' : filter} | Generated: ${new Date().toLocaleDateString()}</p>
+                        </div>
+                        <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                            <thead>
+                                <tr style="background:#f1f5f9;">
+                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">#</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Class</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Roll</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Name</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Obtained</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Total</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Percentage</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Grade</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Incharge</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${students.map((s, i) => {
+                                    const perc = ((s.obtained/s.total)*100).toFixed(1);
+                                    let grade = perc >= 90 ? 'A+' : perc >= 80 ? 'A' : perc >= 70 ? 'B' : perc >= 60 ? 'C' : perc >= 50 ? 'D' : 'F';
+                                    return `<tr>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${i+1}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.class}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.roll}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.name}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px; font-weight:700; color:#065f46;">${s.obtained}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.total}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px; font-weight:700; color:#f5a623;">${perc}%</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px; font-weight:700; color:${perc >= 70 ? '#065f46' : '#dc2626'};">${grade}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${DB.incharges[s.class] || 'N/A'}</td>
+                                    </tr>`;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                        <div style="margin-top:16px; text-align:center; font-size:12px; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:12px;">
+                            © ${new Date().getFullYear()} GES Bait Mughal · Smart School System
+                        </div>
+                    `;
+
+            const opt = {
+                margin: 0.4,
+                filename: `Student_Report_${filter === 'ALL' ? 'All_Classes' : filter.replace(' ', '_')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+            };
+            html2pdf().set(opt).from(container).save();
+            showToast('📊 Report downloading...', 'success');
         }
 
         function renderAdminAnnouncements() {
@@ -2927,11 +3019,12 @@
         function renderAdminSlider() {
             const container = $('adminSliderList');
             container.innerHTML = '';
-            const slides = DB.slides.length > 0 ? DB.slides : [
-                { title: '🏫 Welcome', img: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=400&q=80' },
-                { title: '📚 Education', img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=400&q=80' },
-                { title: '🌟 Empower', img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=400&q=80' }
-            ];
+            const slides = DB.slides.length > 0 ? DB.slides : [];
+            if (slides.length === 0) {
+                container.innerHTML =
+                    '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:12px; padding:8px;">No slides uploaded. Add one above.</p>';
+                return;
+            }
             slides.forEach((s, i) => {
                 const div = document.createElement('div');
                 div.style.cssText = 'border-radius:6px; overflow:hidden; background:var(--gray); position:relative;';
@@ -2939,11 +3032,55 @@
                             <img src="${s.img}" style="width:100%; height:clamp(50px, 7vw, 70px); object-fit:cover;" loading="lazy" />
                             <div style="padding:4px 6px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
                                 <span style="font-size:clamp(8px, 0.8vw, 11px); font-weight:600;">${s.title}</span>
-                                <button onclick="deleteSlide(${i})" class="btn btn-danger btn-sm" style="font-size:clamp(8px, 0.8vw, 10px); padding:2px 6px;">×</button>
+                                <button onclick="deleteSlideImage('${s.id}')" class="btn btn-danger btn-sm" style="font-size:clamp(8px, 0.8vw, 10px); padding:2px 6px;">×</button>
                             </div>
                         `;
                 container.appendChild(div);
             });
+        }
+
+        // ================================================================
+        // SLIDER IMAGE UPLOAD (Head)
+        // ================================================================
+        async function addSlideImage(e) {
+            e.preventDefault();
+            const title = $('slideTitle').value;
+            const fileInput = $('slideImageFile');
+
+            if (!fileInput.files[0]) {
+                showToast('Please select an image', 'warning');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('Image too large! Use under 2MB.', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imgData = e.target.result;
+                const id = Date.now().toString();
+                DB.slides.push({ id, title, img: imgData });
+                saveData();
+                $('slideTitle').value = '';
+                $('slideImageFile').value = '';
+                renderHome();
+                renderAdminSlider();
+                showToast('✅ Slide image uploaded!', 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function deleteSlideImage(id) {
+            if (confirm('Delete this slide image?')) {
+                DB.slides = DB.slides.filter(s => s.id !== id);
+                saveData();
+                renderHome();
+                renderAdminSlider();
+                showToast('Slide deleted', 'warning');
+            }
         }
 
         // ================================================================
@@ -3348,31 +3485,6 @@
             showToast('About & Contact updated!', 'success');
         }
 
-        function addSlide(e) {
-            e.preventDefault();
-            const title = $('slideTitle').value;
-            const img = $('slideImage').value;
-            if (title && img) {
-                DB.slides.push({ title, img });
-                saveData();
-                $('slideTitle').value = '';
-                $('slideImage').value = '';
-                renderHome();
-                renderAdminSlider();
-                showToast('Slide added!', 'success');
-            }
-        }
-
-        function deleteSlide(index) {
-            if (confirm('Delete this slide?')) {
-                DB.slides.splice(index, 1);
-                saveData();
-                renderHome();
-                renderAdminSlider();
-                showToast('Slide deleted', 'warning');
-            }
-        }
-
         function scrollToSection(id) {
             const el = $(id);
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -3481,13 +3593,6 @@
             input.click();
         }
 
-        function exportClassReport() {
-            showToast('📤 Class Report: Select class to export', 'warning');
-            setTimeout(() => {
-                showToast('✅ Class report downloaded!', 'success');
-            }, 1000);
-        }
-
         function downloadAllResults() {
             if (DB.students.length === 0) {
                 showToast('No student records!', 'warning');
@@ -3561,11 +3666,11 @@
             if (overlay) overlay.style.display = 'none';
         }, 3200);
 
-        console.log('🎓 GES Bait Mughal - Smart School System v10.0');
+        console.log('🎓 GES Bait Mughal - Smart School System v11.0');
         console.log('🔑 Admin: admin123 | Teacher PIN: 1234');
         console.log('📱 Fully responsive for all devices!');
-        console.log('🆕 New Features: Bulk Import, Class Reports, Dashboard Stats');
-        console.log('📊 Stats: 2x2 grid layout properly responsive!');
+        console.log('📊 New: Complete Result Report for Head!');
+        console.log('🖼️ New: Upload Slider Images directly!');
     </script>
 
 </body>
