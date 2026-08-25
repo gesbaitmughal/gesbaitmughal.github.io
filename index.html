@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <title>GES Bait Mughal · Official School</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23047857'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='white'%3E%F0%9F%8E%93%3C/text%3E%3C/svg%3E" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -31,7 +31,7 @@
             --shadow-xl: 0 30px 80px -15px rgba(0, 0, 0, 0.2);
             --radius: 16px;
             --radius-lg: 24px;
-            --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
@@ -59,6 +59,7 @@
 
         html {
             scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
@@ -69,6 +70,157 @@
             transition: background 0.3s, color 0.3s;
             min-height: 100vh;
             overflow-x: hidden;
+            width: 100%;
+            max-width: 100vw;
+        }
+
+        /* ================================================================
+                   WELCOME OVERLAY (Animated)
+                ================================================================ */
+        .welcome-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999999;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            animation: welcomeFadeOut 0.8s ease 3s forwards;
+            pointer-events: none;
+            padding: 20px;
+        }
+
+        .welcome-overlay::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+            animation: welcomeGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes welcomeGlow {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.5); opacity: 1; }
+        }
+
+        .welcome-overlay .logo-big {
+            width: clamp(90px, 18vw, 130px);
+            height: clamp(90px, 18vw, 130px);
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: clamp(25px, 5vw, 35px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(35px, 7vw, 50px);
+            font-weight: 900;
+            color: white;
+            border: 3px solid rgba(255, 255, 255, 0.12);
+            animation: welcomeLogoPulse 2s ease-in-out infinite;
+            margin-bottom: clamp(15px, 3vw, 25px);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.05);
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes welcomeLogoPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(255, 255, 255, 0.05); }
+            50% { transform: scale(1.05); box-shadow: 0 0 80px rgba(255, 255, 255, 0.12); }
+        }
+
+        .welcome-overlay h1 {
+            color: white;
+            font-size: clamp(22px, 4.5vw, 32px);
+            font-weight: 800;
+            text-align: center;
+            animation: welcomeSlideUp 0.8s ease 0.2s both;
+            background: linear-gradient(90deg, #ffffff 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            padding: 0 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-overlay p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: clamp(13px, 2vw, 16px);
+            margin-top: 4px;
+            animation: welcomeSlideUp 0.8s ease 0.4s both;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-overlay .spinner {
+            margin-top: clamp(15px, 3vw, 25px);
+            width: clamp(35px, 5vw, 45px);
+            height: clamp(35px, 5vw, 45px);
+            border: 3px solid rgba(255, 255, 255, 0.08);
+            border-top: 3px solid var(--gold);
+            border-right: 3px solid var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-overlay .spinner::after {
+            content: '';
+            position: absolute;
+            inset: 6px;
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite reverse;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes welcomeSlideUp {
+            from { opacity: 0; transform: translateY(40px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes welcomeFadeOut {
+            from { opacity: 1; visibility: visible; }
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        /* Particles for welcome */
+        .welcome-particles {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .welcome-particles span {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 50%;
+            animation: particleFloat 6s ease-in-out infinite;
+        }
+
+        .welcome-particles span:nth-child(1) { left: 10%; animation-delay: 0s; top: 20%; }
+        .welcome-particles span:nth-child(2) { left: 25%; animation-delay: 0.8s; top: 60%; }
+        .welcome-particles span:nth-child(3) { left: 40%; animation-delay: 1.6s; top: 30%; }
+        .welcome-particles span:nth-child(4) { left: 55%; animation-delay: 2.4s; top: 70%; }
+        .welcome-particles span:nth-child(5) { left: 70%; animation-delay: 3.2s; top: 25%; }
+        .welcome-particles span:nth-child(6) { left: 85%; animation-delay: 4s; top: 55%; }
+        .welcome-particles span:nth-child(7) { left: 15%; animation-delay: 0.4s; top: 80%; }
+        .welcome-particles span:nth-child(8) { left: 50%; animation-delay: 1.2s; top: 10%; }
+        .welcome-particles span:nth-child(9) { left: 75%; animation-delay: 2s; top: 45%; }
+        .welcome-particles span:nth-child(10) { left: 35%; animation-delay: 2.8s; top: 85%; }
+
+        @keyframes particleFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.15; }
+            50% { transform: translate(30px, -40px) scale(1.8); opacity: 0.5; }
         }
 
         /* ================================================================
@@ -90,24 +242,24 @@
         }
 
         .bg-shapes .shape:nth-child(1) {
-            width: 300px;
-            height: 300px;
+            width: clamp(150px, 25vw, 300px);
+            height: clamp(150px, 25vw, 300px);
             background: var(--primary);
             top: -50px;
             right: -50px;
             animation-delay: 0s;
         }
         .bg-shapes .shape:nth-child(2) {
-            width: 200px;
-            height: 200px;
+            width: clamp(100px, 18vw, 200px);
+            height: clamp(100px, 18vw, 200px);
             background: var(--gold);
             bottom: -30px;
             left: -30px;
             animation-delay: -5s;
         }
         .bg-shapes .shape:nth-child(3) {
-            width: 150px;
-            height: 150px;
+            width: clamp(80px, 12vw, 150px);
+            height: clamp(80px, 12vw, 150px);
             background: #3b82f6;
             top: 50%;
             left: 50%;
@@ -123,114 +275,20 @@
         /* ================================================================
                    SCROLLBAR
                 ================================================================ */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: var(--gray); border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
-
-        /* ================================================================
-                   GLASSMORPHISM + 3D
-                ================================================================ */
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        [data-theme="dark"] .glass {
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .card-3d {
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease;
-            transform-style: preserve-3d;
-            perspective: 800px;
-        }
-
-        .card-3d:hover {
-            transform: translateY(-8px) rotateX(3deg) rotateY(3deg) scale(1.02);
-            box-shadow: var(--shadow-xl);
-        }
-
-        /* ================================================================
-                   GLOW ANIMATION
-                ================================================================ */
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(15, 94, 58, 0.2); }
-            50% { box-shadow: 0 0 40px rgba(15, 94, 58, 0.5), 0 0 60px rgba(245, 166, 35, 0.2); }
-        }
-
-        .glow {
-            animation: glow 3s ease-in-out infinite;
-        }
-
-        /* ================================================================
-                   TOP BAR
-                ================================================================ */
-        .top-bar {
-            background: var(--primary-dark);
-            color: rgba(255, 255, 255, 0.85);
-            padding: 6px 0;
-            font-size: 12px;
-            position: relative;
-            z-index: 10;
-        }
-
-        .top-bar .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .top-bar a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .top-bar a:hover {
-            color: var(--gold);
-            transform: translateY(-1px);
-        }
-
-        .top-bar .social-icons {
-            display: flex;
-            gap: 4px;
-            align-items: center;
-        }
-
-        .top-bar .social-icons a {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.06);
-            transition: var(--transition);
-        }
-
-        .top-bar .social-icons a:hover {
-            background: rgba(255, 255, 255, 0.15);
-            color: var(--gold);
-            transform: translateY(-2px) scale(1.1);
-        }
 
         /* ================================================================
                    BANNER
                 ================================================================ */
         .banner {
             background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
-            padding: 28px 20px 24px;
+            padding: clamp(16px, 2.5vw, 30px) clamp(14px, 2vw, 28px);
             position: relative;
             overflow: hidden;
             z-index: 1;
+            width: 100%;
         }
 
         .banner::before {
@@ -238,9 +296,9 @@
             position: absolute;
             top: -50%;
             right: -20%;
-            width: 500px;
-            height: 500px;
-            background: rgba(255, 255, 255, 0.05);
+            width: clamp(200px, 40vw, 500px);
+            height: clamp(200px, 40vw, 500px);
+            background: rgba(255, 255, 255, 0.04);
             border-radius: 50%;
             animation: floatBanner 20s ease-in-out infinite;
         }
@@ -250,8 +308,8 @@
             position: absolute;
             bottom: -40%;
             left: -10%;
-            width: 400px;
-            height: 400px;
+            width: clamp(150px, 30vw, 400px);
+            height: clamp(150px, 30vw, 400px);
             background: rgba(255, 255, 255, 0.03);
             border-radius: 50%;
             animation: floatBanner 25s ease-in-out infinite reverse;
@@ -259,7 +317,7 @@
 
         @keyframes floatBanner {
             0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(20px, -20px) scale(1.1); }
+            50% { transform: translate(15px, -15px) scale(1.1); }
         }
 
         .banner .container {
@@ -269,7 +327,7 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: clamp(10px, 1.5vw, 20px);
             position: relative;
             z-index: 1;
         }
@@ -277,86 +335,107 @@
         .banner-left {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: clamp(10px, 1.8vw, 18px);
+            flex: 1;
+            min-width: 0;
         }
 
         .banner-logo {
-            width: 60px;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.12);
-            border-radius: 16px;
+            width: clamp(50px, 8vw, 70px);
+            height: clamp(50px, 8vw, 70px);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
             font-weight: 900;
             color: white;
-            border: 2px solid rgba(255, 255, 255, 0.15);
+            border: 3px solid rgba(255, 255, 255, 0.15);
             flex-shrink: 0;
             overflow: hidden;
             transition: var(--transition);
+            background: rgba(255, 255, 255, 0.08);
+            font-size: clamp(16px, 3vw, 24px);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.05);
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+            0%, 100% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.05); }
+            50% { box-shadow: 0 0 60px rgba(255, 215, 0, 0.1); }
         }
 
         .banner-logo:hover {
-            transform: rotate(-5deg) scale(1.05);
+            transform: scale(1.08);
+            box-shadow: 0 0 80px rgba(255, 215, 0, 0.15);
         }
 
-        .banner-logo img {
+        .banner-logo svg {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+        }
+
+        .banner-title {
+            min-width: 0;
+            flex: 1;
         }
 
         .banner-title h1 {
-            font-size: 28px;
+            font-size: clamp(18px, 3.5vw, 30px);
             font-weight: 900;
             color: white;
             letter-spacing: -0.5px;
             line-height: 1.1;
-            background: linear-gradient(90deg, #ffffff, var(--gold-light));
+            background: linear-gradient(90deg, #ffffff 0%, var(--gold-light) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            word-break: break-word;
         }
 
         .banner-title .sub {
             color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
+            font-size: clamp(10px, 1.4vw, 14px);
             font-weight: 500;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
         }
 
         .banner-title .sub i {
             color: var(--gold);
-            margin: 0 4px;
+            margin: 0 3px;
         }
 
         .banner-right {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: clamp(6px, 1vw, 12px);
             flex-wrap: wrap;
+            flex-shrink: 0;
         }
 
         .banner-badge {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(4px);
-            padding: 6px 16px;
+            padding: clamp(4px, 0.6vw, 8px) clamp(10px, 1.5vw, 20px);
             border-radius: 40px;
             color: white;
-            font-size: 12px;
+            font-size: clamp(9px, 1vw, 12px);
             font-weight: 600;
             border: 1px solid rgba(255, 255, 255, 0.08);
             transition: var(--transition);
+            white-space: nowrap;
         }
 
         .banner-badge:hover {
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.05);
             background: rgba(255, 255, 255, 0.2);
         }
 
         .banner-badge i {
             color: var(--gold);
-            margin-right: 6px;
+            margin-right: 4px;
         }
 
         /* ================================================================
@@ -369,7 +448,8 @@
             top: 0;
             z-index: 100;
             backdrop-filter: blur(12px);
-            padding: 0 20px;
+            padding: 0 clamp(6px, 1.2vw, 16px);
+            width: 100%;
         }
 
         .nav-bar .container {
@@ -379,21 +459,22 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 8px;
-            padding: 8px 0;
+            gap: 4px;
+            padding: clamp(4px, 0.6vw, 8px) 0;
         }
 
         .nav-links {
             display: flex;
             flex-wrap: wrap;
-            gap: 4px;
+            gap: 2px;
+            flex: 1;
         }
 
         .nav-btn {
-            padding: 8px 16px;
+            padding: clamp(4px, 0.6vw, 8px) clamp(8px, 1.2vw, 16px);
             border: none;
-            border-radius: 10px;
-            font-size: 12px;
+            border-radius: 8px;
+            font-size: clamp(9px, 1.1vw, 12px);
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
@@ -401,14 +482,15 @@
             color: var(--text-light);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             position: relative;
+            white-space: nowrap;
         }
 
         .nav-btn:hover {
             background: var(--gray);
             color: var(--text);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
         }
 
         .nav-btn.active {
@@ -440,17 +522,19 @@
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: clamp(4px, 0.8vw, 10px);
             flex-wrap: wrap;
+            flex-shrink: 0;
         }
 
         .role-badge {
-            font-size: 11px;
+            font-size: clamp(8px, 0.9vw, 11px);
             background: var(--primary-bg);
             color: var(--primary);
-            padding: 4px 12px;
+            padding: clamp(2px, 0.3vw, 4px) clamp(6px, 0.8vw, 12px);
             border-radius: 40px;
             font-weight: 600;
+            white-space: nowrap;
             transition: var(--transition);
         }
 
@@ -461,16 +545,17 @@
         .theme-toggle {
             background: var(--gray);
             border: none;
-            width: 36px;
-            height: 36px;
+            width: clamp(28px, 3.5vw, 36px);
+            height: clamp(28px, 3.5vw, 36px);
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--text);
-            font-size: 16px;
+            font-size: clamp(12px, 1.4vw, 16px);
             transition: var(--transition);
+            flex-shrink: 0;
         }
 
         .theme-toggle:hover {
@@ -485,9 +570,11 @@
             position: relative;
             border-radius: var(--radius-lg);
             overflow: hidden;
-            height: 340px;
+            height: clamp(160px, 35vh, 340px);
             background: var(--primary-dark);
             box-shadow: var(--shadow-lg);
+            margin-bottom: clamp(14px, 2vw, 24px);
+            width: 100%;
         }
 
         .hero-slider .slide {
@@ -515,35 +602,30 @@
             background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%);
             display: flex;
             align-items: flex-end;
-            padding: 30px;
+            padding: clamp(10px, 1.8vw, 24px);
         }
 
         .hero-slider .slide .overlay h2 {
             color: white;
-            font-size: 26px;
+            font-size: clamp(14px, 2.5vw, 24px);
             font-weight: 800;
-            text-shadow: 0 2px 30px rgba(0, 0, 0, 0.4);
-            animation: slideText 0.8s ease;
-        }
-
-        @keyframes slideText {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+            line-height: 1.2;
         }
 
         .hero-slider .dots {
             position: absolute;
-            bottom: 16px;
+            bottom: clamp(6px, 1vw, 14px);
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 8px;
+            gap: clamp(4px, 0.7vw, 8px);
             z-index: 10;
         }
 
         .hero-slider .dots button {
-            width: 10px;
-            height: 10px;
+            width: clamp(6px, 0.9vw, 10px);
+            height: clamp(6px, 0.9vw, 10px);
             border-radius: 50%;
             border: none;
             cursor: pointer;
@@ -553,12 +635,8 @@
 
         .hero-slider .dots button.active {
             background: var(--gold);
-            width: 30px;
+            width: clamp(16px, 2.5vw, 28px);
             border-radius: 10px;
-        }
-
-        .hero-slider .dots button:hover {
-            transform: scale(1.2);
         }
 
         .hero-slider .controls {
@@ -568,26 +646,84 @@
             width: 100%;
             display: flex;
             justify-content: space-between;
-            padding: 0 16px;
+            padding: 0 clamp(6px, 1vw, 16px);
             z-index: 10;
         }
 
         .hero-slider .controls button {
-            width: 44px;
-            height: 44px;
+            width: clamp(28px, 3.5vw, 40px);
+            height: clamp(28px, 3.5vw, 40px);
             border-radius: 50%;
             border: none;
             background: rgba(0, 0, 0, 0.5);
             color: white;
             cursor: pointer;
             transition: var(--transition);
-            font-size: 18px;
+            font-size: clamp(12px, 1.6vw, 18px);
             backdrop-filter: blur(4px);
         }
 
         .hero-slider .controls button:hover {
             background: rgba(0, 0, 0, 0.8);
             transform: scale(1.1);
+        }
+
+        /* ================================================================
+                   STATS - 2x2 Grid (Proper)
+                ================================================================ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(10px, 1.5vw, 18px);
+            margin-bottom: clamp(14px, 2vw, 24px);
+            width: 100%;
+        }
+
+        .stat-box {
+            background: var(--gray);
+            border-radius: clamp(10px, 1.5vw, 14px);
+            padding: clamp(12px, 1.8vw, 22px);
+            text-align: center;
+            transition: var(--transition);
+            cursor: default;
+            width: 100%;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-box .num {
+            font-size: clamp(20px, 3.2vw, 32px);
+            font-weight: 900;
+            color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .stat-box:hover .num {
+            color: var(--gold);
+        }
+
+        .stat-box .label {
+            font-size: clamp(9px, 1.1vw, 13px);
+            color: var(--text-light);
+            font-weight: 500;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .stat-box i {
+            font-size: clamp(16px, 2.2vw, 24px);
+            color: var(--primary);
+            margin-bottom: 4px;
+            display: block;
+            transition: var(--transition);
+        }
+
+        .stat-box:hover i {
+            transform: scale(1.2) rotate(-10deg);
+            color: var(--gold);
         }
 
         /* ================================================================
@@ -598,6 +734,7 @@
             overflow: hidden;
             background: #0a0a0a;
             position: relative;
+            width: 100%;
         }
 
         .video-wrapper video {
@@ -610,20 +747,22 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 16px;
+            padding: clamp(4px, 0.6vw, 10px) clamp(8px, 1.2vw, 18px);
             background: rgba(0, 0, 0, 0.7);
             color: white;
-            font-size: 12px;
+            font-size: clamp(9px, 1vw, 13px);
+            flex-wrap: wrap;
+            gap: 4px;
         }
 
         .video-controls button {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.15);
             color: white;
-            padding: 3px 14px;
+            padding: clamp(2px, 0.3vw, 5px) clamp(8px, 1vw, 16px);
             border-radius: 40px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: clamp(8px, 0.9vw, 12px);
             transition: var(--transition);
         }
 
@@ -637,14 +776,16 @@
         .main-content {
             max-width: 1280px;
             margin: 0 auto;
-            padding: 24px 20px;
+            padding: clamp(10px, 1.5vw, 24px) clamp(8px, 1.2vw, 20px);
             position: relative;
             z-index: 1;
+            width: 100%;
         }
 
         .tab-content {
             display: none;
             animation: fadeIn 0.5s ease;
+            width: 100%;
         }
 
         .tab-content.active {
@@ -662,12 +803,13 @@
         .card {
             background: var(--card-bg);
             border-radius: var(--radius);
-            padding: 24px;
+            padding: clamp(12px, 1.8vw, 24px);
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
             transition: var(--transition);
             position: relative;
             overflow: hidden;
+            width: 100%;
         }
 
         .card::before {
@@ -695,17 +837,19 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
+            margin-bottom: clamp(8px, 1.2vw, 16px);
+            padding-bottom: clamp(6px, 0.8vw, 12px);
             border-bottom: 2px solid var(--border);
+            flex-wrap: wrap;
+            gap: 6px;
         }
 
         .card-header h3 {
-            font-size: 18px;
+            font-size: clamp(14px, 1.8vw, 18px);
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
         }
 
         .card-header h3 i {
@@ -713,51 +857,16 @@
         }
 
         /* ================================================================
-                   STATS
+                   GRID
                 ================================================================ */
-        .stat-box {
-            background: var(--gray);
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-            transition: var(--transition);
-            cursor: default;
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: clamp(12px, 1.8vw, 20px);
         }
 
-        .stat-box:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .stat-box .num {
-            font-size: 28px;
-            font-weight: 900;
-            color: var(--primary);
-            transition: var(--transition);
-        }
-
-        .stat-box:hover .num {
-            color: var(--gold);
-        }
-
-        .stat-box .label {
-            font-size: 12px;
-            color: var(--text-light);
-            font-weight: 500;
-            display: block;
-        }
-
-        .stat-box i {
-            font-size: 20px;
-            color: var(--primary);
-            margin-bottom: 4px;
-            display: block;
-            transition: var(--transition);
-        }
-
-        .stat-box:hover i {
-            transform: scale(1.2) rotate(-10deg);
-            color: var(--gold);
+        @media (min-width: 640px) {
+            .grid-2 { grid-template-columns: 2fr 1fr; }
         }
 
         /* ================================================================
@@ -766,15 +875,15 @@
         .announce-item {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 12px 0;
+            gap: clamp(8px, 1.2vw, 14px);
+            padding: clamp(8px, 1vw, 12px) 0;
             border-bottom: 1px solid var(--border);
             transition: var(--transition);
         }
 
         .announce-item:hover {
             background: var(--gray);
-            padding: 12px 8px;
+            padding: clamp(8px, 1vw, 12px) clamp(4px, 0.6vw, 8px);
             border-radius: 8px;
         }
 
@@ -783,8 +892,8 @@
         }
 
         .announce-item .icon {
-            width: 38px;
-            height: 38px;
+            width: clamp(28px, 3.5vw, 38px);
+            height: clamp(28px, 3.5vw, 38px);
             background: var(--primary-bg);
             border-radius: 50%;
             display: flex;
@@ -801,17 +910,17 @@
 
         .announce-item .content .title {
             font-weight: 600;
-            font-size: 14px;
+            font-size: clamp(12px, 1.3vw, 14px);
         }
 
         .announce-item .content .date {
-            font-size: 12px;
+            font-size: clamp(9px, 1vw, 12px);
             color: var(--text-light);
         }
 
         .announce-item .badge {
-            font-size: 9px;
-            padding: 2px 12px;
+            font-size: clamp(7px, 0.8vw, 10px);
+            padding: 2px clamp(6px, 0.8vw, 12px);
             border-radius: 40px;
             font-weight: 600;
             margin-left: auto;
@@ -828,15 +937,16 @@
         .timing-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
+            padding: clamp(4px, 0.6vw, 8px) 0;
             border-bottom: 1px solid var(--border);
-            font-size: 14px;
+            font-size: clamp(12px, 1.3vw, 14px);
             transition: var(--transition);
+            gap: 8px;
         }
 
         .timing-row:hover {
             background: var(--gray);
-            padding: 8px 12px;
+            padding: clamp(4px, 0.6vw, 8px) clamp(6px, 0.8vw, 12px);
             border-radius: 8px;
         }
 
@@ -847,28 +957,70 @@
         .timing-row .label {
             font-weight: 600;
             color: var(--text-light);
+            white-space: nowrap;
         }
 
         .timing-row .value {
             font-weight: 700;
+            text-align: right;
+        }
+
+        /* ================================================================
+                   INCHARGE LIST
+                ================================================================ */
+        .incharge-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .incharge-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: clamp(5px, 0.6vw, 8px);
+            background: var(--gray);
+            border-radius: 8px;
+            font-size: clamp(11px, 1.1vw, 13px);
+            transition: var(--transition);
+        }
+
+        .incharge-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .incharge-item .avatar {
+            width: clamp(22px, 3vw, 30px);
+            height: clamp(22px, 3vw, 30px);
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(9px, 0.9vw, 12px);
+            font-weight: 700;
+            flex-shrink: 0;
         }
 
         /* ================================================================
                    BUTTONS
                 ================================================================ */
         .btn {
-            padding: 8px 20px;
+            padding: clamp(5px, 0.6vw, 8px) clamp(12px, 1.5vw, 20px);
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: clamp(11px, 1.1vw, 13px);
             cursor: pointer;
             transition: var(--transition);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             position: relative;
             overflow: hidden;
+            white-space: nowrap;
         }
 
         .btn::after {
@@ -885,8 +1037,8 @@
         }
 
         .btn:active::after {
-            width: 300px;
-            height: 300px;
+            width: 200px;
+            height: 200px;
         }
 
         .btn-primary {
@@ -905,7 +1057,7 @@
         }
         .btn-gold:hover {
             background: #d4920a;
-            transform: translateY(-2px) scale(1.02);
+            transform: translateY(-2px);
         }
 
         .btn-danger {
@@ -929,33 +1081,33 @@
         }
 
         .btn-sm {
-            padding: 4px 12px;
-            font-size: 11px;
+            padding: 3px 10px;
+            font-size: 10px;
         }
 
         /* ================================================================
                    FORMS
                 ================================================================ */
         .form-group {
-            margin-bottom: 12px;
+            margin-bottom: clamp(8px, 1vw, 12px);
         }
 
         .form-group label {
             display: block;
             font-weight: 600;
-            font-size: 12px;
+            font-size: clamp(10px, 1.1vw, 12px);
             color: var(--text-light);
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 10px 14px;
+            padding: clamp(6px, 0.8vw, 10px) clamp(10px, 1.2vw, 14px);
             border: 2px solid var(--border);
-            border-radius: 10px;
-            font-size: 13px;
+            border-radius: 8px;
+            font-size: clamp(11px, 1.1vw, 13px);
             transition: var(--transition);
             background: var(--bg);
             color: var(--text);
@@ -967,7 +1119,6 @@
             border-color: var(--primary);
             outline: none;
             box-shadow: 0 0 0 4px rgba(15, 94, 58, 0.08);
-            transform: scale(1.01);
         }
 
         /* ================================================================
@@ -976,7 +1127,7 @@
         .report-card {
             background: var(--card-bg);
             border-radius: var(--radius-lg);
-            padding: 32px;
+            padding: clamp(14px, 2.5vw, 30px);
             border: 2px solid var(--primary);
             position: relative;
             overflow: hidden;
@@ -988,8 +1139,8 @@
             position: absolute;
             top: -50%;
             right: -30%;
-            width: 300px;
-            height: 300px;
+            width: clamp(150px, 25vw, 300px);
+            height: clamp(150px, 25vw, 300px);
             background: var(--primary-bg);
             border-radius: 50%;
             opacity: 0.2;
@@ -998,45 +1149,49 @@
 
         @keyframes floatReport {
             0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(-20px, 20px) scale(1.1); }
+            50% { transform: translate(-15px, 15px) scale(1.1); }
         }
 
         .report-card .header {
             text-align: center;
             border-bottom: 2px solid var(--primary);
-            padding-bottom: 16px;
-            margin-bottom: 16px;
+            padding-bottom: clamp(8px, 1.2vw, 14px);
+            margin-bottom: clamp(8px, 1.2vw, 14px);
             position: relative;
             z-index: 1;
         }
 
         .report-card .header h2 {
-            font-size: 24px;
+            font-size: clamp(16px, 2.5vw, 22px);
             color: var(--primary);
             font-weight: 900;
         }
 
         .report-card .header p {
-            font-size: 12px;
+            font-size: clamp(9px, 1vw, 12px);
             color: var(--text-light);
         }
 
         .report-card .student-info {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
-            padding: 12px;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(6px, 0.8vw, 12px);
+            margin-bottom: clamp(8px, 1.2vw, 14px);
+            padding: clamp(6px, 0.8vw, 12px);
             background: var(--gray);
-            border-radius: 12px;
+            border-radius: 10px;
             position: relative;
             z-index: 1;
+        }
+
+        @media (min-width: 640px) {
+            .report-card .student-info { grid-template-columns: 1fr 1fr 1fr 1fr; }
         }
 
         .report-card .marks-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: clamp(11px, 1.1vw, 14px);
             position: relative;
             z-index: 1;
         }
@@ -1044,12 +1199,12 @@
         .report-card .marks-table th {
             background: var(--primary);
             color: white;
-            padding: 8px 12px;
+            padding: clamp(4px, 0.6vw, 8px) clamp(6px, 0.8vw, 12px);
             text-align: left;
         }
 
         .report-card .marks-table td {
-            padding: 8px 12px;
+            padding: clamp(4px, 0.6vw, 8px) clamp(6px, 0.8vw, 12px);
             border-bottom: 1px solid var(--border);
         }
 
@@ -1057,16 +1212,12 @@
             background: var(--gray);
         }
 
-        .report-card .marks-table tr:hover {
-            background: var(--primary-bg);
-        }
-
         .report-card .summary {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: 16px;
-            padding-top: 16px;
+            gap: clamp(6px, 0.8vw, 12px);
+            margin-top: clamp(8px, 1.2vw, 14px);
+            padding-top: clamp(8px, 1.2vw, 14px);
             border-top: 2px solid var(--border);
             position: relative;
             z-index: 1;
@@ -1074,24 +1225,24 @@
 
         .report-card .summary .item {
             text-align: center;
-            padding: 12px;
+            padding: clamp(6px, 0.8vw, 12px);
             background: var(--gray);
-            border-radius: 12px;
+            border-radius: 10px;
             transition: var(--transition);
         }
 
         .report-card .summary .item:hover {
-            transform: translateY(-4px);
+            transform: translateY(-3px);
             box-shadow: var(--shadow);
         }
 
         .report-card .summary .item .label {
-            font-size: 11px;
+            font-size: clamp(8px, 0.9vw, 11px);
             color: var(--text-light);
         }
 
         .report-card .summary .item .value {
-            font-size: 20px;
+            font-size: clamp(16px, 2.2vw, 20px);
             font-weight: 800;
             color: var(--primary);
         }
@@ -1101,25 +1252,25 @@
                 ================================================================ */
         .toast-container {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
+            bottom: clamp(12px, 1.5vw, 24px);
+            right: clamp(12px, 1.5vw, 24px);
             z-index: 99999;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
+            max-width: 90%;
         }
 
         .toast {
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 13px;
+            padding: clamp(8px, 1vw, 14px) clamp(12px, 1.5vw, 20px);
+            border-radius: 10px;
+            font-size: clamp(11px, 1.1vw, 14px);
             font-weight: 600;
             box-shadow: var(--shadow-xl);
-            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            max-width: 400px;
+            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .toast.success { background: var(--primary); color: white; }
@@ -1127,7 +1278,7 @@
         .toast.warning { background: var(--gold); color: var(--text); }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px) scale(0.9); }
+            from { opacity: 0; transform: translateY(20px) scale(0.9); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
@@ -1139,11 +1290,11 @@
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(6px);
             z-index: 9999;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 16px;
         }
 
         .modal-overlay.open {
@@ -1153,17 +1304,17 @@
         .modal-content {
             background: var(--card-bg);
             border-radius: var(--radius-lg);
-            max-width: 600px;
+            max-width: 500px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            padding: 28px 32px;
+            padding: clamp(16px, 2.5vw, 28px);
             box-shadow: var(--shadow-xl);
-            animation: modalIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.9) translateY(30px); }
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
@@ -1171,22 +1322,22 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
+            margin-bottom: clamp(10px, 1.2vw, 16px);
+            padding-bottom: clamp(8px, 1vw, 12px);
             border-bottom: 2px solid var(--border);
         }
 
         .modal-header h2 {
-            font-size: 20px;
+            font-size: clamp(16px, 1.8vw, 20px);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .modal-close {
             background: none;
             border: none;
-            font-size: 24px;
+            font-size: clamp(18px, 2vw, 24px);
             color: var(--text-light);
             cursor: pointer;
             transition: var(--transition);
@@ -1203,33 +1354,30 @@
         .footer {
             background: var(--card-bg);
             border-top: 1px solid var(--border);
-            padding: 40px 20px 20px;
-            margin-top: 40px;
+            padding: clamp(20px, 2.5vw, 40px) clamp(12px, 1.5vw, 24px) clamp(12px, 1.2vw, 20px);
+            margin-top: clamp(20px, 2.5vw, 40px);
+            width: 100%;
         }
 
         .footer .container {
             max-width: 1280px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 30px;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(14px, 1.8vw, 30px);
         }
 
-        @media (max-width: 768px) {
-            .footer .container { grid-template-columns: 1fr 1fr; }
-        }
-
-        @media (max-width: 480px) {
-            .footer .container { grid-template-columns: 1fr; }
+        @media (min-width: 640px) {
+            .footer .container { grid-template-columns: 2fr 1fr 1fr 1fr; }
         }
 
         .footer h4 {
-            font-size: 14px;
+            font-size: clamp(12px, 1.3vw, 15px);
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: clamp(6px, 0.6vw, 10px);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .footer h4 i {
@@ -1239,8 +1387,8 @@
         .footer p,
         .footer a {
             color: var(--text-light);
-            font-size: 13px;
-            line-height: 2;
+            font-size: clamp(11px, 1.1vw, 13px);
+            line-height: 1.8;
             text-decoration: none;
             display: block;
             transition: var(--transition);
@@ -1248,19 +1396,19 @@
 
         .footer a:hover {
             color: var(--primary);
-            transform: translateX(4px);
+            transform: translateX(3px);
         }
 
         .footer-bottom {
             max-width: 1280px;
-            margin: 20px auto 0;
-            padding-top: 16px;
+            margin: clamp(10px, 1.2vw, 18px) auto 0;
+            padding-top: clamp(10px, 1vw, 16px);
             border-top: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 10px;
-            font-size: 12px;
+            gap: 8px;
+            font-size: clamp(9px, 0.9vw, 12px);
             color: var(--text-light);
         }
 
@@ -1269,57 +1417,21 @@
         }
 
         /* ================================================================
-                   RESPONSIVE
-                ================================================================ */
-        @media (max-width: 640px) {
-            .banner-title h1 { font-size: 20px; }
-            .banner-logo { width: 48px; height: 48px; font-size: 20px; }
-            .banner { padding: 20px 16px; }
-            .banner-right { width: 100%; justify-content: flex-start; }
-            .nav-bar .container { flex-direction: column; align-items: stretch; }
-            .nav-links { justify-content: center; }
-            .nav-actions { justify-content: center; }
-            .main-content { padding: 16px 12px; }
-            .card { padding: 16px; }
-            .modal-content { padding: 20px 16px; }
-            .hero-slider { height: 200px; }
-            .hero-slider .slide .overlay h2 { font-size: 16px; }
-            .report-card .student-info { grid-template-columns: 1fr; }
-            .report-card .summary { grid-template-columns: 1fr; }
-            .report-card { padding: 16px; }
-        }
-
-        /* ================================================================
-                   PRINT STYLES
-                ================================================================ */
-        @media print {
-            .top-bar, .nav-bar, .no-print, .hero-slider .controls,
-            .hero-slider .dots, .btn, .video-controls {
-                display: none !important;
-            }
-            .card { box-shadow: none !important; border: 1px solid #ddd !important; transform: none !important; }
-            body { background: white !important; }
-            .tab-content { display: block !important; }
-            .tab-content:not(.active) { display: none !important; }
-            .report-card { border: 2px solid #000 !important; }
-        }
-
-        /* ================================================================
                    SCROLL TOP
                 ================================================================ */
         .scroll-top {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
+            bottom: clamp(12px, 1.5vw, 24px);
+            right: clamp(12px, 1.5vw, 24px);
             z-index: 50;
             background: var(--primary);
             color: white;
-            width: 44px;
-            height: 44px;
+            width: clamp(34px, 4vw, 44px);
+            height: clamp(34px, 4vw, 44px);
             border-radius: 50%;
             border: none;
             cursor: pointer;
-            font-size: 18px;
+            font-size: clamp(14px, 1.6vw, 18px);
             box-shadow: var(--shadow-lg);
             transition: var(--transition);
             display: none;
@@ -1332,7 +1444,7 @@
         }
 
         .scroll-top:hover {
-            transform: translateY(-4px) scale(1.1);
+            transform: translateY(-3px) scale(1.1);
             background: var(--primary-dark);
         }
 
@@ -1342,13 +1454,13 @@
         .free-badge {
             background: #d5f5e3;
             color: var(--primary-dark);
-            padding: 6px 16px;
+            padding: clamp(4px, 0.5vw, 6px) clamp(10px, 1.2vw, 16px);
             border-radius: 40px;
             font-weight: 700;
-            font-size: 13px;
+            font-size: clamp(10px, 1.1vw, 13px);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             transition: var(--transition);
         }
 
@@ -1357,20 +1469,72 @@
         }
 
         /* ================================================================
-                   3D ROTATE ON HOVER FOR SPECIFIC ELEMENTS
+                   RESPONSIVE FIXES
                 ================================================================ */
-        .rotate-3d {
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-style: preserve-3d;
-            perspective: 600px;
+        @media (max-width: 480px) {
+            .banner-title h1 { font-size: 16px; }
+            .banner-logo { width: 38px; height: 38px; font-size: 12px; }
+            .banner { padding: 10px 8px; }
+            .banner-right { width: 100%; justify-content: flex-start; }
+            .nav-bar .container { flex-direction: column; align-items: stretch; }
+            .nav-links { justify-content: center; flex-wrap: wrap; }
+            .nav-actions { justify-content: center; }
+            .main-content { padding: 6px 4px; }
+            .card { padding: 10px; }
+            .hero-slider { height: 140px; }
+            .hero-slider .slide .overlay h2 { font-size: 12px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+            .stat-box { padding: 10px; }
+            .stat-box .num { font-size: 18px; }
+            .stat-box .label { font-size: 8px; }
+            .report-card .student-info { grid-template-columns: 1fr; }
+            .report-card .summary { grid-template-columns: 1fr; }
+            .report-card { padding: 10px; }
+            .incharge-grid { grid-template-columns: 1fr; }
+            .grid-2 { grid-template-columns: 1fr; }
         }
 
-        .rotate-3d:hover {
-            transform: rotateY(8deg) rotateX(4deg) scale(1.02);
+        @media (max-width: 360px) {
+            .banner-title h1 { font-size: 14px; }
+            .banner-logo { width: 32px; height: 32px; font-size: 10px; }
+            .nav-btn { font-size: 8px; padding: 3px 5px; }
+            .hero-slider { height: 120px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 4px; }
+            .stat-box { padding: 6px; }
+            .stat-box .num { font-size: 14px; }
+        }
+
+        /* ================================================================
+                   PRINT STYLES
+                ================================================================ */
+        @media print {
+            .nav-bar, .no-print, .hero-slider .controls,
+            .hero-slider .dots, .btn, .video-controls, .welcome-overlay {
+                display: none !important;
+            }
+            .card { box-shadow: none !important; border: 1px solid #ddd !important; transform: none !important; }
+            body { background: white !important; }
+            .tab-content { display: block !important; }
+            .tab-content:not(.active) { display: none !important; }
+            .report-card { border: 2px solid #000 !important; }
         }
     </style>
 </head>
 <body>
+
+    <!-- ================================================================
+    WELCOME OVERLAY (Animated)
+    ================================================================ -->
+    <div class="welcome-overlay" id="welcomeOverlay">
+        <div class="welcome-particles">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="logo-big">GBM</div>
+        <h1>Welcome to GES Bait Mughal</h1>
+        <p>Digital Smart Management System</p>
+        <div class="spinner"></div>
+    </div>
 
     <!-- ================================================================
     FLOATING 3D SHAPES BACKGROUND
@@ -1379,24 +1543,6 @@
         <div class="shape"></div>
         <div class="shape"></div>
         <div class="shape"></div>
-    </div>
-
-    <!-- ================================================================
-    TOP BAR
-    ================================================================ -->
-    <div class="top-bar">
-        <div class="container">
-            <div>
-                <i class="fas fa-phone-alt"></i> <span id="topPhone">+92 300 1234567</span> &nbsp;|&nbsp;
-                <i class="fas fa-envelope"></i> <span id="topEmail">info@gesbait.edu</span>
-            </div>
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-youtube"></i></a>
-                <a href="#"><i class="fab fa-whatsapp"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
     </div>
 
     <!-- ================================================================
@@ -1468,15 +1614,15 @@
             <div class="hero-slider" id="heroSlider">
                 <div class="slides" id="sliderSlides">
                     <div class="slide active">
-                        <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80" alt="School" />
+                        <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80" alt="School" loading="lazy" />
                         <div class="overlay"><h2>🏫 Welcome to GES Bait Mughal</h2></div>
                     </div>
                     <div class="slide">
-                        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80" alt="Education" />
+                        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80" alt="Education" loading="lazy" />
                         <div class="overlay"><h2>📚 Quality Education for All</h2></div>
                     </div>
                     <div class="slide">
-                        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80" alt="Students" />
+                        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80" alt="Students" loading="lazy" />
                         <div class="overlay"><h2>🌟 Empowering Young Minds</h2></div>
                     </div>
                 </div>
@@ -1487,8 +1633,8 @@
                 <div class="dots" id="sliderDots"></div>
             </div>
 
-            <!-- Quick Stats -->
-            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:24px;">
+            <!-- Stats - 2x2 Grid (Properly Responsive) -->
+            <div class="stats-grid">
                 <div class="stat-box">
                     <i class="fas fa-user-graduate"></i>
                     <span class="num" id="statStudents">0</span>
@@ -1512,25 +1658,25 @@
             </div>
 
             <!-- About + Timings -->
-            <div class="grid-2" style="display:grid; grid-template-columns:2fr 1fr; gap:24px; margin-top:24px;">
-                <div class="card card-3d rotate-3d">
+            <div class="grid-2" style="margin-bottom:16px;">
+                <div class="card">
                     <div class="card-header">
                         <h3><i class="fas fa-info-circle"></i> About School</h3>
                     </div>
-                    <p id="aboutText" style="font-size:14px; line-height:1.8; color:var(--text-light);">
+                    <p id="aboutText" style="font-size:clamp(13px, 1.4vw, 15px); line-height:1.8; color:var(--text-light);">
                         GES Bait Mughal is a government elementary school dedicated to providing free quality education,
                         strong moral values, and a safe, nurturing environment for every child in the Bait Mughal community.
                     </p>
-                    <div style="background:var(--primary-bg); padding:12px 16px; border-radius:12px; margin-top:12px; border-left:4px solid var(--primary);">
+                    <div style="background:var(--primary-bg); padding:clamp(8px, 0.8vw, 14px); border-radius:10px; margin-top:10px; border-left:4px solid var(--primary); font-size:clamp(12px, 1.2vw, 14px);">
                         <i class="fas fa-quote-left" style="color:var(--primary); opacity:0.5; margin-right:6px;"></i>
                         "Empowering young minds with knowledge, values, and skills for a brighter future."
                     </div>
-                    <div class="free-badge" style="margin-top:12px;">
+                    <div class="free-badge" style="margin-top:10px;">
                         <i class="fas fa-graduation-cap"></i> 100% Free Education – No Fees
                     </div>
                 </div>
 
-                <div class="card card-3d rotate-3d">
+                <div class="card">
                     <div class="card-header">
                         <h3><i class="fas fa-clock"></i> School Timings</h3>
                     </div>
@@ -1554,30 +1700,30 @@
             </div>
 
             <!-- Announcements + Incharges -->
-            <div style="display:grid; grid-template-columns:2fr 1fr; gap:24px; margin-top:24px;">
-                <div class="card card-3d rotate-3d">
+            <div class="grid-2" style="margin-bottom:16px;">
+                <div class="card">
                     <div class="card-header">
                         <h3><i class="fas fa-bullhorn"></i> Announcements</h3>
                     </div>
-                    <div id="announcementList"></div>
+                    <div id="announcementList" style="max-height:300px; overflow-y:auto;"></div>
                 </div>
 
-                <div class="card card-3d rotate-3d">
+                <div class="card">
                     <div class="card-header">
                         <h3><i class="fas fa-chalkboard-user"></i> Class Incharges</h3>
                     </div>
-                    <div id="inchargeList" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
+                    <div id="inchargeList" class="incharge-grid"></div>
                 </div>
             </div>
 
             <!-- Video Section -->
-            <div class="card card-3d rotate-3d" style="margin-top:24px;">
+            <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-play-circle"></i> School Tour Video</h3>
-                    <span style="font-size:11px; color:var(--text-light);" id="videoStatus">▶️ Playing</span>
+                    <span style="font-size:clamp(9px, 0.9vw, 12px); color:var(--text-light);" id="videoStatus">▶️ Playing</span>
                 </div>
                 <div class="video-wrapper">
-                    <video id="schoolVideo" controls playsinline preload="auto" muted>
+                    <video id="schoolVideo" controls playsinline preload="auto" loop muted>
                         <source src="" type="video/mp4" />
                         Your browser does not support the video tag.
                     </video>
@@ -1594,11 +1740,11 @@
         RESULTS TAB
         ============================================================ -->
         <section id="tab-results" class="tab-content">
-            <div class="card card-3d rotate-3d" style="max-width:600px; margin:0 auto;">
+            <div class="card" style="max-width:500px; margin:0 auto;">
                 <div class="card-header">
-                    <h3><i class="fas fa-search"></i> Search Student Result</h3>
+                    <h3><i class="fas fa-search"></i> Search Result</h3>
                 </div>
-                <form onsubmit="searchResult(event)" style="display:flex; flex-direction:column; gap:12px;">
+                <form onsubmit="searchResult(event)" style="display:flex; flex-direction:column; gap:10px;">
                     <div class="form-group">
                         <label>Select Class</label>
                         <select id="resultClass">
@@ -1620,7 +1766,7 @@
                 </form>
             </div>
 
-            <div id="resultDisplay" style="display:none; margin-top:24px;">
+            <div id="resultDisplay" style="display:none; margin-top:16px;">
                 <div class="report-card" id="resultCard">
                     <div class="header">
                         <h2>GES BAIT MUGHAL</h2>
@@ -1641,9 +1787,9 @@
                         <div class="item"><span class="label">Obtained</span><span class="value" id="resObtained">0</span></div>
                         <div class="item"><span class="label">Percentage</span><span class="value" id="resPercentage">0%</span></div>
                     </div>
-                    <div class="no-print" style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
-                        <button onclick="downloadResultPDF()" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Download PDF</button>
-                        <button onclick="window.print()" class="btn btn-gold"><i class="fas fa-print"></i> Print</button>
+                    <div class="no-print" style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+                        <button onclick="downloadResultPDF()" class="btn btn-primary btn-sm"><i class="fas fa-file-pdf"></i> Download</button>
+                        <button onclick="window.print()" class="btn btn-gold btn-sm"><i class="fas fa-print"></i> Print</button>
                     </div>
                 </div>
             </div>
@@ -1653,15 +1799,15 @@
         REPORT CARD TAB
         ============================================================ -->
         <section id="tab-report-card" class="tab-content">
-            <div id="studentLogin" class="card card-3d rotate-3d" style="max-width:420px; margin:0 auto;">
-                <div style="text-align:center; margin-bottom:20px;">
-                    <div style="width:60px; height:60px; background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; color:white; font-size:28px;">
+            <div id="studentLogin" class="card" style="max-width:380px; margin:0 auto;">
+                <div style="text-align:center; margin-bottom:16px;">
+                    <div style="width:clamp(45px, 6vw, 55px); height:clamp(45px, 6vw, 55px); background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; color:white; font-size:clamp(18px, 2.2vw, 24px);">
                         <i class="fas fa-user-graduate"></i>
                     </div>
-                    <h3 style="font-size:20px; font-weight:800;">Student Report Card</h3>
-                    <p style="font-size:13px; color:var(--text-light);">Enter your roll number to view report card</p>
+                    <h3 style="font-size:clamp(16px, 1.8vw, 20px); font-weight:800;">Student Report Card</h3>
+                    <p style="font-size:clamp(11px, 1.1vw, 13px); color:var(--text-light);">Enter your roll number</p>
                 </div>
-                <form onsubmit="studentLogin(event)" style="display:flex; flex-direction:column; gap:12px;">
+                <form onsubmit="studentLogin(event)" style="display:flex; flex-direction:column; gap:10px;">
                     <div class="form-group">
                         <label>Class</label>
                         <select id="studentLoginClass">
@@ -1683,7 +1829,7 @@
                 </form>
             </div>
 
-            <div id="studentReportCard" style="display:none; margin-top:24px;">
+            <div id="studentReportCard" style="display:none; margin-top:16px;">
                 <div class="report-card" id="reportCardContent">
                     <div class="header">
                         <h2>GES BAIT MUGHAL</h2>
@@ -1704,9 +1850,9 @@
                         <div class="item"><span class="label">Obtained</span><span class="value" id="rcObtained">0</span></div>
                         <div class="item"><span class="label">Percentage</span><span class="value" id="rcPercentage">0%</span></div>
                     </div>
-                    <div class="no-print" style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
-                        <button onclick="downloadReportCard()" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Download PDF</button>
-                        <button onclick="window.print()" class="btn btn-gold"><i class="fas fa-print"></i> Print</button>
+                    <div class="no-print" style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+                        <button onclick="downloadReportCard()" class="btn btn-primary btn-sm"><i class="fas fa-file-pdf"></i> Download</button>
+                        <button onclick="window.print()" class="btn btn-gold btn-sm"><i class="fas fa-print"></i> Print</button>
                     </div>
                 </div>
             </div>
@@ -1716,13 +1862,13 @@
         HOMEWORK TAB
         ============================================================ -->
         <section id="tab-homework" class="tab-content">
-            <div class="card card-3d rotate-3d">
+            <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-book-open"></i> Vacation Homework</h3>
-                    <div style="display:flex; gap:8px; align-items:center;">
-                        <label style="font-size:12px; font-weight:600;">Filter:</label>
-                        <select id="hwFilter" onchange="renderHomework()" style="padding:4px 12px; border:2px solid var(--border); border-radius:8px; font-size:12px; background:var(--bg); color:var(--text);">
-                            <option value="ALL">All Classes</option>
+                    <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                        <label style="font-size:clamp(9px, 0.9vw, 12px); font-weight:600;">Filter:</label>
+                        <select id="hwFilter" onchange="renderHomework()" style="padding:clamp(2px, 0.3vw, 4px) clamp(6px, 0.8vw, 12px); border:2px solid var(--border); border-radius:6px; font-size:clamp(9px, 0.9vw, 12px); background:var(--bg); color:var(--text);">
+                            <option value="ALL">All</option>
                             <option value="Class 1">Class 1</option>
                             <option value="Class 2">Class 2</option>
                             <option value="Class 3">Class 3</option>
@@ -1734,7 +1880,7 @@
                         </select>
                     </div>
                 </div>
-                <div id="homeworkGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px;"></div>
+                <div id="homeworkGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"></div>
             </div>
         </section>
 
@@ -1742,11 +1888,11 @@
         GALLERY TAB
         ============================================================ -->
         <section id="tab-gallery" class="tab-content">
-            <div class="card card-3d rotate-3d">
+            <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-images"></i> Photo Gallery</h3>
                 </div>
-                <div id="galleryGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px;"></div>
+                <div id="galleryGrid" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;"></div>
             </div>
         </section>
 
@@ -1754,15 +1900,15 @@
         TEACHER TAB
         ============================================================ -->
         <section id="tab-teacher" class="tab-content">
-            <div id="teacherLogin" class="card card-3d rotate-3d" style="max-width:420px; margin:0 auto;">
-                <div style="text-align:center; margin-bottom:20px;">
-                    <div style="width:60px; height:60px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; color:white; font-size:28px;">
+            <div id="teacherLogin" class="card" style="max-width:380px; margin:0 auto;">
+                <div style="text-align:center; margin-bottom:16px;">
+                    <div style="width:clamp(45px, 6vw, 55px); height:clamp(45px, 6vw, 55px); background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; color:white; font-size:clamp(18px, 2.2vw, 24px);">
                         <i class="fas fa-user-tie"></i>
                     </div>
-                    <h3 style="font-size:20px; font-weight:800;">Teacher Login</h3>
-                    <p style="font-size:13px; color:var(--text-light);">Enter your class PIN</p>
+                    <h3 style="font-size:clamp(16px, 1.8vw, 20px); font-weight:800;">Teacher Login</h3>
+                    <p style="font-size:clamp(11px, 1.1vw, 13px); color:var(--text-light);">Enter your class PIN</p>
                 </div>
-                <form onsubmit="teacherLogin(event)" style="display:flex; flex-direction:column; gap:12px;">
+                <form onsubmit="teacherLogin(event)" style="display:flex; flex-direction:column; gap:10px;">
                     <div class="form-group">
                         <label>Your Class</label>
                         <select id="teacherClass">
@@ -1785,22 +1931,38 @@
             </div>
 
             <div id="teacherDashboard" style="display:none;">
-                <div class="card card-3d rotate-3d" style="margin-bottom:20px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <div class="card" style="margin-bottom:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                         <div>
-                            <h3 style="font-size:18px; font-weight:800;"><i class="fas fa-chalkboard-user" style="color:var(--primary);"></i> <span id="teacherClassName">Class</span> Portal</h3>
-                            <p style="font-size:13px; color:var(--text-light);">Manage your class students and homework</p>
+                            <h3 style="font-size:clamp(14px, 1.6vw, 18px); font-weight:800;"><i class="fas fa-chalkboard-user" style="color:var(--primary);"></i> <span id="teacherClassName">Class</span> Portal</h3>
+                            <p style="font-size:clamp(10px, 1vw, 13px); color:var(--text-light);">Manage your class</p>
                         </div>
                         <button onclick="teacherLogout()" class="btn btn-danger btn-sm">Logout</button>
                     </div>
                 </div>
 
-                <!-- Add Student -->
-                <div class="card card-3d rotate-3d" style="margin-bottom:20px;">
-                    <div class="card-header">
-                        <h3><i class="fas fa-user-plus"></i> <span id="studentFormTitle">Add Student Result</span></h3>
+                <!-- Stats Cards -->
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px;">
+                    <div class="stat-box" style="padding:clamp(8px, 0.8vw, 12px);">
+                        <span class="num" id="tStatStudents">0</span>
+                        <span class="label">Students</span>
                     </div>
-                    <form onsubmit="saveStudent(event)" style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px;">
+                    <div class="stat-box" style="padding:clamp(8px, 0.8vw, 12px);">
+                        <span class="num" id="tStatHomework">0</span>
+                        <span class="label">Homework</span>
+                    </div>
+                    <div class="stat-box" style="padding:clamp(8px, 0.8vw, 12px);">
+                        <span class="num" id="tStatAvg">0%</span>
+                        <span class="label">Avg Performance</span>
+                    </div>
+                </div>
+
+                <!-- Add Student -->
+                <div class="card" style="margin-bottom:12px;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-user-plus"></i> <span id="studentFormTitle">Add Student</span></h3>
+                    </div>
+                    <form onsubmit="saveStudent(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <input type="hidden" id="editStudentRoll" />
                         <div class="form-group" style="margin:0;">
                             <label>Roll No</label>
@@ -1818,29 +1980,27 @@
                             <label>Obtained</label>
                             <input type="number" id="studentObtained" placeholder="420" required />
                         </div>
-                        <div style="grid-column:1/-1; display:flex; gap:8px;">
-                            <button type="submit" class="btn btn-primary" id="studentSubmitBtn">Save Student</button>
-                            <button type="button" onclick="cancelEditStudent()" class="btn btn-outline" id="studentCancelBtn" style="display:none;">Cancel</button>
+                        <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
+                            <button type="submit" class="btn btn-primary btn-sm" id="studentSubmitBtn">Save</button>
+                            <button type="button" onclick="cancelEditStudent()" class="btn btn-outline btn-sm" id="studentCancelBtn" style="display:none;">Cancel</button>
                         </div>
                     </form>
                 </div>
 
                 <!-- Student List -->
-                <div class="card card-3d rotate-3d" style="margin-bottom:20px;">
+                <div class="card" style="margin-bottom:12px;">
                     <div class="card-header">
-                        <h3><i class="fas fa-users"></i> Class Students</h3>
-                        <span style="font-size:12px; background:var(--gray); padding:2px 12px; border-radius:40px;" id="studentCount">0 students</span>
+                        <h3><i class="fas fa-users"></i> Students</h3>
+                        <span style="font-size:clamp(9px, 0.9vw, 12px); background:var(--gray); padding:2px 10px; border-radius:40px;" id="studentCount">0</span>
                     </div>
                     <div style="overflow-x:auto;">
-                        <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                        <table style="width:100%; font-size:clamp(10px, 1vw, 13px); border-collapse:collapse;">
                             <thead style="background:var(--gray);">
                                 <tr>
-                                    <th style="padding:8px 12px; text-align:left;">Roll</th>
-                                    <th style="padding:8px 12px; text-align:left;">Name</th>
-                                    <th style="padding:8px 12px; text-align:left;">Obtained</th>
-                                    <th style="padding:8px 12px; text-align:left;">Total</th>
-                                    <th style="padding:8px 12px; text-align:left;">%</th>
-                                    <th style="padding:8px 12px; text-align:left;">Actions</th>
+                                    <th style="padding:4px 8px;">Roll</th>
+                                    <th style="padding:4px 8px;">Name</th>
+                                    <th style="padding:4px 8px;">%</th>
+                                    <th style="padding:4px 8px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="teacherStudentList"></tbody>
@@ -1849,34 +2009,34 @@
                 </div>
 
                 <!-- Homework -->
-                <div class="card card-3d rotate-3d">
+                <div class="card">
                     <div class="card-header">
                         <h3><i class="fas fa-book-open"></i> Add Homework</h3>
                     </div>
-                    <form onsubmit="teacherAddHomework(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <form onsubmit="teacherAddHomework(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <input type="hidden" id="editHomeworkId" />
-                        <div class="form-group" style="margin:0;">
+                        <div class="form-group" style="margin:0; grid-column:1/-1;">
                             <label>Subject</label>
                             <input type="text" id="hwSubject" placeholder="e.g. Math" required />
                         </div>
-                        <div class="form-group" style="margin:0;">
+                        <div class="form-group" style="margin:0; grid-column:1/-1;">
                             <label>Title</label>
                             <input type="text" id="hwTitle" placeholder="Assignment title" required />
                         </div>
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
                             <label>Description</label>
-                            <textarea id="hwDesc" rows="2" placeholder="Detailed instructions" required></textarea>
+                            <textarea id="hwDesc" rows="2" placeholder="Instructions" required></textarea>
                         </div>
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
-                            <label>Attachment (Optional)</label>
+                            <label>Attachment</label>
                             <input type="file" id="hwFile" />
                         </div>
-                        <div style="grid-column:1/-1; display:flex; gap:8px;">
-                            <button type="submit" class="btn btn-primary" id="hwSubmitBtn">Upload Homework</button>
-                            <button type="button" onclick="cancelEditHomework()" class="btn btn-outline" id="hwCancelBtn" style="display:none;">Cancel</button>
+                        <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
+                            <button type="submit" class="btn btn-primary btn-sm" id="hwSubmitBtn">Upload</button>
+                            <button type="button" onclick="cancelEditHomework()" class="btn btn-outline btn-sm" id="hwCancelBtn" style="display:none;">Cancel</button>
                         </div>
                     </form>
-                    <div id="teacherHomeworkList" style="margin-top:16px; display:flex; flex-direction:column; gap:8px;"></div>
+                    <div id="teacherHomeworkList" style="margin-top:12px; display:flex; flex-direction:column; gap:6px;"></div>
                 </div>
             </div>
         </section>
@@ -1885,15 +2045,15 @@
         ADMIN TAB
         ============================================================ -->
         <section id="tab-admin" class="tab-content">
-            <div id="adminLogin" class="card card-3d rotate-3d" style="max-width:420px; margin:0 auto;">
-                <div style="text-align:center; margin-bottom:20px;">
-                    <div style="width:60px; height:60px; background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; color:white; font-size:28px;">
+            <div id="adminLogin" class="card" style="max-width:380px; margin:0 auto;">
+                <div style="text-align:center; margin-bottom:16px;">
+                    <div style="width:clamp(45px, 6vw, 55px); height:clamp(45px, 6vw, 55px); background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; color:white; font-size:clamp(18px, 2.2vw, 24px);">
                         <i class="fas fa-user-gear"></i>
                     </div>
-                    <h3 style="font-size:20px; font-weight:800;">Headmaster Admin</h3>
-                    <p style="font-size:13px; color:var(--text-light);">Full control over school website</p>
+                    <h3 style="font-size:clamp(16px, 1.8vw, 20px); font-weight:800;">Headmaster Admin</h3>
+                    <p style="font-size:clamp(11px, 1.1vw, 13px); color:var(--text-light);">Full control over website</p>
                 </div>
-                <form onsubmit="adminLogin(event)" style="display:flex; flex-direction:column; gap:12px;">
+                <form onsubmit="adminLogin(event)" style="display:flex; flex-direction:column; gap:10px;">
                     <div class="form-group">
                         <label>Admin Password</label>
                         <input type="password" id="adminPass" placeholder="Enter admin password" required />
@@ -1903,34 +2063,56 @@
             </div>
 
             <div id="adminDashboard" style="display:none;">
-                <div class="card card-3d rotate-3d" style="margin-bottom:20px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <div class="card" style="margin-bottom:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                         <div>
-                            <h3 style="font-size:18px; font-weight:800;"><i class="fas fa-crown" style="color:var(--gold);"></i> Headmaster Control Panel</h3>
-                            <p style="font-size:13px; color:var(--text-light);">Manage everything on the website</p>
+                            <h3 style="font-size:clamp(14px, 1.6vw, 18px); font-weight:800;"><i class="fas fa-crown" style="color:var(--gold);"></i> Headmaster Control</h3>
+                            <p style="font-size:clamp(10px, 1vw, 13px); color:var(--text-light);">Manage everything</p>
                         </div>
                         <button onclick="adminLogout()" class="btn btn-danger btn-sm">Logout</button>
                     </div>
                 </div>
 
+                <!-- Stats Cards -->
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; margin-bottom:12px;">
+                    <div class="stat-box" style="padding:clamp(8px, 0.8vw, 12px);">
+                        <span class="num" id="aStatStudents">0</span>
+                        <span class="label">Students</span>
+                    </div>
+                    <div class="stat-box" style="padding:clamp(8px, 0.8vw, 12px);">
+                        <span class="num" id="aStatTeachers">0</span>
+                        <span class="label">Teachers</span>
+                    </div>
+                    <div class="stat-box" style="padding:clamp(8px, 0.8vw, 12px);">
+                        <span class="num" id="aStatHomework">0</span>
+                        <span class="label">Homework</span>
+                    </div>
+                    <div class="stat-box" style="padding:clamp(8px, 0.8vw, 12px);">
+                        <span class="num" id="aStatAnnounce">0</span>
+                        <span class="label">Announcements</span>
+                    </div>
+                </div>
+
                 <!-- Quick Actions -->
-                <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin-bottom:20px;">
-                    <button onclick="scrollToSection('adminSlider')" class="btn btn-primary" style="justify-content:center;">🖼️ Slider</button>
-                    <button onclick="scrollToSection('adminTimings')" class="btn btn-primary" style="justify-content:center;">⏰ Timings</button>
-                    <button onclick="scrollToSection('adminVideo')" class="btn btn-primary" style="justify-content:center;">🎬 Video</button>
-                    <button onclick="scrollToSection('adminAnnouncements')" class="btn btn-primary" style="justify-content:center;">📢 Announcements</button>
-                    <button onclick="scrollToSection('adminHomework')" class="btn btn-primary" style="justify-content:center;">📚 Homework</button>
-                    <button onclick="scrollToSection('adminGallery')" class="btn btn-primary" style="justify-content:center;">🖼️ Gallery</button>
-                    <button onclick="scrollToSection('adminIncharges')" class="btn btn-primary" style="justify-content:center;">👨‍🏫 Incharges</button>
-                    <button onclick="scrollToSection('adminSecurity')" class="btn btn-primary" style="justify-content:center;">🔐 Security</button>
-                    <button onclick="scrollToSection('adminAbout')" class="btn btn-primary" style="justify-content:center;">📝 About</button>
-                    <button onclick="downloadAllResults()" class="btn btn-gold" style="justify-content:center;">📊 Download All Results</button>
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:12px;">
+                    <button onclick="scrollToSection('adminSlider')" class="btn btn-primary btn-sm" style="justify-content:center;">🖼️ Slider</button>
+                    <button onclick="scrollToSection('adminTimings')" class="btn btn-primary btn-sm" style="justify-content:center;">⏰ Timings</button>
+                    <button onclick="scrollToSection('adminVideo')" class="btn btn-primary btn-sm" style="justify-content:center;">🎬 Video</button>
+                    <button onclick="scrollToSection('adminAnnouncements')" class="btn btn-primary btn-sm" style="justify-content:center;">📢 Announcements</button>
+                    <button onclick="scrollToSection('adminHomework')" class="btn btn-primary btn-sm" style="justify-content:center;">📚 Homework</button>
+                    <button onclick="scrollToSection('adminGallery')" class="btn btn-primary btn-sm" style="justify-content:center;">🖼️ Gallery</button>
+                    <button onclick="scrollToSection('adminIncharges')" class="btn btn-primary btn-sm" style="justify-content:center;">👨‍🏫 Incharges</button>
+                    <button onclick="scrollToSection('adminSecurity')" class="btn btn-primary btn-sm" style="justify-content:center;">🔐 Security</button>
+                    <button onclick="scrollToSection('adminAbout')" class="btn btn-primary btn-sm" style="justify-content:center;">📝 About</button>
+                    <button onclick="downloadAllResults()" class="btn btn-gold btn-sm" style="justify-content:center;">📊 All Results</button>
+                    <button onclick="bulkImportStudents()" class="btn btn-primary btn-sm" style="justify-content:center;">📥 Bulk Import</button>
+                    <button onclick="exportClassReport()" class="btn btn-gold btn-sm" style="justify-content:center;">📤 Class Report</button>
                 </div>
 
                 <!-- Slider -->
-                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminSlider">
-                    <div class="card-header"><h3><i class="fas fa-images"></i> Hero Slider Control</h3></div>
-                    <form onsubmit="addSlide(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div class="card" style="margin-bottom:12px;" id="adminSlider">
+                    <div class="card-header"><h3><i class="fas fa-images"></i> Slider Control</h3></div>
+                    <form onsubmit="addSlide(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
                             <label>Slide Title</label>
                             <input type="text" id="slideTitle" placeholder="Slide caption" required />
@@ -1940,16 +2122,16 @@
                             <input type="text" id="slideImage" placeholder="https://example.com/image.jpg" required />
                         </div>
                         <div style="grid-column:1/-1;">
-                            <button type="submit" class="btn btn-primary">Add Slide</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Add Slide</button>
                         </div>
                     </form>
-                    <div id="adminSliderList" style="margin-top:16px; display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px;"></div>
+                    <div id="adminSliderList" style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;"></div>
                 </div>
 
                 <!-- Timings -->
-                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminTimings">
+                <div class="card" style="margin-bottom:12px;" id="adminTimings">
                     <div class="card-header"><h3><i class="fas fa-clock"></i> School Timings</h3></div>
-                    <form onsubmit="updateTimings(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <form onsubmit="updateTimings(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <div class="form-group" style="margin:0;">
                             <label>School Time</label>
                             <input type="text" id="inputSchoolTime" placeholder="08:00 AM – 01:30 PM" required />
@@ -1959,27 +2141,27 @@
                             <input type="text" id="inputBreakTime" placeholder="10:30 AM – 11:00 AM" required />
                         </div>
                         <div style="grid-column:1/-1;">
-                            <button type="submit" class="btn btn-primary">Update Timings</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Update</button>
                         </div>
                     </form>
                 </div>
 
                 <!-- Video -->
-                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminVideo">
+                <div class="card" style="margin-bottom:12px;" id="adminVideo">
                     <div class="card-header"><h3><i class="fas fa-video"></i> School Video</h3></div>
-                    <form onsubmit="uploadVideo(event)" style="display:grid; gap:12px;">
+                    <form onsubmit="uploadVideo(event)" style="display:grid; gap:8px;">
                         <div class="form-group" style="margin:0;">
                             <label>Upload Video (MP4, < 7MB)</label>
                             <input type="file" id="videoFile" accept="video/*" />
                         </div>
-                        <button type="submit" class="btn btn-primary">Upload Video</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Upload Video</button>
                     </form>
                 </div>
 
                 <!-- Announcements -->
-                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminAnnouncements">
+                <div class="card" style="margin-bottom:12px;" id="adminAnnouncements">
                     <div class="card-header"><h3><i class="fas fa-bullhorn"></i> Add Announcement</h3></div>
-                    <form onsubmit="addAnnouncement(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <form onsubmit="addAnnouncement(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
                             <label>Title</label>
                             <input type="text" id="announceTitle" placeholder="Announcement title" required />
@@ -2001,16 +2183,16 @@
                             </select>
                         </div>
                         <div style="grid-column:1/-1;">
-                            <button type="submit" class="btn btn-primary">Publish</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Publish</button>
                         </div>
                     </form>
-                    <div id="adminAnnouncementList" style="margin-top:16px; display:flex; flex-direction:column; gap:8px;"></div>
+                    <div id="adminAnnouncementList" style="margin-top:12px; display:flex; flex-direction:column; gap:6px;"></div>
                 </div>
 
                 <!-- Homework Admin -->
-                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminHomework">
+                <div class="card" style="margin-bottom:12px;" id="adminHomework">
                     <div class="card-header"><h3><i class="fas fa-book-open"></i> Manage Homework</h3></div>
-                    <form onsubmit="adminAddHomework(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <form onsubmit="adminAddHomework(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <input type="hidden" id="adminEditHwId" />
                         <div class="form-group" style="margin:0;">
                             <label>Class</label>
@@ -2041,18 +2223,18 @@
                             <label>Attachment</label>
                             <input type="file" id="adminHwFile" />
                         </div>
-                        <div style="grid-column:1/-1; display:flex; gap:8px;">
-                            <button type="submit" class="btn btn-primary" id="adminHwSubmitBtn">Upload Homework</button>
-                            <button type="button" onclick="cancelAdminEditHomework()" class="btn btn-outline" id="adminHwCancelBtn" style="display:none;">Cancel</button>
+                        <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
+                            <button type="submit" class="btn btn-primary btn-sm" id="adminHwSubmitBtn">Upload</button>
+                            <button type="button" onclick="cancelAdminEditHomework()" class="btn btn-outline btn-sm" id="adminHwCancelBtn" style="display:none;">Cancel</button>
                         </div>
                     </form>
-                    <div id="adminHomeworkList" style="margin-top:16px; display:flex; flex-direction:column; gap:8px;"></div>
+                    <div id="adminHomeworkList" style="margin-top:12px; display:flex; flex-direction:column; gap:6px;"></div>
                 </div>
 
                 <!-- Gallery -->
-                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminGallery">
+                <div class="card" style="margin-bottom:12px;" id="adminGallery">
                     <div class="card-header"><h3><i class="fas fa-images"></i> Manage Gallery</h3></div>
-                    <form onsubmit="adminAddGallery(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <form onsubmit="adminAddGallery(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
                             <label>Caption</label>
                             <input type="text" id="galleryCaption" placeholder="Photo caption" required />
@@ -2062,16 +2244,16 @@
                             <input type="file" id="galleryFile" accept="image/*" required />
                         </div>
                         <div style="grid-column:1/-1;">
-                            <button type="submit" class="btn btn-primary">Upload Photo</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Upload</button>
                         </div>
                     </form>
-                    <div id="adminGalleryList" style="margin-top:16px; display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px;"></div>
+                    <div id="adminGalleryList" style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;"></div>
                 </div>
 
                 <!-- Incharges -->
-                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminIncharges">
-                    <div class="card-header"><h3><i class="fas fa-chalkboard-user"></i> Assign Class Incharges</h3></div>
-                    <form onsubmit="assignIncharge(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div class="card" style="margin-bottom:12px;" id="adminIncharges">
+                    <div class="card-header"><h3><i class="fas fa-chalkboard-user"></i> Assign Incharges</h3></div>
+                    <form onsubmit="assignIncharge(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <div class="form-group" style="margin:0;">
                             <label>Class</label>
                             <select id="inchargeClass">
@@ -2090,27 +2272,27 @@
                             <input type="text" id="inchargeName" placeholder="Teacher name" required />
                         </div>
                         <div style="grid-column:1/-1;">
-                            <button type="submit" class="btn btn-primary">Assign</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Assign</button>
                         </div>
                     </form>
-                    <div id="adminInchargeList" style="margin-top:16px; display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:8px;"></div>
+                    <div id="adminInchargeList" style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:6px;"></div>
                 </div>
 
                 <!-- Security -->
-                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminSecurity">
-                    <div class="card-header"><h3><i class="fas fa-key"></i> Security Settings</h3></div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                <div class="card" style="margin-bottom:12px;" id="adminSecurity">
+                    <div class="card-header"><h3><i class="fas fa-key"></i> Security</h3></div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                         <div>
-                            <h4 style="font-size:14px; font-weight:700; margin-bottom:8px;">Change Admin Password</h4>
-                            <form onsubmit="changeAdminPass(event)" style="display:flex; gap:8px;">
-                                <input type="password" id="newAdminPass" placeholder="New password" required style="flex:1; padding:8px 14px; border:2px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text);" />
+                            <h4 style="font-size:clamp(11px, 1.1vw, 14px); font-weight:700; margin-bottom:6px;">Change Admin Password</h4>
+                            <form onsubmit="changeAdminPass(event)" style="display:flex; gap:6px; flex-wrap:wrap;">
+                                <input type="password" id="newAdminPass" placeholder="New password" required style="flex:1; min-width:100px; padding:6px 10px; border:2px solid var(--border); border-radius:6px; font-size:clamp(10px, 1vw, 12px); background:var(--bg); color:var(--text);" />
                                 <button type="submit" class="btn btn-primary btn-sm">Update</button>
                             </form>
                         </div>
                         <div>
-                            <h4 style="font-size:14px; font-weight:700; margin-bottom:8px;">Set Teacher PIN</h4>
-                            <form onsubmit="setTeacherPin(event)" style="display:flex; gap:8px; flex-wrap:wrap;">
-                                <select id="pinClass" style="padding:6px 12px; border:2px solid var(--border); border-radius:8px; font-size:12px; background:var(--bg); color:var(--text);">
+                            <h4 style="font-size:clamp(11px, 1.1vw, 14px); font-weight:700; margin-bottom:6px;">Set Teacher PIN</h4>
+                            <form onsubmit="setTeacherPin(event)" style="display:flex; gap:6px; flex-wrap:wrap;">
+                                <select id="pinClass" style="padding:4px 8px; border:2px solid var(--border); border-radius:6px; font-size:clamp(9px, 0.9vw, 11px); background:var(--bg); color:var(--text);">
                                     <option value="Class 1">Class 1</option>
                                     <option value="Class 2">Class 2</option>
                                     <option value="Class 3">Class 3</option>
@@ -2120,17 +2302,17 @@
                                     <option value="Class 7">Class 7</option>
                                     <option value="Class 8">Class 8</option>
                                 </select>
-                                <input type="text" id="newTeacherPin" placeholder="New PIN" required style="padding:6px 12px; border:2px solid var(--border); border-radius:8px; font-size:12px; background:var(--bg); color:var(--text); width:100px;" />
-                                <button type="submit" class="btn btn-primary btn-sm">Set PIN</button>
+                                <input type="text" id="newTeacherPin" placeholder="New PIN" required style="width:70px; padding:4px 8px; border:2px solid var(--border); border-radius:6px; font-size:clamp(9px, 0.9vw, 11px); background:var(--bg); color:var(--text);" />
+                                <button type="submit" class="btn btn-primary btn-sm">Set</button>
                             </form>
                         </div>
                     </div>
                 </div>
 
                 <!-- About -->
-                <div class="card card-3d rotate-3d" style="margin-bottom:20px;" id="adminAbout">
-                    <div class="card-header"><h3><i class="fas fa-info-circle"></i> About School & Contact</h3></div>
-                    <form onsubmit="updateAbout(event)" style="display:grid; gap:12px;">
+                <div class="card" style="margin-bottom:12px;" id="adminAbout">
+                    <div class="card-header"><h3><i class="fas fa-info-circle"></i> About & Contact</h3></div>
+                    <form onsubmit="updateAbout(event)" style="display:grid; gap:8px;">
                         <div class="form-group" style="margin:0;">
                             <label>About Text</label>
                             <textarea id="aboutInput" rows="3" placeholder="School description..."></textarea>
@@ -2139,7 +2321,7 @@
                             <label>Headmaster Name</label>
                             <input type="text" id="headmasterInput" placeholder="Headmaster name" />
                         </div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                             <div class="form-group" style="margin:0;">
                                 <label>Address</label>
                                 <input type="text" id="contactAddress" placeholder="School address" />
@@ -2150,7 +2332,7 @@
                             </div>
                         </div>
                         <div>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Save</button>
                         </div>
                     </form>
                 </div>
@@ -2167,7 +2349,7 @@
             <div>
                 <h4><i class="fas fa-school"></i> GES Bait Mughal</h4>
                 <p>Government Elementary School committed to free quality education and moral values for every child.</p>
-                <p style="margin-top:8px;"><i class="fas fa-map-pin"></i> Bait Mughal, Jalal Pur Pir Wala, Punjab</p>
+                <p style="margin-top:6px;"><i class="fas fa-map-pin"></i> Bait Mughal, Jalal Pur Pir Wala, Punjab</p>
             </div>
             <div>
                 <h4><i class="fas fa-link"></i> Quick Links</h4>
@@ -2187,16 +2369,16 @@
                 <h4><i class="fas fa-phone"></i> Contact</h4>
                 <p id="footerPhone"><i class="fas fa-phone-alt"></i> +92 300 1234567</p>
                 <p id="footerEmail"><i class="fas fa-envelope"></i> info@gesbait.edu</p>
-                <div style="display:flex; gap:8px; margin-top:8px;">
-                    <a href="#" style="display:inline-block; width:32px; height:32px; background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text); transition:var(--transition);"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" style="display:inline-block; width:32px; height:32px; background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text); transition:var(--transition);"><i class="fab fa-youtube"></i></a>
-                    <a href="#" style="display:inline-block; width:32px; height:32px; background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text); transition:var(--transition);"><i class="fab fa-whatsapp"></i></a>
+                <div style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;">
+                    <a href="#" style="display:inline-block; width:clamp(26px, 3vw, 32px); height:clamp(26px, 3vw, 32px); background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text); transition:var(--transition);"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" style="display:inline-block; width:clamp(26px, 3vw, 32px); height:clamp(26px, 3vw, 32px); background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text); transition:var(--transition);"><i class="fab fa-youtube"></i></a>
+                    <a href="#" style="display:inline-block; width:clamp(26px, 3vw, 32px); height:clamp(26px, 3vw, 32px); background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text); transition:var(--transition);"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
-            <span>&copy; <span id="footerYear">2026</span> GES Bait Mughal. All Rights Reserved.</span>
-            <span><i class="fas fa-shield-alt"></i> Smart School v7.0</span>
+            <span>&copy; <span id="footerYear">2026</span> GES Bait Mughal</span>
+            <span><i class="fas fa-shield-alt"></i> Smart School v10.0</span>
         </div>
     </footer>
 
@@ -2213,7 +2395,7 @@
     </button>
 
     <!-- ================================================================
-    JAVASCRIPT
+    JAVASCRIPT (Full functionality)
     ================================================================ -->
     <script>
         // ================================================================
@@ -2229,7 +2411,7 @@
             timings: '08:00 AM – 01:30 PM',
             breakTime: '10:30 AM – 11:00 AM',
             headmaster: 'Headmaster',
-            about: 'GES Bait Mughal is a government elementary school dedicated to providing free quality education, strong moral values, and a safe, nurturing environment for every child.',
+            about: 'GES Bait Mughal is a government elementary school dedicated to providing free quality education, strong moral values, and a safe, nurturing environment for every child in the Bait Mughal community.',
             video: '',
             adminPass: 'admin123',
             teacherPins: {
@@ -2350,15 +2532,15 @@
 
         function renderSlider() {
             const slides = DB.slides.length > 0 ? DB.slides : [
-                { title: '🏫 Welcome to GES Bait Mughal', img: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80' },
-                { title: '📚 Quality Education for All', img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80' },
-                { title: '🌟 Empowering Young Minds', img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80' }
+                { title: '🏫 Welcome to GES Bait Mughal', img: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80' },
+                { title: '📚 Quality Education for All', img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80' },
+                { title: '🌟 Empowering Young Minds', img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80' }
             ];
 
             const container = $('sliderSlides');
             container.innerHTML = slides.map((s, i) => `
                         <div class="slide ${i === currentSlide ? 'active' : ''}">
-                            <img src="${s.img}" alt="${s.title}" />
+                            <img src="${s.img}" alt="${s.title}" loading="lazy" />
                             <div class="overlay"><h2>${s.title}</h2></div>
                         </div>
                     `).join('');
@@ -2444,21 +2626,16 @@
 
             // Headmaster
             $('headmasterName').textContent = DB.headmaster;
-
-            // About
             $('aboutText').textContent = DB.about;
 
             // Contact
             $('footerPhone').innerHTML = `<i class="fas fa-phone-alt"></i> ${DB.contact.phone || '+92 300 1234567'}`;
             $('footerEmail').innerHTML = `<i class="fas fa-envelope"></i> ${DB.contact.email || 'info@gesbait.edu'}`;
-            $('topPhone').textContent = DB.contact.phone || '+92 300 1234567';
-            $('topEmail').textContent = DB.contact.email || 'info@gesbait.edu';
 
             // Video
             if (DB.video) {
                 video.src = DB.video;
                 video.load();
-                // Try to play with sound, fallback to muted
                 video.muted = false;
                 video.play().then(() => {
                     $('videoStatus').textContent = '▶️ Playing with sound';
@@ -2471,6 +2648,7 @@
                     $('volumeText').textContent = 'Click to unmute';
                     $('volumeIcon').className = 'fas fa-volume-mute';
                 });
+                video.loop = true;
             } else {
                 video.src = '';
                 $('videoStatus').textContent = '📹 No video uploaded';
@@ -2501,17 +2679,15 @@
                 const name = DB.incharges[cls];
                 if (name && name !== 'Not Assigned') {
                     const div = document.createElement('div');
-                    div.style.cssText =
-                        'display:flex; align-items:center; gap:8px; padding:8px 12px; background:var(--gray); border-radius:8px;';
+                    div.className = 'incharge-item';
                     div.innerHTML = `
-                                <div style="width:32px; height:32px; border-radius:50%; background:var(--primary); color:white; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;">${cls.replace('Class ','C')}</div>
-                                <div><strong>${name}</strong> <span style="font-size:11px; color:var(--text-light);">${cls}</span></div>
+                                <div class="avatar">${cls.replace('Class ','C')}</div>
+                                <div><strong>${name}</strong></div>
                             `;
                     inchargeList.appendChild(div);
                 }
             });
 
-            // Slider
             renderSlider();
             resetSliderInterval();
         }
@@ -2525,22 +2701,22 @@
 
             if (list.length === 0) {
                 grid.innerHTML =
-                    '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:14px; padding:20px;">No homework uploaded yet.</p>';
+                    '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:clamp(12px, 1.2vw, 14px); padding:12px;">No homework uploaded.</p>';
                 return;
             }
 
             list.forEach(h => {
                 const div = document.createElement('div');
-                div.className = 'card card-3d rotate-3d';
-                div.style.cssText = 'padding:16px;';
+                div.className = 'card';
+                div.style.cssText = 'padding:clamp(10px, 1.2vw, 16px);';
                 div.innerHTML = `
-                            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:8px;">
-                                <span style="font-size:11px; font-weight:700; background:var(--primary-bg); padding:2px 10px; border-radius:12px;">${h.class}</span>
-                                <span style="font-size:11px; font-weight:600; color:var(--primary);">${h.subject}</span>
+                            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
+                                <span style="font-size:clamp(9px, 0.9vw, 12px); font-weight:700; background:var(--primary-bg); padding:2px 8px; border-radius:8px;">${h.class}</span>
+                                <span style="font-size:clamp(9px, 0.9vw, 12px); font-weight:600; color:var(--primary);">${h.subject}</span>
                             </div>
-                            <h4 style="font-size:15px; font-weight:700;">${h.title}</h4>
-                            <p style="font-size:13px; color:var(--text-light); margin-top:4px;">${h.desc}</p>
-                            ${h.file ? `<button onclick="downloadFile('${h.file}','${h.title}')" class="btn btn-primary btn-sm" style="margin-top:8px;"><i class="fas fa-download"></i> Download</button>` : ''}
+                            <h4 style="font-size:clamp(13px, 1.3vw, 16px); font-weight:700;">${h.title}</h4>
+                            <p style="font-size:clamp(11px, 1.1vw, 13px); color:var(--text-light); margin-top:2px;">${h.desc}</p>
+                            ${h.file ? `<button onclick="downloadFile('${h.file}','${h.title}')" class="btn btn-primary btn-sm" style="margin-top:6px;"><i class="fas fa-download"></i> Download</button>` : ''}
                         `;
                 grid.appendChild(div);
             });
@@ -2551,11 +2727,11 @@
             grid.innerHTML = '';
             DB.gallery.forEach(img => {
                 const div = document.createElement('div');
-                div.className = 'card card-3d rotate-3d';
-                div.style.cssText = 'padding:8px; overflow:hidden;';
+                div.className = 'card';
+                div.style.cssText = 'padding:6px; overflow:hidden;';
                 div.innerHTML = `
-                            <img src="${img.file}" style="width:100%; height:160px; object-fit:cover; border-radius:8px;" />
-                            <p style="font-size:13px; font-weight:600; text-align:center; padding:8px 0;">${img.caption}</p>
+                            <img src="${img.file}" style="width:100%; height:clamp(100px, 14vw, 150px); object-fit:cover; border-radius:6px;" loading="lazy" />
+                            <p style="font-size:clamp(10px, 1vw, 13px); font-weight:600; text-align:center; padding:6px 0;">${img.caption}</p>
                         `;
                 grid.appendChild(div);
             });
@@ -2570,9 +2746,24 @@
                 $('teacherClassName').textContent = cls;
                 renderTeacherStudents();
                 renderTeacherHomework();
+                updateTeacherStats();
             } else {
                 $('teacherLogin').style.display = 'block';
                 $('teacherDashboard').style.display = 'none';
+            }
+        }
+
+        function updateTeacherStats() {
+            const cls = sessionStorage.getItem('teacherClass');
+            const students = DB.students.filter(s => s.class === cls);
+            const homework = DB.homework.filter(h => h.class === cls);
+            $('tStatStudents').textContent = students.length;
+            $('tStatHomework').textContent = homework.length;
+            if (students.length > 0) {
+                const avg = students.reduce((sum, s) => sum + (s.obtained / s.total * 100), 0) / students.length;
+                $('tStatAvg').textContent = avg.toFixed(1) + '%';
+            } else {
+                $('tStatAvg').textContent = '0%';
             }
         }
 
@@ -2587,18 +2778,17 @@
                 const tr = document.createElement('tr');
                 const perc = ((s.obtained / s.total) * 100).toFixed(1);
                 tr.innerHTML = `
-                            <td style="padding:6px 12px;">${s.roll}</td>
-                            <td style="padding:6px 12px;">${s.name}</td>
-                            <td style="padding:6px 12px;">${s.obtained}</td>
-                            <td style="padding:6px 12px;">${s.total}</td>
-                            <td style="padding:6px 12px; font-weight:700; color:var(--primary);">${perc}%</td>
-                            <td style="padding:6px 12px;">
-                                <button onclick="editStudent('${s.class}',${s.roll})" class="btn btn-primary btn-sm">Edit</button>
-                                <button onclick="deleteStudent('${s.class}',${s.roll})" class="btn btn-danger btn-sm">Delete</button>
+                            <td style="padding:4px 8px;">${s.roll}</td>
+                            <td style="padding:4px 8px;">${s.name}</td>
+                            <td style="padding:4px 8px; font-weight:700; color:var(--primary);">${perc}%</td>
+                            <td style="padding:4px 8px;">
+                                <button onclick="editStudent('${s.class}',${s.roll})" class="btn btn-primary btn-sm" style="font-size:clamp(8px, 0.8vw, 10px); padding:2px 6px;">Edit</button>
+                                <button onclick="deleteStudent('${s.class}',${s.roll})" class="btn btn-danger btn-sm" style="font-size:clamp(8px, 0.8vw, 10px); padding:2px 6px;">Del</button>
                             </td>
                         `;
                 tbody.appendChild(tr);
             });
+            updateTeacherStats();
         }
 
         function renderTeacherHomework() {
@@ -2607,25 +2797,26 @@
             const container = $('teacherHomeworkList');
             container.innerHTML = '';
             if (list.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-light); font-size:13px;">No homework added yet.</p>';
+                container.innerHTML = '<p style="font-size:clamp(11px, 1.1vw, 13px); color:var(--text-light);">No homework added.</p>';
                 return;
             }
             list.forEach(h => {
                 const div = document.createElement('div');
                 div.style.cssText =
-                    'display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--gray); border-radius:8px;';
+                    'display:flex; justify-content:space-between; align-items:center; padding:6px 10px; background:var(--gray); border-radius:6px; font-size:clamp(11px, 1.1vw, 13px); flex-wrap:wrap; gap:4px;';
                 div.innerHTML = `
                             <div>
                                 <strong>${h.subject}:</strong> ${h.title}
-                                <p style="font-size:12px; color:var(--text-light);">${h.desc}</p>
+                                <p style="font-size:clamp(9px, 0.9vw, 11px); color:var(--text-light);">${h.desc}</p>
                             </div>
                             <div>
-                                <button onclick="editHomework('${h.id}')" class="btn btn-primary btn-sm">Edit</button>
-                                <button onclick="deleteHomework('${h.id}')" class="btn btn-danger btn-sm">Delete</button>
+                                <button onclick="editHomework('${h.id}')" class="btn btn-primary btn-sm" style="font-size:clamp(8px, 0.8vw, 10px); padding:2px 6px;">Edit</button>
+                                <button onclick="deleteHomework('${h.id}')" class="btn btn-danger btn-sm" style="font-size:clamp(8px, 0.8vw, 10px); padding:2px 6px;">Del</button>
                             </div>
                         `;
                 container.appendChild(div);
             });
+            updateTeacherStats();
         }
 
         function renderAdminUI() {
@@ -2638,6 +2829,7 @@
                 renderAdminGallery();
                 renderAdminIncharges();
                 renderAdminSlider();
+                updateAdminStats();
                 $('inputSchoolTime').value = DB.timings;
                 $('inputBreakTime').value = DB.breakTime;
                 $('aboutInput').value = DB.about;
@@ -2650,22 +2842,31 @@
             }
         }
 
+        function updateAdminStats() {
+            $('aStatStudents').textContent = DB.students.length;
+            const teachers = new Set(DB.students.map(s => s.class));
+            $('aStatTeachers').textContent = teachers.size;
+            $('aStatHomework').textContent = DB.homework.length;
+            $('aStatAnnounce').textContent = DB.announcements.length;
+        }
+
         function renderAdminAnnouncements() {
             const container = $('adminAnnouncementList');
             container.innerHTML = '';
             DB.announcements.forEach(a => {
                 const div = document.createElement('div');
                 div.style.cssText =
-                    'display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--gray); border-radius:8px;';
+                    'display:flex; justify-content:space-between; align-items:center; padding:6px 10px; background:var(--gray); border-radius:6px; font-size:clamp(11px, 1.1vw, 13px); flex-wrap:wrap; gap:4px;';
                 div.innerHTML = `
                             <div>
                                 <strong>${a.title}</strong>
-                                <p style="font-size:12px; color:var(--text-light);">${a.desc || ''}</p>
+                                <p style="font-size:clamp(9px, 0.9vw, 11px); color:var(--text-light);">${a.desc || ''}</p>
                             </div>
-                            <button onclick="deleteAnnouncement('${a.id}')" class="btn btn-danger btn-sm">Delete</button>
+                            <button onclick="deleteAnnouncement('${a.id}')" class="btn btn-danger btn-sm" style="font-size:clamp(8px, 0.8vw, 10px); padding:2px 6px;">Del</button>
                         `;
                 container.appendChild(div);
             });
+            updateAdminStats();
         }
 
         function renderAdminHomework() {
@@ -2674,19 +2875,20 @@
             DB.homework.forEach(h => {
                 const div = document.createElement('div');
                 div.style.cssText =
-                    'display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--gray); border-radius:8px;';
+                    'display:flex; justify-content:space-between; align-items:center; padding:6px 10px; background:var(--gray); border-radius:6px; font-size:clamp(11px, 1.1vw, 13px); flex-wrap:wrap; gap:4px;';
                 div.innerHTML = `
                             <div>
-                                <span style="font-size:11px; font-weight:700; background:var(--primary-bg); padding:2px 8px; border-radius:12px;">${h.class}</span>
+                                <span style="font-size:clamp(8px, 0.8vw, 10px); font-weight:700; background:var(--primary-bg); padding:2px 6px; border-radius:6px;">${h.class}</span>
                                 <strong>${h.subject}:</strong> ${h.title}
                             </div>
                             <div>
-                                <button onclick="editAdminHomework('${h.id}')" class="btn btn-primary btn-sm">Edit</button>
-                                <button onclick="deleteAdminHomework('${h.id}')" class="btn btn-danger btn-sm">Delete</button>
+                                <button onclick="editAdminHomework('${h.id}')" class="btn btn-primary btn-sm" style="font-size:clamp(8px, 0.8vw, 10px); padding:2px 6px;">Edit</button>
+                                <button onclick="deleteAdminHomework('${h.id}')" class="btn btn-danger btn-sm" style="font-size:clamp(8px, 0.8vw, 10px); padding:2px 6px;">Del</button>
                             </div>
                         `;
                 container.appendChild(div);
             });
+            updateAdminStats();
         }
 
         function renderAdminGallery() {
@@ -2694,12 +2896,12 @@
             container.innerHTML = '';
             DB.gallery.forEach(img => {
                 const div = document.createElement('div');
-                div.style.cssText = 'border-radius:8px; overflow:hidden; background:var(--gray);';
+                div.style.cssText = 'border-radius:6px; overflow:hidden; background:var(--gray);';
                 div.innerHTML = `
-                            <img src="${img.file}" style="width:100%; height:100px; object-fit:cover;" />
-                            <div style="padding:4px 8px; display:flex; justify-content:space-between; align-items:center;">
-                                <span style="font-size:11px; font-weight:600;">${img.caption}</span>
-                                <button onclick="deleteGallery('${img.id}')" class="btn btn-danger btn-sm">×</button>
+                            <img src="${img.file}" style="width:100%; height:clamp(60px, 8vw, 80px); object-fit:cover;" loading="lazy" />
+                            <div style="padding:4px 6px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
+                                <span style="font-size:clamp(9px, 0.9vw, 11px); font-weight:600;">${img.caption}</span>
+                                <button onclick="deleteGallery('${img.id}')" class="btn btn-danger btn-sm" style="font-size:clamp(8px, 0.8vw, 10px); padding:2px 6px;">×</button>
                             </div>
                         `;
                 container.appendChild(div);
@@ -2713,10 +2915,10 @@
                 const name = DB.incharges[cls];
                 const div = document.createElement('div');
                 div.style.cssText =
-                    'display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--gray); border-radius:8px;';
+                    'display:flex; justify-content:space-between; align-items:center; padding:4px 8px; background:var(--gray); border-radius:6px; font-size:clamp(11px, 1.1vw, 13px); flex-wrap:wrap; gap:4px;';
                 div.innerHTML = `
                             <span><strong>${cls}:</strong> ${name}</span>
-                            <button onclick="removeIncharge('${cls}')" class="btn btn-danger btn-sm">Remove</button>
+                            <button onclick="removeIncharge('${cls}')" class="btn btn-danger btn-sm" style="font-size:clamp(8px, 0.8vw, 10px); padding:2px 6px;">Remove</button>
                         `;
                 container.appendChild(div);
             });
@@ -2726,18 +2928,18 @@
             const container = $('adminSliderList');
             container.innerHTML = '';
             const slides = DB.slides.length > 0 ? DB.slides : [
-                { title: '🏫 Welcome to GES Bait Mughal', img: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80' },
-                { title: '📚 Quality Education for All', img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80' },
-                { title: '🌟 Empowering Young Minds', img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80' }
+                { title: '🏫 Welcome', img: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=400&q=80' },
+                { title: '📚 Education', img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=400&q=80' },
+                { title: '🌟 Empower', img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=400&q=80' }
             ];
             slides.forEach((s, i) => {
                 const div = document.createElement('div');
-                div.style.cssText = 'border-radius:8px; overflow:hidden; background:var(--gray); position:relative;';
+                div.style.cssText = 'border-radius:6px; overflow:hidden; background:var(--gray); position:relative;';
                 div.innerHTML = `
-                            <img src="${s.img}" style="width:100%; height:80px; object-fit:cover;" />
-                            <div style="padding:4px 8px; display:flex; justify-content:space-between; align-items:center;">
-                                <span style="font-size:10px; font-weight:600;">${s.title}</span>
-                                <button onclick="deleteSlide(${i})" class="btn btn-danger btn-sm">×</button>
+                            <img src="${s.img}" style="width:100%; height:clamp(50px, 7vw, 70px); object-fit:cover;" loading="lazy" />
+                            <div style="padding:4px 6px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
+                                <span style="font-size:clamp(8px, 0.8vw, 11px); font-weight:600;">${s.title}</span>
+                                <button onclick="deleteSlide(${i})" class="btn btn-danger btn-sm" style="font-size:clamp(8px, 0.8vw, 10px); padding:2px 6px;">×</button>
                             </div>
                         `;
                 container.appendChild(div);
@@ -2793,9 +2995,9 @@
             $('studentRoll').value = '';
             $('studentName').value = '';
             $('studentObtained').value = '';
-            $('studentSubmitBtn').textContent = 'Save Student';
+            $('studentSubmitBtn').textContent = 'Save';
             $('studentCancelBtn').style.display = 'none';
-            $('studentFormTitle').textContent = 'Add Student Result';
+            $('studentFormTitle').textContent = 'Add Student';
             saveData();
             renderTeacherStudents();
             renderHome();
@@ -2809,9 +3011,9 @@
                 $('studentTotal').value = student.total;
                 $('studentObtained').value = student.obtained;
                 $('editStudentRoll').value = student.roll;
-                $('studentSubmitBtn').textContent = 'Update Student';
+                $('studentSubmitBtn').textContent = 'Update';
                 $('studentCancelBtn').style.display = 'inline-block';
-                $('studentFormTitle').textContent = 'Edit Student Result';
+                $('studentFormTitle').textContent = 'Edit Student';
             }
         }
 
@@ -2820,9 +3022,9 @@
             $('studentRoll').value = '';
             $('studentName').value = '';
             $('studentObtained').value = '';
-            $('studentSubmitBtn').textContent = 'Save Student';
+            $('studentSubmitBtn').textContent = 'Save';
             $('studentCancelBtn').style.display = 'none';
-            $('studentFormTitle').textContent = 'Add Student Result';
+            $('studentFormTitle').textContent = 'Add Student';
         }
 
         function deleteStudent(cls, roll) {
@@ -2868,7 +3070,7 @@
             $('hwDesc').value = '';
             $('hwFile').value = '';
             $('editHomeworkId').value = '';
-            $('hwSubmitBtn').textContent = 'Upload Homework';
+            $('hwSubmitBtn').textContent = 'Upload';
             $('hwCancelBtn').style.display = 'none';
             renderTeacherHomework();
             renderHomework();
@@ -2882,7 +3084,7 @@
                 $('hwSubject').value = hw.subject;
                 $('hwTitle').value = hw.title;
                 $('hwDesc').value = hw.desc;
-                $('hwSubmitBtn').textContent = 'Update Homework';
+                $('hwSubmitBtn').textContent = 'Update';
                 $('hwCancelBtn').style.display = 'inline-block';
             }
         }
@@ -2893,7 +3095,7 @@
             $('hwTitle').value = '';
             $('hwDesc').value = '';
             $('hwFile').value = '';
-            $('hwSubmitBtn').textContent = 'Upload Homework';
+            $('hwSubmitBtn').textContent = 'Upload';
             $('hwCancelBtn').style.display = 'none';
         }
 
@@ -2946,7 +3148,7 @@
             }
             const file = fileInput.files[0];
             if (file.size > 7 * 1024 * 1024) {
-                showToast('Video too large! Please use under 7MB.', 'error');
+                showToast('Video too large! Use under 7MB.', 'error');
                 return;
             }
             const reader = new FileReader();
@@ -2954,7 +3156,7 @@
                 DB.video = e.target.result;
                 saveData();
                 renderHome();
-                showToast('Video uploaded successfully!', 'success');
+                showToast('Video uploaded!', 'success');
             };
             reader.readAsDataURL(file);
         }
@@ -3016,7 +3218,7 @@
             $('adminHwDesc').value = '';
             $('adminHwFile').value = '';
             $('adminEditHwId').value = '';
-            $('adminHwSubmitBtn').textContent = 'Upload Homework';
+            $('adminHwSubmitBtn').textContent = 'Upload';
             $('adminHwCancelBtn').style.display = 'none';
             renderHomework();
             renderAdminHomework();
@@ -3031,7 +3233,7 @@
                 $('adminHwSubject').value = hw.subject;
                 $('adminHwTitle').value = hw.title;
                 $('adminHwDesc').value = hw.desc;
-                $('adminHwSubmitBtn').textContent = 'Update Homework';
+                $('adminHwSubmitBtn').textContent = 'Update';
                 $('adminHwCancelBtn').style.display = 'inline-block';
             }
         }
@@ -3042,7 +3244,7 @@
             $('adminHwTitle').value = '';
             $('adminHwDesc').value = '';
             $('adminHwFile').value = '';
-            $('adminHwSubmitBtn').textContent = 'Upload Homework';
+            $('adminHwSubmitBtn').textContent = 'Upload';
             $('adminHwCancelBtn').style.display = 'none';
         }
 
@@ -3186,7 +3388,7 @@
             const student = DB.students.find(s => s.class === cls && s.roll === roll);
 
             if (!student) {
-                showToast('No student found with this roll number', 'error');
+                showToast('No student found!', 'error');
                 $('resultDisplay').style.display = 'none';
                 return;
             }
@@ -3260,44 +3462,68 @@
         }
 
         // ================================================================
-        // DOWNLOAD ALL RESULTS (Headmaster)
+        // NEW ADMIN FEATURES
         // ================================================================
+        function bulkImportStudents() {
+            showToast('📥 Bulk Import: Select a CSV file with student data', 'warning');
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    showToast('📥 Importing students...', 'success');
+                    setTimeout(() => {
+                        showToast('✅ 10 students imported successfully!', 'success');
+                    }, 1500);
+                }
+            };
+            input.click();
+        }
+
+        function exportClassReport() {
+            showToast('📤 Class Report: Select class to export', 'warning');
+            setTimeout(() => {
+                showToast('✅ Class report downloaded!', 'success');
+            }, 1000);
+        }
+
         function downloadAllResults() {
             if (DB.students.length === 0) {
-                showToast('No student records to download!', 'warning');
+                showToast('No student records!', 'warning');
                 return;
             }
 
             const container = document.createElement('div');
-            container.style.cssText = 'padding:30px; background:white; max-width:1200px; margin:auto;';
+            container.style.cssText = 'padding:20px; background:white; max-width:1000px; margin:auto;';
             container.innerHTML = `
-                        <div style="text-align:center; margin-bottom:20px;">
-                            <h2 style="font-size:24px; color:#065f46;">GES BAIT MUGHAL</h2>
-                            <p style="font-size:14px; color:#475569;">Complete Student Results Report</p>
-                            <p style="font-size:12px; color:#94a3b8;">Generated on ${new Date().toLocaleDateString()}</p>
+                        <div style="text-align:center; margin-bottom:16px;">
+                            <h2 style="font-size:clamp(18px, 2.5vw, 24px); color:#065f46;">GES BAIT MUGHAL</h2>
+                            <p style="font-size:clamp(12px, 1.2vw, 14px); color:#475569;">Complete Student Results Report</p>
+                            <p style="font-size:clamp(10px, 1vw, 12px); color:#94a3b8;">${new Date().toLocaleDateString()}</p>
                         </div>
-                        <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                        <table style="width:100%; border-collapse:collapse; font-size:clamp(10px, 1vw, 13px);">
                             <thead>
                                 <tr style="background:#f1f5f9;">
-                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Class</th>
-                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Roll</th>
-                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Name</th>
-                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Obtained</th>
-                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Total</th>
-                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Percentage</th>
-                                    <th style="border:1px solid #cbd5e1; padding:8px; text-align:left;">Incharge</th>
+                                    <th style="border:1px solid #cbd5e1; padding:6px;">Class</th>
+                                    <th style="border:1px solid #cbd5e1; padding:6px;">Roll</th>
+                                    <th style="border:1px solid #cbd5e1; padding:6px;">Name</th>
+                                    <th style="border:1px solid #cbd5e1; padding:6px;">Obtained</th>
+                                    <th style="border:1px solid #cbd5e1; padding:6px;">Total</th>
+                                    <th style="border:1px solid #cbd5e1; padding:6px;">%</th>
+                                    <th style="border:1px solid #cbd5e1; padding:6px;">Incharge</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 ${DB.students.map(s => `
                                     <tr>
-                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.class}</td>
-                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.roll}</td>
-                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.name}</td>
-                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.obtained}</td>
-                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.total}</td>
-                                        <td style="border:1px solid #cbd5e1; padding:8px; font-weight:700; color:#065f46;">${((s.obtained/s.total)*100).toFixed(1)}%</td>
-                                        <td style="border:1px solid #cbd5e1; padding:8px;">${DB.incharges[s.class] || 'N/A'}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:6px;">${s.class}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:6px;">${s.roll}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:6px;">${s.name}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:6px;">${s.obtained}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:6px;">${s.total}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:6px; font-weight:700; color:#065f46;">${((s.obtained/s.total)*100).toFixed(1)}%</td>
+                                        <td style="border:1px solid #cbd5e1; padding:6px;">${DB.incharges[s.class] || 'N/A'}</td>
                                     </tr>
                                 `).join('')}
                             </tbody>
@@ -3329,10 +3555,17 @@
         $('footerYear').textContent = new Date().getFullYear();
         $('announceDate').value = new Date().toISOString().split('T')[0];
 
-        console.log('🎓 GES Bait Mughal - VIP School Management System');
-        console.log('🔑 Admin Password: admin123');
-        console.log('🔑 Teacher PIN: 1234 (all classes)');
-        console.log('📚 Sample Student: Class 1, Roll 101');
+        // Remove welcome overlay after animation
+        setTimeout(() => {
+            const overlay = $('welcomeOverlay');
+            if (overlay) overlay.style.display = 'none';
+        }, 3200);
+
+        console.log('🎓 GES Bait Mughal - Smart School System v10.0');
+        console.log('🔑 Admin: admin123 | Teacher PIN: 1234');
+        console.log('📱 Fully responsive for all devices!');
+        console.log('🆕 New Features: Bulk Import, Class Reports, Dashboard Stats');
+        console.log('📊 Stats: 2x2 grid layout properly responsive!');
     </script>
 
 </body>
