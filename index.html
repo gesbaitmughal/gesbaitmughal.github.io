@@ -33,7 +33,7 @@
 
     <style>
         /* ================================================================
-                   ROOT VARIABLES - PROFESSIONAL SIZE
+                   ROOT VARIABLES
                 ================================================================ */
         :root {
             --primary: #0f5e3a;
@@ -604,7 +604,7 @@
         @media (max-width: 768px) { .incharge-item .avatar { width: 28px; height: 28px; font-size: 11px; } }
 
         /* ================================================================
-                   ABOUT SCHOOL - MINASIB SIZE
+                   ABOUT SCHOOL
                 ================================================================ */
         .about-text {
             font-size: 16px;
@@ -725,7 +725,7 @@
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
         /* ================================================================
-                   FOOTER - Only Address
+                   FOOTER
                 ================================================================ */
         .footer {
             background: var(--card-bg); border-top: 1px solid var(--border);
@@ -738,7 +738,6 @@
             display: grid; grid-template-columns: 2fr 1fr 1fr;
             gap: 28px;
         }
-        @media (min-width: 640px) { .footer .container { grid-template-columns: 2fr 1fr 1fr; } }
         @media (max-width: 640px) { .footer .container { grid-template-columns: 1fr; gap: 16px; } }
         .footer h4 {
             font-size: 17px; font-weight: 700;
@@ -896,7 +895,6 @@
                 </div>
             </div>
             <div class="banner-right">
-                <span class="banner-badge"><i class="fas fa-star"></i> Smart Campus</span>
                 <span class="banner-badge"><i class="fas fa-graduation-cap"></i> Free Education</span>
             </div>
         </div>
@@ -1664,7 +1662,7 @@
     </main>
 
     <!-- ================================================================
-    FOOTER - Only Address
+    FOOTER
     ================================================================ -->
     <footer class="footer">
         <div class="container">
@@ -1689,7 +1687,7 @@
         </div>
         <div class="footer-bottom">
             <span>&copy; <span id="footerYear">2026</span> GES Bait Mughal</span>
-            <span><i class="fas fa-shield-alt"></i> Smart School v18.0</span>
+            <span><i class="fas fa-shield-alt"></i> Smart School v19.0</span>
         </div>
     </footer>
 
@@ -1836,7 +1834,7 @@
         });
 
         // ================================================================
-        // SLIDER
+        // SLIDER - Auto Slide
         // ================================================================
         let currentSlide = 0;
         let sliderInterval;
@@ -1954,7 +1952,13 @@
             onValue(ref(db, 'gesData'), (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
-                    DB = { ...DB, ...data };
+                    // Merge data without overwriting the whole DB object
+                    // This ensures we keep any local state that might not be in Firebase
+                    for (const key in data) {
+                        if (data.hasOwnProperty(key)) {
+                            DB[key] = data[key];
+                        }
+                    }
                     renderAll();
                     if (DB.notice && DB.notice.title) {
                         setTimeout(showNotice, 500);
@@ -1984,7 +1988,11 @@
                 const saved = localStorage.getItem('gesData');
                 if (saved) {
                     const parsed = JSON.parse(saved);
-                    DB = { ...DB, ...parsed };
+                    for (const key in parsed) {
+                        if (parsed.hasOwnProperty(key)) {
+                            DB[key] = parsed[key];
+                        }
+                    }
                 }
             } catch (e) {}
             renderAll();
@@ -2020,9 +2028,11 @@
             $('headmasterName').textContent = DB.headmaster;
             $('aboutText').textContent = DB.about;
 
+            // Video
             if (DB.video) {
                 video.src = DB.video;
                 video.load();
+                // Try to play with sound
                 video.muted = false;
                 video.play().then(() => {
                     $('videoStatus').textContent = '▶️ Playing with sound';
@@ -3102,12 +3112,13 @@
             if (overlay) overlay.style.display = 'none';
         }, 3500);
 
-        console.log('🎓 GES Bait Mughal - Smart School System v18.0');
+        console.log('🎓 GES Bait Mughal - Smart School System v19.0');
         console.log('🔑 Admin: admin123 | Teacher PIN: 1234');
         console.log('📱 Fully responsive for all devices!');
         console.log('🔥 Real-time Firebase sync enabled!');
         console.log('📢 Important Notice feature added!');
         console.log('🎬 Video autoplay with sound!');
+        console.log('🖼️ Slider auto-slides every 4 seconds!');
     </script>
 
 </body>
