@@ -34,12 +34,12 @@
 
     <style>
         /* ================================================================
-           ROOT VARIABLES
+           ROOT VARIABLES - ENHANCED
         ================================================================ */
         :root {
-            --primary: #0f5e3a;
+            --primary: #0a5c3a;
             --primary-light: #1a8a4a;
-            --primary-dark: #083d26;
+            --primary-dark: #064026;
             --primary-bg: #e8f5ee;
             --gold: #f5a623;
             --gold-light: #fde68a;
@@ -56,6 +56,7 @@
             --radius-lg: 24px;
             --transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --slider-height: 520px;
         }
 
         [data-theme="dark"] {
@@ -88,39 +89,40 @@
             font-family: var(--font);
             background: var(--bg);
             color: var(--text);
-            line-height: 1.6;
+            line-height: 1.7;
             transition: background 0.3s, color 0.3s;
             min-height: 100vh;
             overflow-x: hidden;
             width: 100%;
             max-width: 100vw;
             -webkit-font-smoothing: antialiased;
-            font-size: 17px;
+            font-size: 18px;
         }
 
         /* Toast */
         .toast-container {
             position: fixed;
-            bottom: 22px;
-            right: 22px;
+            bottom: 24px;
+            right: 24px;
             z-index: 99999;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            max-width: 90%;
+            gap: 10px;
+            max-width: 92%;
         }
         .toast {
-            padding: 14px 24px;
-            border-radius: 12px;
-            font-size: 14px;
+            padding: 16px 28px;
+            border-radius: 14px;
+            font-size: 15px;
             font-weight: 600;
             box-shadow: var(--shadow-xl);
-            animation: toastSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: toastSlide 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
-            gap: 10px;
-            min-width: 250px;
-            border-left: 4px solid;
+            gap: 12px;
+            min-width: 280px;
+            border-left: 5px solid;
+            backdrop-filter: blur(8px);
         }
         .toast-success {
             background: var(--primary);
@@ -145,7 +147,7 @@
         @keyframes toastSlide {
             from {
                 opacity: 0;
-                transform: translateX(40px) scale(0.95);
+                transform: translateX(60px) scale(0.9);
             }
             to {
                 opacity: 1;
@@ -171,7 +173,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+            background: radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
             animation: welcomeGlow 3s ease-in-out infinite;
         }
         @keyframes welcomeGlow {
@@ -186,20 +188,20 @@
             }
         }
         .welcome-overlay .logo-big {
-            width: 120px;
-            height: 120px;
+            width: 150px;
+            height: 150px;
             background: rgba(255, 255, 255, 0.08);
-            border-radius: 28px;
+            border-radius: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 46px;
+            font-size: 56px;
             font-weight: 900;
             color: white;
-            border: 3px solid rgba(255, 255, 255, 0.12);
+            border: 3px solid rgba(255, 255, 255, 0.15);
             animation: welcomeLogoPulse 2s ease-in-out infinite;
-            margin-bottom: 22px;
-            backdrop-filter: blur(8px);
+            margin-bottom: 30px;
+            backdrop-filter: blur(12px);
             box-shadow: 0 0 80px rgba(255, 255, 255, 0.05);
             position: relative;
             z-index: 1;
@@ -212,13 +214,13 @@
             }
             50% {
                 transform: scale(1.05);
-                box-shadow: 0 0 80px rgba(255, 255, 255, 0.12);
+                box-shadow: 0 0 120px rgba(255, 215, 0, 0.15);
             }
         }
         .welcome-overlay h1 {
             color: white;
-            font-size: 34px;
-            font-weight: 800;
+            font-size: 44px;
+            font-weight: 900;
             text-align: center;
             animation: welcomeSlideUp 0.8s ease 0.2s both;
             background: linear-gradient(90deg, #ffffff 0%, var(--gold-light) 100%);
@@ -230,18 +232,18 @@
             z-index: 1;
         }
         .welcome-overlay p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 17px;
-            margin-top: 4px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 20px;
+            margin-top: 6px;
             animation: welcomeSlideUp 0.8s ease 0.4s both;
             text-align: center;
             position: relative;
             z-index: 1;
         }
         .welcome-overlay .spinner {
-            margin-top: 22px;
-            width: 46px;
-            height: 46px;
+            margin-top: 30px;
+            width: 56px;
+            height: 56px;
             border: 3px solid rgba(255, 255, 255, 0.08);
             border-top: 3px solid var(--gold);
             border-right: 3px solid var(--gold);
@@ -258,7 +260,7 @@
         @keyframes welcomeSlideUp {
             from {
                 opacity: 0;
-                transform: translateY(40px) scale(0.95);
+                transform: translateY(50px) scale(0.95);
             }
             to {
                 opacity: 1;
@@ -281,8 +283,8 @@
             position: fixed;
             inset: 0;
             z-index: 99998;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(14px);
             display: none;
             align-items: center;
             justify-content: center;
@@ -305,27 +307,28 @@
         .notice-box {
             background: var(--card-bg);
             border-radius: var(--radius-lg);
-            max-width: 580px;
+            max-width: 640px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            padding: 30px;
+            padding: 38px;
             box-shadow: var(--shadow-xl);
             position: relative;
-            border-top: 5px solid var(--gold);
+            border-top: 6px solid var(--gold);
         }
         .notice-box .close-btn {
             position: absolute;
-            top: 12px;
-            right: 16px;
+            top: 14px;
+            right: 18px;
             background: none;
             border: none;
-            font-size: 28px;
+            font-size: 34px;
             color: var(--text-light);
             cursor: pointer;
             transition: var(--transition);
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: 50%;
+            line-height: 1;
         }
         .notice-box .close-btn:hover {
             color: #dc2626;
@@ -333,45 +336,45 @@
             background: var(--gray);
         }
         .notice-box .notice-title {
-            font-size: 22px;
+            font-size: 26px;
             font-weight: 800;
             color: var(--primary);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
         .notice-box .notice-title i {
             color: var(--gold);
-            font-size: 26px;
+            font-size: 30px;
         }
         .notice-box .notice-desc {
-            font-size: 17px;
+            font-size: 18px;
             color: var(--text-light);
-            line-height: 1.8;
+            line-height: 2;
         }
         .notice-box .notice-img {
             width: 100%;
-            max-height: 230px;
+            max-height: 300px;
             object-fit: cover;
-            border-radius: 12px;
-            margin-top: 12px;
+            border-radius: 14px;
+            margin-top: 14px;
         }
         .notice-box .notice-close-bottom {
-            margin-top: 16px;
-            padding: 10px 28px;
+            margin-top: 18px;
+            padding: 12px 34px;
             background: var(--primary);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 16px;
             cursor: pointer;
             transition: var(--transition);
         }
         .notice-box .notice-close-bottom:hover {
             background: var(--primary-dark);
-            transform: scale(1.02);
+            transform: scale(1.03);
         }
 
         /* Floating Shapes */
@@ -389,24 +392,24 @@
             animation: floatShape 20s ease-in-out infinite;
         }
         .bg-shapes .shape:nth-child(1) {
-            width: 350px;
-            height: 350px;
+            width: 500px;
+            height: 500px;
             background: var(--primary);
-            top: -80px;
-            right: -80px;
+            top: -120px;
+            right: -120px;
             animation-delay: 0s;
         }
         .bg-shapes .shape:nth-child(2) {
-            width: 250px;
-            height: 250px;
+            width: 400px;
+            height: 400px;
             background: var(--gold);
-            bottom: -40px;
-            left: -40px;
+            bottom: -80px;
+            left: -80px;
             animation-delay: -5s;
         }
         .bg-shapes .shape:nth-child(3) {
-            width: 180px;
-            height: 180px;
+            width: 280px;
+            height: 280px;
             background: #3b82f6;
             top: 50%;
             left: 50%;
@@ -418,17 +421,17 @@
                 transform: translate(0, 0) scale(1) rotate(0deg);
             }
             33% {
-                transform: translate(35px, -35px) scale(1.1) rotate(120deg);
+                transform: translate(60px, -60px) scale(1.1) rotate(120deg);
             }
             66% {
-                transform: translate(-25px, 25px) scale(0.9) rotate(240deg);
+                transform: translate(-40px, 40px) scale(0.9) rotate(240deg);
             }
         }
 
         /* Scrollbar */
         ::-webkit-scrollbar {
-            width: 7px;
-            height: 7px;
+            width: 8px;
+            height: 8px;
         }
         ::-webkit-scrollbar-track {
             background: var(--gray);
@@ -438,19 +441,23 @@
             background: var(--primary);
             border-radius: 10px;
         }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
 
         /* Banner */
         .banner {
             background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
-            padding: 20px 28px;
+            padding: 26px 34px;
             position: relative;
             overflow: hidden;
             z-index: 1;
             width: 100%;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
         @media (max-width:768px) {
             .banner {
-                padding: 14px 16px;
+                padding: 18px 20px;
             }
         }
         .banner .container {
@@ -460,41 +467,41 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 14px;
+            gap: 16px;
             position: relative;
             z-index: 1;
         }
         .banner-left {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
             flex: 1;
             min-width: 0;
         }
         .banner-logo {
-            width: 65px;
-            height: 65px;
+            width: 76px;
+            height: 76px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
             color: white;
-            border: 3px solid rgba(255, 255, 255, 0.15);
+            border: 3px solid rgba(255, 255, 255, 0.2);
             flex-shrink: 0;
             overflow: hidden;
             transition: var(--transition);
             background: rgba(255, 255, 255, 0.08);
-            font-size: 24px;
+            font-size: 28px;
             backdrop-filter: blur(4px);
-            box-shadow: 0 0 40px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.05);
             animation: logoGlow 3s ease-in-out infinite;
         }
         @media (max-width:768px) {
             .banner-logo {
-                width: 48px;
-                height: 48px;
-                font-size: 17px;
+                width: 54px;
+                height: 54px;
+                font-size: 20px;
             }
         }
         @keyframes logoGlow {
@@ -503,12 +510,12 @@
                 box-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
             }
             50% {
-                box-shadow: 0 0 60px rgba(255, 215, 0, 0.1);
+                box-shadow: 0 0 90px rgba(255, 215, 0, 0.15);
             }
         }
         .banner-logo:hover {
             transform: scale(1.06);
-            box-shadow: 0 0 80px rgba(255, 215, 0, 0.15);
+            box-shadow: 0 0 120px rgba(255, 215, 0, 0.25);
         }
         .banner-logo svg {
             width: 100%;
@@ -519,7 +526,7 @@
             flex: 1;
         }
         .banner-title h1 {
-            font-size: 28px;
+            font-size: 34px;
             font-weight: 900;
             color: white;
             letter-spacing: -0.5px;
@@ -532,58 +539,58 @@
         }
         @media (max-width:768px) {
             .banner-title h1 {
-                font-size: 19px;
+                font-size: 22px;
             }
         }
         .banner-title .sub {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 15px;
             font-weight: 500;
             display: flex;
             flex-wrap: wrap;
-            gap: 5px;
+            gap: 6px;
         }
         @media (max-width:768px) {
             .banner-title .sub {
-                font-size: 11px;
+                font-size: 12px;
             }
         }
         .banner-title .sub i {
             color: var(--gold);
-            margin: 0 3px;
+            margin: 0 4px;
         }
         .banner-right {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
             flex-shrink: 0;
         }
         .banner-badge {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(4px);
-            padding: 6px 18px;
+            padding: 8px 24px;
             border-radius: 40px;
             color: white;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             transition: var(--transition);
             white-space: nowrap;
         }
         @media (max-width:768px) {
             .banner-badge {
-                padding: 4px 12px;
-                font-size: 10px;
+                padding: 5px 16px;
+                font-size: 11px;
             }
         }
         .banner-badge:hover {
             transform: translateY(-2px) scale(1.05);
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
         }
         .banner-badge i {
             color: var(--gold);
-            margin-right: 4px;
+            margin-right: 6px;
         }
 
         /* Navigation */
@@ -593,13 +600,13 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            backdrop-filter: blur(12px);
-            padding: 0 18px;
+            backdrop-filter: blur(20px);
+            padding: 0 20px;
             width: 100%;
         }
         @media (max-width:768px) {
             .nav-bar {
-                padding: 0 8px;
+                padding: 0 10px;
             }
         }
         .nav-bar .container {
@@ -609,25 +616,25 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 6px;
-            padding: 8px 0;
+            gap: 8px;
+            padding: 10px 0;
         }
         @media (max-width:768px) {
             .nav-bar .container {
-                padding: 5px 0;
+                padding: 6px 0;
             }
         }
         .nav-links {
             display: flex;
             flex-wrap: wrap;
-            gap: 3px;
+            gap: 4px;
             flex: 1;
         }
         .nav-btn {
-            padding: 8px 18px;
+            padding: 10px 24px;
             border: none;
-            border-radius: 10px;
-            font-size: 14px;
+            border-radius: 12px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
@@ -635,14 +642,14 @@
             color: var(--text-light);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             position: relative;
             white-space: nowrap;
         }
         @media (max-width:768px) {
             .nav-btn {
-                padding: 5px 10px;
-                font-size: 11px;
+                padding: 6px 14px;
+                font-size: 12px;
             }
         }
         .nav-btn:hover {
@@ -653,7 +660,7 @@
         .nav-btn.active {
             background: var(--primary);
             color: white;
-            box-shadow: 0 4px 25px rgba(15, 94, 58, 0.3);
+            box-shadow: 0 4px 30px rgba(15, 94, 58, 0.35);
         }
         .nav-btn.active i {
             color: var(--gold);
@@ -664,10 +671,11 @@
             bottom: -2px;
             left: 50%;
             width: 0;
-            height: 2px;
+            height: 3px;
             background: var(--primary);
             transition: var(--transition);
             transform: translateX(-50%);
+            border-radius: 3px;
         }
         .nav-btn.active::after {
             width: 60%;
@@ -675,15 +683,15 @@
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
             flex-shrink: 0;
         }
         .role-badge {
-            font-size: 12px;
+            font-size: 13px;
             background: var(--primary-bg);
             color: var(--primary);
-            padding: 5px 14px;
+            padding: 6px 18px;
             border-radius: 40px;
             font-weight: 600;
             white-space: nowrap;
@@ -691,8 +699,8 @@
         }
         @media (max-width:768px) {
             .role-badge {
-                font-size: 9px;
-                padding: 3px 8px;
+                font-size: 10px;
+                padding: 4px 12px;
             }
         }
         .role-badge:hover {
@@ -701,23 +709,23 @@
         .theme-toggle {
             background: var(--gray);
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 46px;
+            height: 46px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--text);
-            font-size: 18px;
+            font-size: 20px;
             transition: var(--transition);
             flex-shrink: 0;
         }
         @media (max-width:768px) {
             .theme-toggle {
-                width: 34px;
-                height: 34px;
-                font-size: 15px;
+                width: 40px;
+                height: 40px;
+                font-size: 17px;
             }
         }
         .theme-toggle:hover {
@@ -725,33 +733,38 @@
             background: var(--border);
         }
 
-        /* Hero Slider */
+        /* Hero Slider - ENHANCED */
         .hero-slider {
             position: relative;
             border-radius: var(--radius-lg);
             overflow: hidden;
-            height: 360px;
+            height: var(--slider-height);
             background: var(--primary-dark);
             box-shadow: var(--shadow-lg);
-            margin-bottom: 22px;
+            margin-bottom: 30px;
             width: 100%;
         }
+        @media (max-width:1024px) {
+            :root {
+                --slider-height: 420px;
+            }
+        }
         @media (max-width:768px) {
-            .hero-slider {
-                height: 200px;
+            :root {
+                --slider-height: 300px;
             }
         }
         @media (max-width:480px) {
-            .hero-slider {
-                height: 160px;
+            :root {
+                --slider-height: 220px;
             }
         }
         .hero-slider .slide {
             position: absolute;
             inset: 0;
             opacity: 0;
-            transition: opacity 0.8s ease, transform 0.8s ease;
-            transform: scale(1.02);
+            transition: opacity 1s ease, transform 1s ease;
+            transform: scale(1.03);
             will-change: opacity, transform;
         }
         .hero-slider .slide.active {
@@ -767,62 +780,80 @@
         .hero-slider .slide .overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%);
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 50%, transparent 80%);
             display: flex;
             align-items: flex-end;
-            padding: 28px;
+            padding: 50px 60px;
         }
         @media (max-width:768px) {
             .hero-slider .slide .overlay {
-                padding: 14px;
+                padding: 24px 28px;
+            }
+        }
+        @media (max-width:480px) {
+            .hero-slider .slide .overlay {
+                padding: 16px 18px;
             }
         }
         .hero-slider .slide .overlay h2 {
             color: white;
-            font-size: 30px;
+            font-size: 42px;
             font-weight: 800;
-            text-shadow: 0 2px 30px rgba(0, 0, 0, 0.4);
+            text-shadow: 0 4px 50px rgba(0, 0, 0, 0.6);
             line-height: 1.2;
+            max-width: 70%;
         }
         @media (max-width:768px) {
             .hero-slider .slide .overlay h2 {
-                font-size: 17px;
+                font-size: 24px;
+                max-width: 85%;
+            }
+        }
+        @media (max-width:480px) {
+            .hero-slider .slide .overlay h2 {
+                font-size: 18px;
+                max-width: 100%;
             }
         }
         .hero-slider .dots {
             position: absolute;
-            bottom: 14px;
+            bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 8px;
+            gap: 12px;
             z-index: 10;
         }
         .hero-slider .dots button {
-            width: 11px;
-            height: 11px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            border: none;
+            border: 2px solid rgba(255, 255, 255, 0.5);
             cursor: pointer;
             transition: var(--transition);
-            background: rgba(255, 255, 255, 0.4);
+            background: transparent;
+            padding: 0;
         }
         @media (max-width:768px) {
             .hero-slider .dots button {
-                width: 7px;
-                height: 7px;
-                gap: 5px;
+                width: 10px;
+                height: 10px;
+                border-width: 1.5px;
             }
         }
         .hero-slider .dots button.active {
             background: var(--gold);
-            width: 30px;
+            border-color: var(--gold);
+            width: 40px;
             border-radius: 10px;
         }
         @media (max-width:768px) {
             .hero-slider .dots button.active {
-                width: 18px;
+                width: 26px;
             }
+        }
+        .hero-slider .dots button:hover {
+            transform: scale(1.2);
         }
         .hero-slider .controls {
             position: absolute;
@@ -831,68 +862,88 @@
             width: 100%;
             display: flex;
             justify-content: space-between;
-            padding: 0 18px;
+            padding: 0 28px;
             z-index: 10;
             pointer-events: none;
         }
         @media (max-width:768px) {
             .hero-slider .controls {
-                padding: 0 8px;
+                padding: 0 14px;
             }
         }
         .hero-slider .controls button {
-            width: 46px;
-            height: 46px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             border: none;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.55);
             color: white;
             cursor: pointer;
             transition: var(--transition);
-            font-size: 20px;
-            backdrop-filter: blur(4px);
+            font-size: 24px;
+            backdrop-filter: blur(8px);
             pointer-events: all;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         @media (max-width:768px) {
             .hero-slider .controls button {
-                width: 34px;
-                height: 34px;
-                font-size: 14px;
+                width: 40px;
+                height: 40px;
+                font-size: 17px;
             }
         }
         .hero-slider .controls button:hover {
-            background: rgba(0, 0, 0, 0.8);
-            transform: scale(1.1);
+            background: rgba(0, 0, 0, 0.85);
+            transform: scale(1.12);
         }
 
         /* Stats */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 18px;
-            margin-bottom: 22px;
+            gap: 22px;
+            margin-bottom: 30px;
             width: 100%;
         }
         @media (max-width:768px) {
             .stats-grid {
-                gap: 10px;
-                margin-bottom: 16px;
+                gap: 14px;
+                margin-bottom: 20px;
             }
         }
         .stat-box {
             background: var(--gray);
-            border-radius: 14px;
-            padding: 22px;
+            border-radius: 18px;
+            padding: 28px;
             text-align: center;
             transition: var(--transition);
             cursor: default;
             width: 100%;
             animation: statFloat 3s ease-in-out infinite;
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
         }
         @media (max-width:768px) {
             .stat-box {
-                padding: 14px;
+                padding: 18px;
             }
+        }
+        .stat-box::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--gold), var(--primary));
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .stat-box:hover::after {
+            opacity: 1;
         }
         .stat-box:nth-child(1) {
             animation-delay: 0s;
@@ -912,49 +963,50 @@
                 transform: translateY(0);
             }
             50% {
-                transform: translateY(-5px);
+                transform: translateY(-6px);
             }
         }
         .stat-box:hover {
-            transform: translateY(-8px) scale(1.02);
+            transform: translateY(-10px) scale(1.02);
             box-shadow: var(--shadow-lg);
+            border-color: var(--border);
         }
         .stat-box .num {
-            font-size: 34px;
+            font-size: 42px;
             font-weight: 900;
             color: var(--primary);
             transition: var(--transition);
         }
         @media (max-width:768px) {
             .stat-box .num {
-                font-size: 24px;
+                font-size: 28px;
             }
         }
         .stat-box:hover .num {
             color: var(--gold);
         }
         .stat-box .label {
-            font-size: 15px;
+            font-size: 16px;
             color: var(--text-light);
             font-weight: 500;
             display: block;
-            margin-top: 4px;
+            margin-top: 6px;
         }
         @media (max-width:768px) {
             .stat-box .label {
-                font-size: 12px;
+                font-size: 13px;
             }
         }
         .stat-box i {
-            font-size: 26px;
+            font-size: 30px;
             color: var(--primary);
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             display: block;
             transition: var(--transition);
         }
         @media (max-width:768px) {
             .stat-box i {
-                font-size: 20px;
+                font-size: 24px;
             }
         }
         .stat-box:hover i {
@@ -964,7 +1016,7 @@
 
         /* Video */
         .video-wrapper {
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
             background: #0a0a0a;
             position: relative;
@@ -979,56 +1031,56 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 18px;
-            background: rgba(0, 0, 0, 0.7);
+            padding: 12px 24px;
+            background: rgba(0, 0, 0, 0.85);
             color: white;
-            font-size: 13px;
+            font-size: 14px;
             flex-wrap: wrap;
-            gap: 5px;
+            gap: 8px;
         }
         @media (max-width:768px) {
             .video-controls {
-                padding: 6px 12px;
-                font-size: 11px;
+                padding: 10px 16px;
+                font-size: 12px;
             }
         }
         .video-controls button {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.12);
             border: 1px solid rgba(255, 255, 255, 0.15);
             color: white;
-            padding: 5px 16px;
+            padding: 6px 22px;
             border-radius: 40px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 13px;
             transition: var(--transition);
         }
         @media (max-width:768px) {
             .video-controls button {
-                padding: 3px 10px;
-                font-size: 10px;
+                padding: 4px 14px;
+                font-size: 11px;
             }
         }
         .video-controls button:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
         }
 
         /* Main */
         .main-content {
             max-width: 1280px;
             margin: 0 auto;
-            padding: 18px 22px;
+            padding: 24px 30px;
             position: relative;
             z-index: 1;
             width: 100%;
         }
         @media (max-width:768px) {
             .main-content {
-                padding: 10px 10px;
+                padding: 14px 14px;
             }
         }
         .tab-content {
             display: none;
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.6s ease;
             width: 100%;
         }
         .tab-content.active {
@@ -1037,7 +1089,7 @@
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(16px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -1045,11 +1097,11 @@
             }
         }
 
-        /* Cards */
+        /* Cards - Enhanced with Glassmorphism */
         .card {
             background: var(--card-bg);
             border-radius: var(--radius);
-            padding: 22px;
+            padding: 28px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
             transition: var(--transition);
@@ -1061,7 +1113,7 @@
         }
         @media (max-width:768px) {
             .card {
-                padding: 14px;
+                padding: 18px;
             }
         }
         .card::before {
@@ -1070,7 +1122,7 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
+            height: 4px;
             background: linear-gradient(90deg, var(--primary), var(--gold), var(--primary));
             opacity: 0;
             transition: var(--transition);
@@ -1080,28 +1132,28 @@
         }
         .card:hover {
             box-shadow: var(--shadow-xl);
-            transform: translateY(-5px) rotateX(2deg) rotateY(2deg) scale(1.01);
+            transform: translateY(-6px) rotateX(2deg) rotateY(2deg) scale(1.01);
         }
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 14px;
-            padding-bottom: 10px;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
             border-bottom: 2px solid var(--border);
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 10px;
         }
         .card-header h3 {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
         @media (max-width:768px) {
             .card-header h3 {
-                font-size: 17px;
+                font-size: 18px;
             }
         }
         .card-header h3 i {
@@ -1112,7 +1164,7 @@
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 18px;
+            gap: 24px;
         }
         @media (min-width:640px) {
             .grid-2 {
@@ -1124,33 +1176,33 @@
         .announce-item {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 12px 0;
+            gap: 16px;
+            padding: 14px 0;
             border-bottom: 1px solid var(--border);
             transition: var(--transition);
         }
         @media (max-width:768px) {
             .announce-item {
-                gap: 10px;
-                padding: 8px 0;
+                gap: 12px;
+                padding: 10px 0;
             }
         }
         .announce-item:hover {
             background: var(--gray);
-            padding: 12px 8px;
-            border-radius: 10px;
+            padding: 14px 12px;
+            border-radius: 12px;
         }
         @media (max-width:768px) {
             .announce-item:hover {
-                padding: 8px 5px;
+                padding: 10px 8px;
             }
         }
         .announce-item:last-child {
             border-bottom: none;
         }
         .announce-item .icon {
-            width: 40px;
-            height: 40px;
+            width: 46px;
+            height: 46px;
             background: var(--primary-bg);
             border-radius: 50%;
             display: flex;
@@ -1159,11 +1211,13 @@
             color: var(--primary);
             flex-shrink: 0;
             transition: var(--transition);
+            font-size: 18px;
         }
         @media (max-width:768px) {
             .announce-item .icon {
-                width: 34px;
-                height: 34px;
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
             }
         }
         .announce-item:hover .icon {
@@ -1171,20 +1225,20 @@
         }
         .announce-item .content .title {
             font-weight: 600;
-            font-size: 15px;
+            font-size: 16px;
         }
         @media (max-width:768px) {
             .announce-item .content .title {
-                font-size: 13px;
+                font-size: 14px;
             }
         }
         .announce-item .content .date {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-light);
         }
         .announce-item .badge {
-            font-size: 10px;
-            padding: 3px 12px;
+            font-size: 11px;
+            padding: 4px 14px;
             border-radius: 40px;
             font-weight: 600;
             margin-left: auto;
@@ -1207,22 +1261,22 @@
         .timing-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
+            padding: 10px 0;
             border-bottom: 1px solid var(--border);
-            font-size: 15px;
+            font-size: 16px;
             transition: var(--transition);
-            gap: 8px;
+            gap: 10px;
         }
         @media (max-width:768px) {
             .timing-row {
-                font-size: 13px;
-                padding: 6px 0;
+                font-size: 14px;
+                padding: 8px 0;
             }
         }
         .timing-row:hover {
             background: var(--gray);
-            padding: 8px 12px;
-            border-radius: 8px;
+            padding: 10px 16px;
+            border-radius: 10px;
         }
         .timing-row:last-child {
             border-bottom: none;
@@ -1241,28 +1295,28 @@
         .incharge-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 10px;
         }
         @media (max-width:768px) {
             .incharge-grid {
-                gap: 5px;
+                gap: 6px;
             }
         }
         .incharge-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 14px;
+            gap: 10px;
+            padding: 12px 16px;
             background: var(--gray);
-            border-radius: 10px;
-            font-size: 14px;
+            border-radius: 12px;
+            font-size: 15px;
             transition: var(--transition);
             border: 1px solid transparent;
         }
         @media (max-width:768px) {
             .incharge-item {
-                padding: 6px 10px;
-                font-size: 12px;
+                padding: 8px 12px;
+                font-size: 13px;
             }
         }
         .incharge-item:hover {
@@ -1271,71 +1325,71 @@
             border-color: var(--border);
         }
         .incharge-item .avatar {
-            width: 34px;
-            height: 34px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: var(--primary);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
             flex-shrink: 0;
         }
         @media (max-width:768px) {
             .incharge-item .avatar {
-                width: 28px;
-                height: 28px;
-                font-size: 11px;
+                width: 34px;
+                height: 34px;
+                font-size: 12px;
             }
         }
         .incharge-item .incharge-name {
             font-weight: 600;
         }
         .incharge-item .incharge-class {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--text-light);
             margin-left: auto;
         }
         @media (max-width:768px) {
             .incharge-item .incharge-class {
-                font-size: 9px;
+                font-size: 10px;
             }
         }
 
         /* About */
         .about-text {
-            font-size: 16px;
-            line-height: 1.8;
+            font-size: 17px;
+            line-height: 2;
             color: var(--text-light);
         }
         @media (max-width:768px) {
             .about-text {
-                font-size: 14px;
+                font-size: 15px;
             }
         }
 
-        /* Buttons */
+        /* Buttons - Enhanced */
         .btn {
-            padding: 9px 22px;
+            padding: 10px 28px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 15px;
             cursor: pointer;
             transition: var(--transition);
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             position: relative;
             overflow: hidden;
             white-space: nowrap;
         }
         @media (max-width:768px) {
             .btn {
-                padding: 7px 14px;
-                font-size: 12px;
+                padding: 8px 18px;
+                font-size: 13px;
             }
         }
         .btn::after {
@@ -1351,8 +1405,8 @@
             transform: translate(-50%, -50%);
         }
         .btn:active::after {
-            width: 200px;
-            height: 200px;
+            width: 250px;
+            height: 250px;
         }
         .btn-primary {
             background: var(--primary);
@@ -1361,7 +1415,7 @@
         .btn-primary:hover {
             background: var(--primary-dark);
             transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 35px rgba(15, 94, 58, 0.3);
+            box-shadow: 0 8px 40px rgba(15, 94, 58, 0.35);
         }
         .btn-gold {
             background: var(--gold);
@@ -1370,6 +1424,7 @@
         .btn-gold:hover {
             background: #d4920a;
             transform: translateY(-3px);
+            box-shadow: 0 8px 40px rgba(245, 166, 35, 0.35);
         }
         .btn-danger {
             background: #dc2626;
@@ -1390,35 +1445,35 @@
             transform: translateY(-3px);
         }
         .btn-sm {
-            padding: 5px 14px;
-            font-size: 12px;
+            padding: 6px 18px;
+            font-size: 13px;
         }
         @media (max-width:768px) {
             .btn-sm {
-                padding: 4px 10px;
-                font-size: 10px;
+                padding: 4px 12px;
+                font-size: 11px;
             }
         }
 
         /* Forms */
         .form-group {
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
         .form-group label {
             display: block;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text-light);
-            margin-bottom: 3px;
+            margin-bottom: 4px;
         }
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 10px 14px;
+            padding: 12px 16px;
             border: 2px solid var(--border);
-            border-radius: 10px;
-            font-size: 14px;
+            border-radius: 12px;
+            font-size: 15px;
             transition: var(--transition);
             background: var(--bg);
             color: var(--text);
@@ -1427,8 +1482,8 @@
             .form-group input,
             .form-group select,
             .form-group textarea {
-                padding: 8px 12px;
-                font-size: 13px;
+                padding: 10px 14px;
+                font-size: 14px;
             }
         }
         .form-group input:focus,
@@ -1436,14 +1491,14 @@
         .form-group textarea:focus {
             border-color: var(--primary);
             outline: none;
-            box-shadow: 0 0 0 4px rgba(15, 94, 58, 0.08);
+            box-shadow: 0 0 0 5px rgba(15, 94, 58, 0.08);
         }
 
         /* Report Card */
         .report-card {
             background: var(--card-bg);
             border-radius: var(--radius-lg);
-            padding: 26px;
+            padding: 32px;
             border: 2px solid var(--primary);
             position: relative;
             overflow: hidden;
@@ -1451,39 +1506,39 @@
         }
         @media (max-width:768px) {
             .report-card {
-                padding: 14px;
+                padding: 18px;
             }
         }
         .report-card .header {
             text-align: center;
             border-bottom: 2px solid var(--primary);
-            padding-bottom: 14px;
-            margin-bottom: 14px;
+            padding-bottom: 18px;
+            margin-bottom: 18px;
             position: relative;
             z-index: 1;
         }
         .report-card .header h2 {
-            font-size: 24px;
+            font-size: 28px;
             color: var(--primary);
             font-weight: 900;
         }
         @media (max-width:768px) {
             .report-card .header h2 {
-                font-size: 18px;
+                font-size: 22px;
             }
         }
         .report-card .header p {
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text-light);
         }
         .report-card .student-info {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 14px;
-            padding: 12px;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding: 16px;
             background: var(--gray);
-            border-radius: 12px;
+            border-radius: 14px;
             position: relative;
             z-index: 1;
         }
@@ -1495,23 +1550,23 @@
         .report-card .marks-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: 15px;
             position: relative;
             z-index: 1;
         }
         @media (max-width:768px) {
             .report-card .marks-table {
-                font-size: 12px;
+                font-size: 13px;
             }
         }
         .report-card .marks-table th {
             background: var(--primary);
             color: white;
-            padding: 8px 12px;
+            padding: 10px 14px;
             text-align: left;
         }
         .report-card .marks-table td {
-            padding: 8px 12px;
+            padding: 10px 14px;
             border-bottom: 1px solid var(--border);
         }
         .report-card .marks-table tr:nth-child(even) {
@@ -1520,18 +1575,18 @@
         .report-card .summary {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: 14px;
-            padding-top: 14px;
+            gap: 14px;
+            margin-top: 18px;
+            padding-top: 18px;
             border-top: 2px solid var(--border);
             position: relative;
             z-index: 1;
         }
         .report-card .summary .item {
             text-align: center;
-            padding: 12px;
+            padding: 14px;
             background: var(--gray);
-            border-radius: 12px;
+            border-radius: 14px;
             transition: var(--transition);
         }
         .report-card .summary .item:hover {
@@ -1539,32 +1594,32 @@
             box-shadow: var(--shadow);
         }
         .report-card .summary .item .label {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--text-light);
         }
         .report-card .summary .item .value {
-            font-size: 22px;
+            font-size: 26px;
             font-weight: 800;
             color: var(--primary);
         }
         @media (max-width:768px) {
             .report-card .summary .item .value {
-                font-size: 18px;
+                font-size: 22px;
             }
         }
 
-        /* Footer */
+        /* Footer - Clean */
         .footer {
             background: var(--card-bg);
             border-top: 1px solid var(--border);
-            padding: 30px 28px 20px;
-            margin-top: 36px;
+            padding: 40px 32px 24px;
+            margin-top: 44px;
             width: 100%;
         }
         @media (max-width:768px) {
             .footer {
-                padding: 20px 14px 14px;
-                margin-top: 24px;
+                padding: 24px 16px 16px;
+                margin-top: 28px;
             }
         }
         .footer .container {
@@ -1572,25 +1627,25 @@
             margin: 0 auto;
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
-            gap: 28px;
+            gap: 32px;
         }
         @media (max-width:640px) {
             .footer .container {
                 grid-template-columns: 1fr;
-                gap: 16px;
+                gap: 20px;
             }
         }
         .footer h4 {
-            font-size: 17px;
+            font-size: 18px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
         @media (max-width:768px) {
             .footer h4 {
-                font-size: 14px;
+                font-size: 15px;
             }
         }
         .footer h4 i {
@@ -1599,8 +1654,8 @@
         .footer p,
         .footer a {
             color: var(--text-light);
-            font-size: 14px;
-            line-height: 2;
+            font-size: 15px;
+            line-height: 2.2;
             text-decoration: none;
             display: block;
             transition: var(--transition);
@@ -1608,28 +1663,28 @@
         @media (max-width:768px) {
             .footer p,
             .footer a {
-                font-size: 12px;
+                font-size: 13px;
             }
         }
         .footer a:hover {
             color: var(--primary);
-            transform: translateX(4px);
+            transform: translateX(5px);
         }
         .footer-bottom {
             max-width: 1280px;
-            margin: 14px auto 0;
-            padding-top: 14px;
+            margin: 18px auto 0;
+            padding-top: 16px;
             border-top: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 8px;
-            font-size: 13px;
+            gap: 10px;
+            font-size: 14px;
             color: var(--text-light);
         }
         @media (max-width:768px) {
             .footer-bottom {
-                font-size: 11px;
+                font-size: 12px;
             }
         }
         .footer-bottom i {
@@ -1639,17 +1694,17 @@
         /* Scroll Top */
         .scroll-top {
             position: fixed;
-            bottom: 22px;
-            right: 22px;
+            bottom: 28px;
+            right: 28px;
             z-index: 50;
             background: var(--primary);
             color: white;
-            width: 46px;
-            height: 46px;
+            width: 54px;
+            height: 54px;
             border-radius: 50%;
             border: none;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 22px;
             box-shadow: var(--shadow-lg);
             transition: var(--transition);
             display: none;
@@ -1658,9 +1713,11 @@
         }
         @media (max-width:768px) {
             .scroll-top {
-                width: 38px;
-                height: 38px;
-                font-size: 16px;
+                width: 46px;
+                height: 46px;
+                font-size: 18px;
+                bottom: 20px;
+                right: 20px;
             }
         }
         .scroll-top.visible {
@@ -1675,37 +1732,37 @@
         .free-badge {
             background: #d5f5e3;
             color: var(--primary-dark);
-            padding: 6px 18px;
+            padding: 8px 24px;
             border-radius: 40px;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 15px;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             transition: var(--transition);
         }
         @media (max-width:768px) {
             .free-badge {
-                padding: 4px 12px;
-                font-size: 12px;
+                padding: 5px 16px;
+                font-size: 13px;
             }
         }
         .free-badge:hover {
             transform: scale(1.05);
         }
 
-        /* Responsive */
+        /* Responsive Fixes */
         @media (max-width:480px) {
             .banner-title h1 {
-                font-size: 16px;
+                font-size: 18px;
             }
             .banner-logo {
-                width: 38px;
-                height: 38px;
-                font-size: 13px;
+                width: 44px;
+                height: 44px;
+                font-size: 15px;
             }
             .banner {
-                padding: 8px 6px;
+                padding: 10px 8px;
             }
             .banner-right {
                 width: 100%;
@@ -1723,29 +1780,23 @@
                 justify-content: center;
             }
             .main-content {
-                padding: 6px 4px;
+                padding: 8px 6px;
             }
             .card {
-                padding: 10px;
-            }
-            .hero-slider {
-                height: 140px;
-            }
-            .hero-slider .slide .overlay h2 {
-                font-size: 13px;
+                padding: 12px;
             }
             .stats-grid {
                 grid-template-columns: 1fr 1fr;
-                gap: 6px;
+                gap: 8px;
             }
             .stat-box {
-                padding: 10px;
+                padding: 12px;
             }
             .stat-box .num {
-                font-size: 18px;
+                font-size: 22px;
             }
             .stat-box .label {
-                font-size: 10px;
+                font-size: 11px;
             }
             .report-card .student-info {
                 grid-template-columns: 1fr;
@@ -1754,7 +1805,7 @@
                 grid-template-columns: 1fr;
             }
             .report-card {
-                padding: 10px;
+                padding: 12px;
             }
             .incharge-grid {
                 grid-template-columns: 1fr;
@@ -1763,21 +1814,21 @@
                 grid-template-columns: 1fr;
             }
             .btn {
-                font-size: 11px;
-                padding: 5px 12px;
+                font-size: 12px;
+                padding: 6px 14px;
             }
             .btn-sm {
-                font-size: 9px;
-                padding: 3px 8px;
+                font-size: 10px;
+                padding: 4px 10px;
             }
             .notice-box {
-                padding: 18px;
+                padding: 20px;
             }
             .notice-box .notice-title {
-                font-size: 17px;
+                font-size: 18px;
             }
             .notice-box .notice-desc {
-                font-size: 14px;
+                font-size: 15px;
             }
         }
 
@@ -1899,19 +1950,19 @@
         <!-- HOME TAB -->
         <section id="tab-home" class="tab-content active">
 
-            <!-- Hero Slider -->
+            <!-- Hero Slider - Enhanced -->
             <div class="hero-slider" id="heroSlider">
                 <div class="slides" id="sliderSlides">
                     <div class="slide active">
-                        <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80" alt="School" loading="lazy" />
+                        <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1600&q=80" alt="School" loading="lazy" />
                         <div class="overlay"><h2>🏫 Welcome to GES Bait Mughal</h2></div>
                     </div>
                     <div class="slide">
-                        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80" alt="Education" loading="lazy" />
+                        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1600&q=80" alt="Education" loading="lazy" />
                         <div class="overlay"><h2>📚 Quality Education for All</h2></div>
                     </div>
                     <div class="slide">
-                        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80" alt="Students" loading="lazy" />
+                        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1600&q=80" alt="Students" loading="lazy" />
                         <div class="overlay"><h2>🌟 Empowering Young Minds</h2></div>
                     </div>
                 </div>
@@ -1927,7 +1978,7 @@
                 <div class="stat-box">
                     <i class="fas fa-user-graduate"></i>
                     <span class="num" id="statStudents">0</span>
-                    <span class="label">Students</span>
+                    <span class="label">Total Students</span>
                 </div>
                 <div class="stat-box">
                     <i class="fas fa-chalkboard"></i>
@@ -1947,7 +1998,7 @@
             </div>
 
             <!-- About + Timings -->
-            <div class="grid-2" style="margin-bottom:16px;">
+            <div class="grid-2" style="margin-bottom:22px;">
                 <div class="card card-3d">
                     <div class="card-header">
                         <h3><i class="fas fa-info-circle"></i> About School</h3>
@@ -1956,11 +2007,11 @@
                         GES Bait Mughal is a government elementary school dedicated to providing free quality education,
                         strong moral values, and a safe, nurturing environment for every child in the Bait Mughal community.
                     </p>
-                    <div style="background:var(--primary-bg); padding:12px 16px; border-radius:12px; margin-top:10px; border-left:5px solid var(--primary); font-size:14px;">
-                        <i class="fas fa-quote-left" style="color:var(--primary); opacity:0.5; margin-right:6px;"></i>
+                    <div style="background:var(--primary-bg); padding:16px 20px; border-radius:14px; margin-top:14px; border-left:6px solid var(--primary); font-size:15px;">
+                        <i class="fas fa-quote-left" style="color:var(--primary); opacity:0.5; margin-right:8px;"></i>
                         "Empowering young minds with knowledge, values, and skills for a brighter future."
                     </div>
-                    <div class="free-badge" style="margin-top:10px;">
+                    <div class="free-badge" style="margin-top:14px;">
                         <i class="fas fa-graduation-cap"></i> 100% Free Education – No Fees
                     </div>
                 </div>
@@ -1989,12 +2040,12 @@
             </div>
 
             <!-- Announcements + Incharges -->
-            <div class="grid-2" style="margin-bottom:16px;">
+            <div class="grid-2" style="margin-bottom:22px;">
                 <div class="card card-3d">
                     <div class="card-header">
                         <h3><i class="fas fa-bullhorn"></i> Announcements</h3>
                     </div>
-                    <div id="announcementList" style="max-height:300px; overflow-y:auto;"></div>
+                    <div id="announcementList" style="max-height:340px; overflow-y:auto;"></div>
                 </div>
 
                 <div class="card card-3d">
@@ -2005,14 +2056,14 @@
                 </div>
             </div>
 
-            <!-- Video -->
+            <!-- Video with Sound -->
             <div class="card card-3d">
                 <div class="card-header">
                     <h3><i class="fas fa-play-circle"></i> School Tour Video</h3>
-                    <span style="font-size:12px; color:var(--text-light);" id="videoStatus">▶️ Playing</span>
+                    <span style="font-size:13px; color:var(--text-light);" id="videoStatus">▶️ Playing with sound</span>
                 </div>
                 <div class="video-wrapper">
-                    <video id="schoolVideo" controls playsinline preload="auto" loop>
+                    <video id="schoolVideo" controls playsinline preload="auto" loop muted>
                         <source src="" type="video/mp4" />
                         Your browser does not support the video tag.
                     </video>
@@ -2027,11 +2078,11 @@
 
         <!-- RESULTS TAB -->
         <section id="tab-results" class="tab-content">
-            <div class="card card-3d" style="max-width:520px; margin:0 auto;">
+            <div class="card card-3d" style="max-width:540px; margin:0 auto;">
                 <div class="card-header">
                     <h3><i class="fas fa-search"></i> Search Result</h3>
                 </div>
-                <form onsubmit="searchResult(event)" style="display:flex; flex-direction:column; gap:10px;">
+                <form onsubmit="searchResult(event)" style="display:flex; flex-direction:column; gap:12px;">
                     <div class="form-group">
                         <label>Select Class</label>
                         <select id="resultClass">
@@ -2053,7 +2104,7 @@
                 </form>
             </div>
 
-            <div id="resultDisplay" style="display:none; margin-top:16px;">
+            <div id="resultDisplay" style="display:none; margin-top:22px;">
                 <div class="report-card" id="resultCard">
                     <div class="header">
                         <h2>GES BAIT MUGHAL</h2>
@@ -2074,7 +2125,7 @@
                         <div class="item"><span class="label">Obtained</span><span class="value" id="resObtained">0</span></div>
                         <div class="item"><span class="label">Percentage</span><span class="value" id="resPercentage">0%</span></div>
                     </div>
-                    <div class="no-print" style="display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;">
+                    <div class="no-print" style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap;">
                         <button onclick="downloadResultPDF()" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Download</button>
                         <button onclick="window.print()" class="btn btn-gold"><i class="fas fa-print"></i> Print</button>
                     </div>
@@ -2087,9 +2138,9 @@
             <div class="card card-3d">
                 <div class="card-header">
                     <h3><i class="fas fa-book-open"></i> Vacation Homework</h3>
-                    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                        <label style="font-size:13px; font-weight:600;">Filter:</label>
-                        <select id="hwFilter" onchange="renderHomework()" style="padding:6px 14px; border:2px solid var(--border); border-radius:8px; font-size:13px; background:var(--bg); color:var(--text);">
+                    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                        <label style="font-size:14px; font-weight:600;">Filter:</label>
+                        <select id="hwFilter" onchange="renderHomework()" style="padding:8px 16px; border:2px solid var(--border); border-radius:10px; font-size:14px; background:var(--bg); color:var(--text);">
                             <option value="ALL">All</option>
                             <option value="Class 1">Class 1</option>
                             <option value="Class 2">Class 2</option>
@@ -2102,7 +2153,7 @@
                         </select>
                     </div>
                 </div>
-                <div id="homeworkGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:14px;"></div>
+                <div id="homeworkGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:18px;"></div>
             </div>
         </section>
 
@@ -2112,21 +2163,21 @@
                 <div class="card-header">
                     <h3><i class="fas fa-images"></i> Photo Gallery</h3>
                 </div>
-                <div id="galleryGrid" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;"></div>
+                <div id="galleryGrid" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px;"></div>
             </div>
         </section>
 
         <!-- TEACHER TAB -->
         <section id="tab-teacher" class="tab-content">
-            <div id="teacherLogin" class="card card-3d" style="max-width:400px; margin:0 auto;">
-                <div style="text-align:center; margin-bottom:16px;">
-                    <div style="width:56px; height:56px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; color:white; font-size:24px;">
+            <div id="teacherLogin" class="card card-3d" style="max-width:420px; margin:0 auto;">
+                <div style="text-align:center; margin-bottom:18px;">
+                    <div style="width:64px; height:64px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; color:white; font-size:28px;">
                         <i class="fas fa-user-tie"></i>
                     </div>
-                    <h3 style="font-size:20px; font-weight:800;">Teacher Login</h3>
-                    <p style="font-size:13px; color:var(--text-light);">Enter your class PIN</p>
+                    <h3 style="font-size:22px; font-weight:800;">Teacher Login</h3>
+                    <p style="font-size:14px; color:var(--text-light);">Enter your class PIN</p>
                 </div>
-                <form onsubmit="teacherLogin(event)" style="display:flex; flex-direction:column; gap:8px;">
+                <form onsubmit="teacherLogin(event)" style="display:flex; flex-direction:column; gap:10px;">
                     <div class="form-group">
                         <label>Your Class</label>
                         <select id="teacherClass">
@@ -2149,36 +2200,36 @@
             </div>
 
             <div id="teacherDashboard" style="display:none;">
-                <div class="card card-3d" style="margin-bottom:10px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <div class="card card-3d" style="margin-bottom:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                         <div>
-                            <h3 style="font-size:17px; font-weight:800;"><i class="fas fa-chalkboard-user" style="color:var(--primary);"></i> <span id="teacherClassName">Class</span> Portal</h3>
-                            <p style="font-size:13px; color:var(--text-light);">Manage your class</p>
+                            <h3 style="font-size:18px; font-weight:800;"><i class="fas fa-chalkboard-user" style="color:var(--primary);"></i> <span id="teacherClassName">Class</span> Portal</h3>
+                            <p style="font-size:14px; color:var(--text-light);">Manage your class</p>
                         </div>
                         <button onclick="teacherLogout()" class="btn btn-danger">Logout</button>
                     </div>
                 </div>
 
-                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:10px;">
-                    <div class="stat-box" style="padding:10px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
+                    <div class="stat-box" style="padding:12px;">
                         <span class="num" id="tStatStudents">0</span>
                         <span class="label">Students</span>
                     </div>
-                    <div class="stat-box" style="padding:10px;">
+                    <div class="stat-box" style="padding:12px;">
                         <span class="num" id="tStatHomework">0</span>
                         <span class="label">Homework</span>
                     </div>
-                    <div class="stat-box" style="padding:10px;">
+                    <div class="stat-box" style="padding:12px;">
                         <span class="num" id="tStatAvg">0%</span>
                         <span class="label">Avg Performance</span>
                     </div>
                 </div>
 
-                <div class="card card-3d" style="margin-bottom:10px;">
+                <div class="card card-3d" style="margin-bottom:12px;">
                     <div class="card-header">
                         <h3><i class="fas fa-user-plus"></i> <span id="studentFormTitle">Add Student</span></h3>
                     </div>
-                    <form onsubmit="saveStudent(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <form onsubmit="saveStudent(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                         <input type="hidden" id="editStudentRoll" />
                         <div class="form-group" style="margin:0;">
                             <label>Roll No</label>
@@ -2196,26 +2247,26 @@
                             <label>Obtained</label>
                             <input type="number" id="studentObtained" placeholder="420" required />
                         </div>
-                        <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
+                        <div style="grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap;">
                             <button type="submit" class="btn btn-primary" id="studentSubmitBtn">Save</button>
                             <button type="button" onclick="cancelEditStudent()" class="btn btn-outline" id="studentCancelBtn" style="display:none;">Cancel</button>
                         </div>
                     </form>
                 </div>
 
-                <div class="card card-3d" style="margin-bottom:10px;">
+                <div class="card card-3d" style="margin-bottom:12px;">
                     <div class="card-header">
                         <h3><i class="fas fa-users"></i> Students</h3>
-                        <span style="font-size:12px; background:var(--gray); padding:3px 12px; border-radius:40px;" id="studentCount">0</span>
+                        <span style="font-size:13px; background:var(--gray); padding:4px 14px; border-radius:40px;" id="studentCount">0</span>
                     </div>
                     <div style="overflow-x:auto;">
-                        <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                        <table style="width:100%; font-size:14px; border-collapse:collapse;">
                             <thead style="background:var(--gray);">
                                 <tr>
-                                    <th style="padding:6px 10px;">Roll</th>
-                                    <th style="padding:6px 10px;">Name</th>
-                                    <th style="padding:6px 10px;">%</th>
-                                    <th style="padding:6px 10px;">Actions</th>
+                                    <th style="padding:8px 12px;">Roll</th>
+                                    <th style="padding:8px 12px;">Name</th>
+                                    <th style="padding:8px 12px;">%</th>
+                                    <th style="padding:8px 12px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="teacherStudentList"></tbody>
@@ -2227,7 +2278,7 @@
                     <div class="card-header">
                         <h3><i class="fas fa-book-open"></i> Add Homework</h3>
                     </div>
-                    <form onsubmit="teacherAddHomework(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <form onsubmit="teacherAddHomework(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                         <input type="hidden" id="editHomeworkId" />
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
                             <label>Subject</label>
@@ -2245,27 +2296,27 @@
                             <label>Attachment</label>
                             <input type="file" id="hwFile" />
                         </div>
-                        <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
+                        <div style="grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap;">
                             <button type="submit" class="btn btn-primary" id="hwSubmitBtn">Upload</button>
                             <button type="button" onclick="cancelEditHomework()" class="btn btn-outline" id="hwCancelBtn" style="display:none;">Cancel</button>
                         </div>
                     </form>
-                    <div id="teacherHomeworkList" style="margin-top:12px; display:flex; flex-direction:column; gap:6px;"></div>
+                    <div id="teacherHomeworkList" style="margin-top:14px; display:flex; flex-direction:column; gap:8px;"></div>
                 </div>
             </div>
         </section>
 
         <!-- ADMIN TAB -->
         <section id="tab-admin" class="tab-content">
-            <div id="adminLogin" class="card card-3d" style="max-width:400px; margin:0 auto;">
-                <div style="text-align:center; margin-bottom:16px;">
-                    <div style="width:56px; height:56px; background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; color:white; font-size:24px;">
+            <div id="adminLogin" class="card card-3d" style="max-width:420px; margin:0 auto;">
+                <div style="text-align:center; margin-bottom:18px;">
+                    <div style="width:64px; height:64px; background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; color:white; font-size:28px;">
                         <i class="fas fa-user-gear"></i>
                     </div>
-                    <h3 style="font-size:20px; font-weight:800;">Headmaster Admin</h3>
-                    <p style="font-size:13px; color:var(--text-light);">Full control over website</p>
+                    <h3 style="font-size:22px; font-weight:800;">Headmaster Admin</h3>
+                    <p style="font-size:14px; color:var(--text-light);">Full control over website</p>
                 </div>
-                <form onsubmit="adminLogin(event)" style="display:flex; flex-direction:column; gap:8px;">
+                <form onsubmit="adminLogin(event)" style="display:flex; flex-direction:column; gap:10px;">
                     <div class="form-group">
                         <label>Admin Password</label>
                         <input type="password" id="adminPass" placeholder="Enter admin password" required />
@@ -2275,36 +2326,53 @@
             </div>
 
             <div id="adminDashboard" style="display:none;">
-                <div class="card card-3d" style="margin-bottom:10px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <div class="card card-3d" style="margin-bottom:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                         <div>
-                            <h3 style="font-size:17px; font-weight:800;"><i class="fas fa-crown" style="color:var(--gold);"></i> Headmaster Control</h3>
-                            <p style="font-size:13px; color:var(--text-light);">Complete School Management</p>
+                            <h3 style="font-size:18px; font-weight:800;"><i class="fas fa-crown" style="color:var(--gold);"></i> Headmaster Control</h3>
+                            <p style="font-size:14px; color:var(--text-light);">Complete School Management</p>
                         </div>
                         <button onclick="adminLogout()" class="btn btn-danger">Logout</button>
                     </div>
                 </div>
 
-                <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:6px; margin-bottom:10px;">
-                    <div class="stat-box" style="padding:8px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; margin-bottom:12px;">
+                    <div class="stat-box" style="padding:10px;">
                         <span class="num" id="aStatStudents">0</span>
                         <span class="label">Students</span>
                     </div>
-                    <div class="stat-box" style="padding:8px;">
+                    <div class="stat-box" style="padding:10px;">
                         <span class="num" id="aStatTeachers">0</span>
                         <span class="label">Teachers</span>
                     </div>
-                    <div class="stat-box" style="padding:8px;">
+                    <div class="stat-box" style="padding:10px;">
                         <span class="num" id="aStatHomework">0</span>
                         <span class="label">Homework</span>
                     </div>
-                    <div class="stat-box" style="padding:8px;">
+                    <div class="stat-box" style="padding:10px;">
                         <span class="num" id="aStatAnnounce">0</span>
                         <span class="label">Announcements</span>
                     </div>
                 </div>
 
-                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:10px;">
+                <!-- Total Students Count - ONLY HEADMASTER -->
+                <div class="card card-3d" style="margin-bottom:12px; border:2px solid var(--gold);">
+                    <div class="card-header">
+                        <h3><i class="fas fa-user-graduate" style="color:var(--gold);"></i> Total Students Count <span style="font-size:12px; font-weight:400; color:var(--text-light);">(Headmaster Only)</span></h3>
+                    </div>
+                    <form onsubmit="updateTotalStudents(event)" style="display:grid; grid-template-columns:1fr auto; gap:8px;">
+                        <div class="form-group" style="margin:0;">
+                            <label>Total Students</label>
+                            <input type="number" id="inputTotalStudents" required min="0" placeholder="Enter total students" style="font-size:18px; font-weight:700;" />
+                        </div>
+                        <div style="display:flex; align-items:flex-end;">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                    <p style="font-size:13px; color:var(--text-light); margin-top:6px;"><i class="fas fa-info-circle"></i> This number will be displayed on the home page.</p>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px;">
                     <button onclick="scrollToSection('adminNotice')" class="btn btn-gold" style="justify-content:center;">📢 Notice</button>
                     <button onclick="scrollToSection('adminReport')" class="btn btn-gold" style="justify-content:center;">📊 Report</button>
                     <button onclick="scrollToSection('adminSlider')" class="btn btn-primary" style="justify-content:center;">🖼️ Slider</button>
@@ -2320,11 +2388,11 @@
                 </div>
 
                 <!-- Notice Control -->
-                <div class="card card-3d" style="margin-bottom:10px;" id="adminNotice">
+                <div class="card card-3d" style="margin-bottom:12px;" id="adminNotice">
                     <div class="card-header">
                         <h3><i class="fas fa-bullhorn"></i> Important Notice Control</h3>
                     </div>
-                    <form onsubmit="saveNotice(event)" style="display:grid; gap:8px;">
+                    <form onsubmit="saveNotice(event)" style="display:grid; gap:10px;">
                         <div class="form-group" style="margin:0;">
                             <label>Notice Title</label>
                             <input type="text" id="noticeTitleInput" placeholder="Notice title" required />
@@ -2337,23 +2405,23 @@
                             <label>Notice Image (Optional)</label>
                             <input type="file" id="noticeImageInput" accept="image/*" />
                         </div>
-                        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
                             <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Notice</button>
                             <button type="button" onclick="deleteNotice()" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</button>
                             <button type="button" onclick="previewNotice()" class="btn btn-gold"><i class="fas fa-eye"></i> Preview</button>
                         </div>
                     </form>
-                    <div id="noticeStatus" style="margin-top:6px; font-size:12px; color:var(--text-light);">
+                    <div id="noticeStatus" style="margin-top:8px; font-size:13px; color:var(--text-light);">
                         Status: <span id="noticeStatusText">No notice set</span>
                     </div>
                 </div>
 
                 <!-- Result Report -->
-                <div class="card card-3d" style="margin-bottom:10px;" id="adminReport">
+                <div class="card card-3d" style="margin-bottom:12px;" id="adminReport">
                     <div class="card-header">
                         <h3><i class="fas fa-chart-bar"></i> Student Result Report</h3>
-                        <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                            <select id="reportClassFilter" style="padding:5px 12px; border:2px solid var(--border); border-radius:8px; font-size:12px; background:var(--bg); color:var(--text);">
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <select id="reportClassFilter" style="padding:6px 14px; border:2px solid var(--border); border-radius:10px; font-size:13px; background:var(--bg); color:var(--text);">
                                 <option value="ALL">All</option>
                                 <option value="Class 1">Class 1</option>
                                 <option value="Class 2">Class 2</option>
@@ -2368,19 +2436,19 @@
                             <button onclick="downloadResultReport()" class="btn btn-gold btn-sm"><i class="fas fa-file-pdf"></i> PDF</button>
                         </div>
                     </div>
-                    <div id="resultReportContainer" style="overflow-x:auto; max-height:320px; overflow-y:auto;">
-                        <table style="width:100%; font-size:12px; border-collapse:collapse;">
+                    <div id="resultReportContainer" style="overflow-x:auto; max-height:340px; overflow-y:auto;">
+                        <table style="width:100%; font-size:13px; border-collapse:collapse;">
                             <thead style="background:var(--gray); position:sticky; top:0; z-index:5;">
                                 <tr>
-                                    <th style="padding:6px 10px; text-align:left;">#</th>
-                                    <th style="padding:6px 10px; text-align:left;">Class</th>
-                                    <th style="padding:6px 10px; text-align:left;">Roll</th>
-                                    <th style="padding:6px 10px; text-align:left;">Student</th>
-                                    <th style="padding:6px 10px; text-align:left;">Obtained</th>
-                                    <th style="padding:6px 10px; text-align:left;">Total</th>
-                                    <th style="padding:6px 10px; text-align:left;">%</th>
-                                    <th style="padding:6px 10px; text-align:left;">Grade</th>
-                                    <th style="padding:6px 10px; text-align:left;">Incharge</th>
+                                    <th style="padding:8px 12px; text-align:left;">#</th>
+                                    <th style="padding:8px 12px; text-align:left;">Class</th>
+                                    <th style="padding:8px 12px; text-align:left;">Roll</th>
+                                    <th style="padding:8px 12px; text-align:left;">Student</th>
+                                    <th style="padding:8px 12px; text-align:left;">Obtained</th>
+                                    <th style="padding:8px 12px; text-align:left;">Total</th>
+                                    <th style="padding:8px 12px; text-align:left;">%</th>
+                                    <th style="padding:8px 12px; text-align:left;">Grade</th>
+                                    <th style="padding:8px 12px; text-align:left;">Incharge</th>
                                 </tr>
                             </thead>
                             <tbody id="reportTableBody"></tbody>
@@ -2389,9 +2457,9 @@
                 </div>
 
                 <!-- Slider -->
-                <div class="card card-3d" style="margin-bottom:10px;" id="adminSlider">
+                <div class="card card-3d" style="margin-bottom:12px;" id="adminSlider">
                     <div class="card-header"><h3><i class="fas fa-images"></i> Slider Control</h3></div>
-                    <form onsubmit="addSlideImage(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                    <form onsubmit="addSlideImage(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
                             <label>Slide Title</label>
                             <input type="text" id="slideTitle" placeholder="Slide caption" required />
@@ -2404,13 +2472,13 @@
                             <button type="submit" class="btn btn-primary"><i class="fas fa-upload"></i> Upload</button>
                         </div>
                     </form>
-                    <div id="adminSliderList" style="margin-top:10px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;"></div>
+                    <div id="adminSliderList" style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;"></div>
                 </div>
 
                 <!-- Video -->
-                <div class="card card-3d" style="margin-bottom:10px;" id="adminVideo">
+                <div class="card card-3d" style="margin-bottom:12px;" id="adminVideo">
                     <div class="card-header"><h3><i class="fas fa-video"></i> School Video</h3></div>
-                    <form onsubmit="uploadVideo(event)" style="display:grid; gap:6px;">
+                    <form onsubmit="uploadVideo(event)" style="display:grid; gap:8px;">
                         <div class="form-group" style="margin:0;">
                             <label>Upload Video (MP4, < 7MB)</label>
                                 <input type="file" id="videoFile" accept="video/*" />
@@ -2420,9 +2488,9 @@
                     </div>
 
                     <!-- Timings -->
-                    <div class="card card-3d" style="margin-bottom:10px;" id="adminTimings">
+                    <div class="card card-3d" style="margin-bottom:12px;" id="adminTimings">
                         <div class="card-header"><h3><i class="fas fa-clock"></i> School Timings</h3></div>
-                        <form onsubmit="updateTimings(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                        <form onsubmit="updateTimings(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                             <div class="form-group" style="margin:0;">
                                 <label>School Time</label>
                                 <input type="text" id="inputSchoolTime" placeholder="08:00 AM – 01:30 PM" required />
@@ -2438,9 +2506,9 @@
                     </div>
 
                     <!-- Announcements -->
-                    <div class="card card-3d" style="margin-bottom:10px;" id="adminAnnouncements">
+                    <div class="card card-3d" style="margin-bottom:12px;" id="adminAnnouncements">
                         <div class="card-header"><h3><i class="fas fa-bullhorn"></i> Add Announcement</h3></div>
-                        <form onsubmit="addAnnouncement(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                        <form onsubmit="addAnnouncement(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                             <div class="form-group" style="margin:0; grid-column:1/-1;">
                                 <label>Title</label>
                                 <input type="text" id="announceTitle" placeholder="Announcement title" required />
@@ -2465,13 +2533,13 @@
                                 <button type="submit" class="btn btn-primary">Publish</button>
                             </div>
                         </form>
-                        <div id="adminAnnouncementList" style="margin-top:10px; display:flex; flex-direction:column; gap:6px;"></div>
+                        <div id="adminAnnouncementList" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;"></div>
                     </div>
 
                     <!-- Homework Admin -->
-                    <div class="card card-3d" style="margin-bottom:10px;" id="adminHomework">
+                    <div class="card card-3d" style="margin-bottom:12px;" id="adminHomework">
                         <div class="card-header"><h3><i class="fas fa-book-open"></i> Manage Homework</h3></div>
-                        <form onsubmit="adminAddHomework(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                        <form onsubmit="adminAddHomework(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                             <input type="hidden" id="adminEditHwId" />
                             <div class="form-group" style="margin:0;">
                                 <label>Class</label>
@@ -2502,18 +2570,18 @@
                                 <label>Attachment</label>
                                 <input type="file" id="adminHwFile" />
                             </div>
-                            <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
+                            <div style="grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap;">
                                 <button type="submit" class="btn btn-primary" id="adminHwSubmitBtn">Upload</button>
                                 <button type="button" onclick="cancelAdminEditHomework()" class="btn btn-outline" id="adminHwCancelBtn" style="display:none;">Cancel</button>
                             </div>
                         </form>
-                        <div id="adminHomeworkList" style="margin-top:10px; display:flex; flex-direction:column; gap:6px;"></div>
+                        <div id="adminHomeworkList" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;"></div>
                     </div>
 
                     <!-- Gallery -->
-                    <div class="card card-3d" style="margin-bottom:10px;" id="adminGallery">
+                    <div class="card card-3d" style="margin-bottom:12px;" id="adminGallery">
                         <div class="card-header"><h3><i class="fas fa-images"></i> Manage Gallery</h3></div>
-                        <form onsubmit="adminAddGallery(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                        <form onsubmit="adminAddGallery(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                             <div class="form-group" style="margin:0; grid-column:1/-1;">
                                 <label>Caption</label>
                                 <input type="text" id="galleryCaption" placeholder="Photo caption" required />
@@ -2526,13 +2594,13 @@
                                 <button type="submit" class="btn btn-primary">Upload</button>
                             </div>
                         </form>
-                        <div id="adminGalleryList" style="margin-top:10px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;"></div>
+                        <div id="adminGalleryList" style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;"></div>
                     </div>
 
                     <!-- Incharges -->
-                    <div class="card card-3d" style="margin-bottom:10px;" id="adminIncharges">
+                    <div class="card card-3d" style="margin-bottom:12px;" id="adminIncharges">
                         <div class="card-header"><h3><i class="fas fa-chalkboard-user"></i> Assign Incharges</h3></div>
-                        <form onsubmit="assignIncharge(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                        <form onsubmit="assignIncharge(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                             <div class="form-group" style="margin:0;">
                                 <label>Class</label>
                                 <select id="inchargeClass">
@@ -2554,24 +2622,24 @@
                                 <button type="submit" class="btn btn-primary">Assign</button>
                             </div>
                         </form>
-                        <div id="adminInchargeList" style="margin-top:10px; display:grid; grid-template-columns:1fr 1fr; gap:6px;"></div>
+                        <div id="adminInchargeList" style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
                     </div>
 
                     <!-- Security -->
-                    <div class="card card-3d" style="margin-bottom:10px;" id="adminSecurity">
+                    <div class="card card-3d" style="margin-bottom:12px;" id="adminSecurity">
                         <div class="card-header"><h3><i class="fas fa-key"></i> Security</h3></div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
                             <div>
-                                <h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Change Admin Password</h4>
-                                <form onsubmit="changeAdminPass(event)" style="display:flex; gap:6px; flex-wrap:wrap;">
-                                    <input type="password" id="newAdminPass" placeholder="New password" required style="flex:1; min-width:100px; padding:8px 12px; border:2px solid var(--border); border-radius:8px; font-size:13px; background:var(--bg); color:var(--text);" />
+                                <h4 style="font-size:15px; font-weight:700; margin-bottom:8px;">Change Admin Password</h4>
+                                <form onsubmit="changeAdminPass(event)" style="display:flex; gap:8px; flex-wrap:wrap;">
+                                    <input type="password" id="newAdminPass" placeholder="New password" required style="flex:1; min-width:120px; padding:10px 14px; border:2px solid var(--border); border-radius:10px; font-size:14px; background:var(--bg); color:var(--text);" />
                                     <button type="submit" class="btn btn-primary">Update</button>
                                 </form>
                             </div>
                             <div>
-                                <h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Set Teacher PIN</h4>
-                                <form onsubmit="setTeacherPin(event)" style="display:flex; gap:6px; flex-wrap:wrap;">
-                                    <select id="pinClass" style="padding:6px 10px; border:2px solid var(--border); border-radius:8px; font-size:12px; background:var(--bg); color:var(--text);">
+                                <h4 style="font-size:15px; font-weight:700; margin-bottom:8px;">Set Teacher PIN</h4>
+                                <form onsubmit="setTeacherPin(event)" style="display:flex; gap:8px; flex-wrap:wrap;">
+                                    <select id="pinClass" style="padding:8px 12px; border:2px solid var(--border); border-radius:10px; font-size:13px; background:var(--bg); color:var(--text);">
                                         <option value="Class 1">Class 1</option>
                                         <option value="Class 2">Class 2</option>
                                         <option value="Class 3">Class 3</option>
@@ -2581,7 +2649,7 @@
                                         <option value="Class 7">Class 7</option>
                                         <option value="Class 8">Class 8</option>
                                     </select>
-                                    <input type="text" id="newTeacherPin" placeholder="PIN" required style="width:80px; padding:6px 10px; border:2px solid var(--border); border-radius:8px; font-size:12px; background:var(--bg); color:var(--text);" />
+                                    <input type="text" id="newTeacherPin" placeholder="PIN" required style="width:90px; padding:8px 12px; border:2px solid var(--border); border-radius:10px; font-size:13px; background:var(--bg); color:var(--text);" />
                                     <button type="submit" class="btn btn-primary">Set</button>
                                 </form>
                             </div>
@@ -2589,9 +2657,9 @@
                     </div>
 
                     <!-- About -->
-                    <div class="card card-3d" style="margin-bottom:10px;" id="adminAbout">
+                    <div class="card card-3d" style="margin-bottom:12px;" id="adminAbout">
                         <div class="card-header"><h3><i class="fas fa-info-circle"></i> About & Contact</h3></div>
-                        <form onsubmit="updateAbout(event)" style="display:grid; gap:6px;">
+                        <form onsubmit="updateAbout(event)" style="display:grid; gap:8px;">
                             <div class="form-group" style="margin:0;">
                                 <label>About Text</label>
                                 <textarea id="aboutInput" rows="3" placeholder="School description..."></textarea>
@@ -2600,7 +2668,7 @@
                                 <label>Headmaster Name</label>
                                 <input type="text" id="headmasterInput" placeholder="Headmaster name" />
                             </div>
-                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                                 <div class="form-group" style="margin:0;">
                                     <label>Address</label>
                                     <input type="text" id="contactAddress" placeholder="School address" />
@@ -2620,13 +2688,13 @@
 
         </main>
 
-        <!-- Footer -->
+        <!-- Footer - Clean -->
         <footer class="footer">
             <div class="container">
                 <div>
                     <h4><i class="fas fa-school"></i> GES Bait Mughal</h4>
                     <p>Government Elementary School committed to free quality education and moral values for every child.</p>
-                    <p style="margin-top:6px;"><i class="fas fa-map-pin"></i> Bait Mughal, Jalal Pur Pir Wala, Punjab</p>
+                    <p style="margin-top:8px;"><i class="fas fa-map-pin"></i> Bait Mughal, Jalal Pur Pir Wala, Punjab</p>
                 </div>
                 <div>
                     <h4><i class="fas fa-link"></i> Quick Links</h4>
@@ -2643,8 +2711,8 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <span>&copy; <span id="footerYear">2026</span> GES Bait Mughal</span>
-                <span><i class="fas fa-shield-alt"></i> Smart School v21.0</span>
+                <span>&copy; <span id="footerYear">2026</span> GES Bait Mughal — All Rights Reserved</span>
+                <span><i class="fas fa-shield-alt"></i> Smart School v23.0</span>
             </div>
         </footer>
 
@@ -2687,7 +2755,8 @@
                     'Class 7': '1234',
                     'Class 8': '1234'
                 },
-                contact: { address: 'Bait Mughal, Jalal Pur Pir Wala, Punjab', phone: '+92 300 1234567' }
+                contact: { address: 'Bait Mughal, Jalal Pur Pir Wala, Punjab', phone: '+92 300 1234567' },
+                totalStudents: 0  // ONLY headmaster can update this
             };
 
             // ================================================================
@@ -2719,9 +2788,9 @@
                 container.appendChild(toast);
                 setTimeout(() => {
                     toast.style.opacity = '0';
-                    toast.style.transform = 'translateX(40px) scale(0.95)';
-                    setTimeout(() => toast.remove(), 400);
-                }, 3500);
+                    toast.style.transform = 'translateX(60px) scale(0.9)';
+                    setTimeout(() => toast.remove(), 500);
+                }, 4000);
             }
 
             // ================================================================
@@ -2773,13 +2842,14 @@
             });
 
             // ================================================================
-            // VIDEO
+            // VIDEO - with sound
             // ================================================================
             video.addEventListener('click', () => {
                 video.muted = !video.muted;
                 const icon = video.muted ? 'fa-volume-mute' : 'fa-volume-up';
                 $('volumeIcon').className = `fas ${icon}`;
                 $('volumeText').textContent = video.muted ? 'Muted' : 'Sound on';
+                $('videoStatus').textContent = video.muted ? '🔇 Muted' : '▶️ Playing with sound';
             });
 
             function toggleFullscreen() {
@@ -2796,7 +2866,7 @@
             });
 
             // ================================================================
-            // SLIDER – AUTO SLIDE FIXED
+            // SLIDER – AUTO SLIDE
             // ================================================================
             let currentSlide = 0;
             let sliderInterval;
@@ -2804,11 +2874,11 @@
             function renderSlider() {
                 const slides = DB.slides.length > 0 ? DB.slides : [
                     { title: '🏫 Welcome to GES Bait Mughal',
-                    img: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80' },
+                    img: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1600&q=80' },
                     { title: '📚 Quality Education for All',
-                    img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80' },
+                    img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1600&q=80' },
                     { title: '🌟 Empowering Young Minds',
-                    img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80' }
+                    img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1600&q=80' }
                 ];
 
                 if (currentSlide >= slides.length) currentSlide = 0;
@@ -2854,7 +2924,7 @@
                     const total = slides.length > 0 ? slides.length : 3;
                     currentSlide = (currentSlide + 1) % total;
                     renderSlider();
-                }, 4500);
+                }, 5000);
             }
 
             // ================================================================
@@ -2880,11 +2950,6 @@
 
             function closeNotice() {
                 $('noticeOverlay').classList.remove('active');
-                if (DB.video) {
-                    video.muted = false;
-                    video.play().catch(() => { video.muted = true;
-                        video.play(); });
-                }
             }
             $('noticeCloseBtn').addEventListener('click', closeNotice);
             $('noticeCloseBottom').addEventListener('click', closeNotice);
@@ -2972,25 +3037,23 @@
             }
 
             // ================================================================
-            // RENDER HOME – FIXED: all data shows instantly
+            // RENDER HOME - uses DB.totalStudents (headmaster only)
             // ================================================================
             function renderHome() {
-                // Students count
-                $('statStudents').textContent = DB.students.length;
+                // ONLY headmaster's totalStudents is shown on home page
+                $('statStudents').textContent = DB.totalStudents || 0;
                 $('statNews').textContent = DB.announcements.length;
                 $('statGallery').textContent = DB.gallery.length;
 
-                // Timings
                 $('schoolTimings').textContent = DB.timings;
                 $('breakTimings').textContent = DB.breakTime;
                 $('footerTimings').textContent = `School: ${DB.timings}`;
                 $('footerBreak').textContent = `Break: ${DB.breakTime}`;
 
-                // Headmaster / About
                 $('headmasterName').textContent = DB.headmaster;
                 $('aboutText').textContent = DB.about;
 
-                // Video
+                // Video with sound
                 if (DB.video) {
                     video.src = DB.video;
                     video.load();
@@ -3017,7 +3080,7 @@
                 list.innerHTML = '';
                 if (DB.announcements.length === 0) {
                     list.innerHTML =
-                    '<p style="text-align:center; color:var(--text-light); padding:10px; font-size:14px;">No announcements yet.</p>';
+                        '<p style="text-align:center; color:var(--text-light); padding:12px; font-size:15px;">No announcements yet.</p>';
                 }
                 DB.announcements.forEach(a => {
                     const div = document.createElement('div');
@@ -3034,14 +3097,14 @@
                     list.appendChild(div);
                 });
 
-                // Incharges – show ALL assigned
+                // Incharges
                 const inchargeList = $('inchargeList');
                 inchargeList.innerHTML = '';
                 const incharges = DB.incharges || {};
                 const hasIncharges = Object.values(incharges).some(name => name && name !== 'Not Assigned' && name !== '');
                 if (!hasIncharges) {
                     inchargeList.innerHTML =
-                        '<p style="text-align:center; color:var(--text-light); padding:8px; font-size:13px; grid-column:1/-1;">No incharges assigned yet.</p>';
+                        '<p style="text-align:center; color:var(--text-light); padding:10px; font-size:14px; grid-column:1/-1;">No incharges assigned yet.</p>';
                 } else {
                     Object.keys(incharges).forEach(cls => {
                         const name = incharges[cls];
@@ -3065,7 +3128,7 @@
             }
 
             // ================================================================
-            // RENDER HOMEWORK
+            // RENDER HOMEWORK / GALLERY / TEACHER / ADMIN
             // ================================================================
             function renderHomework() {
                 const filter = $('hwFilter').value;
@@ -3076,53 +3139,48 @@
 
                 if (list.length === 0) {
                     grid.innerHTML =
-                        '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:15px; padding:18px;">No homework uploaded.</p>';
+                        '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:16px; padding:20px;">No homework uploaded.</p>';
                     return;
                 }
 
                 list.forEach(h => {
                     const div = document.createElement('div');
                     div.className = 'card card-3d';
-                    div.style.cssText = 'padding:14px;';
+                    div.style.cssText = 'padding:16px;';
                     div.innerHTML = `
-                                <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
-                                    <span style="font-size:11px; font-weight:700; background:var(--primary-bg); padding:3px 10px; border-radius:6px;">${h.class}</span>
-                                    <span style="font-size:11px; font-weight:600; color:var(--primary);">${h.subject}</span>
+                                <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+                                    <span style="font-size:12px; font-weight:700; background:var(--primary-bg); padding:4px 12px; border-radius:8px;">${h.class}</span>
+                                    <span style="font-size:12px; font-weight:600; color:var(--primary);">${h.subject}</span>
                                 </div>
-                                <h4 style="font-size:16px; font-weight:700;">${h.title}</h4>
-                                <p style="font-size:13px; color:var(--text-light); margin-top:3px;">${h.desc}</p>
-                                ${h.file ? `<button onclick="downloadFile('${h.file}','${h.title}')" class="btn btn-primary btn-sm" style="margin-top:6px;"><i class="fas fa-download"></i> Download</button>` : ''}
+                                <h4 style="font-size:17px; font-weight:700;">${h.title}</h4>
+                                <p style="font-size:14px; color:var(--text-light); margin-top:4px;">${h.desc}</p>
+                                ${h.file ? `<button onclick="downloadFile('${h.file}','${h.title}')" class="btn btn-primary btn-sm" style="margin-top:8px;"><i class="fas fa-download"></i> Download</button>` : ''}
                             `;
                     grid.appendChild(div);
                 });
             }
 
-            // ================================================================
-            // RENDER GALLERY
-            // ================================================================
             function renderGallery() {
                 const grid = $('galleryGrid');
                 grid.innerHTML = '';
                 if (DB.gallery.length === 0) {
                     grid.innerHTML =
-                        '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:15px; padding:18px;">No gallery images yet.</p>';
+                        '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:16px; padding:20px;">No gallery images yet.</p>';
                     return;
                 }
                 DB.gallery.forEach(img => {
                     const div = document.createElement('div');
                     div.className = 'card card-3d';
-                    div.style.cssText = 'padding:6px; overflow:hidden;';
+                    div.style.cssText = 'padding:8px; overflow:hidden;';
                     div.innerHTML = `
-                                <img src="${img.file}" style="width:100%; height:170px; object-fit:cover; border-radius:8px;" loading="lazy" />
-                                <p style="font-size:13px; font-weight:600; text-align:center; padding:8px 0;">${img.caption}</p>
+                                <img src="${img.file}" style="width:100%; height:180px; object-fit:cover; border-radius:10px;" loading="lazy" />
+                                <p style="font-size:14px; font-weight:600; text-align:center; padding:10px 0 4px;">${img.caption}</p>
                             `;
                     grid.appendChild(div);
                 });
             }
 
-            // ================================================================
-            // TEACHER
-            // ================================================================
+            // TEACHER FUNCTIONS
             function renderTeacherUI() {
                 const isLoggedIn = sessionStorage.getItem('teacherLoggedIn');
                 if (isLoggedIn) {
@@ -3163,10 +3221,10 @@
                     const tr = document.createElement('tr');
                     const perc = ((s.obtained / s.total) * 100).toFixed(1);
                     tr.innerHTML = `
-                                <td style="padding:6px 10px;">${s.roll}</td>
-                                <td style="padding:6px 10px;">${s.name}</td>
-                                <td style="padding:6px 10px; font-weight:700; color:var(--primary);">${perc}%</td>
-                                <td style="padding:6px 10px;">
+                                <td style="padding:8px 12px;">${s.roll}</td>
+                                <td style="padding:8px 12px;">${s.name}</td>
+                                <td style="padding:8px 12px; font-weight:700; color:var(--primary);">${perc}%</td>
+                                <td style="padding:8px 12px;">
                                     <button onclick="editStudent('${s.class}',${s.roll})" class="btn btn-primary btn-sm">Edit</button>
                                     <button onclick="deleteStudent('${s.class}',${s.roll})" class="btn btn-danger btn-sm">Del</button>
                                 </td>
@@ -3182,17 +3240,17 @@
                 const container = $('teacherHomeworkList');
                 container.innerHTML = '';
                 if (list.length === 0) {
-                    container.innerHTML = '<p style="font-size:13px; color:var(--text-light);">No homework added.</p>';
+                    container.innerHTML = '<p style="font-size:14px; color:var(--text-light);">No homework added.</p>';
                     return;
                 }
                 list.forEach(h => {
                     const div = document.createElement('div');
                     div.style.cssText =
-                        'display:flex; justify-content:space-between; align-items:center; padding:8px 14px; background:var(--gray); border-radius:8px; font-size:13px; flex-wrap:wrap; gap:6px;';
+                        'display:flex; justify-content:space-between; align-items:center; padding:10px 16px; background:var(--gray); border-radius:10px; font-size:14px; flex-wrap:wrap; gap:8px;';
                     div.innerHTML = `
                                 <div>
                                     <strong>${h.subject}:</strong> ${h.title}
-                                    <p style="font-size:11px; color:var(--text-light);">${h.desc}</p>
+                                    <p style="font-size:12px; color:var(--text-light);">${h.desc}</p>
                                 </div>
                                 <div>
                                     <button onclick="editHomework('${h.id}')" class="btn btn-primary btn-sm">Edit</button>
@@ -3374,7 +3432,7 @@
             }
 
             // ================================================================
-            // ADMIN
+            // ADMIN FUNCTIONS
             // ================================================================
             function renderAdminUI() {
                 const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
@@ -3400,6 +3458,7 @@
                         $('noticeStatusText').textContent = DB.notice.title ? 'Active - "' + DB.notice.title + '"' :
                             'No notice set';
                     }
+                    $('inputTotalStudents').value = DB.totalStudents || 0;
                 } else {
                     $('adminLogin').style.display = 'block';
                     $('adminDashboard').style.display = 'none';
@@ -3407,7 +3466,7 @@
             }
 
             function updateAdminStats() {
-                $('aStatStudents').textContent = DB.students.length;
+                $('aStatStudents').textContent = DB.totalStudents || 0;
                 const teachers = new Set(DB.students.map(s => s.class));
                 $('aStatTeachers').textContent = teachers.size;
                 $('aStatHomework').textContent = DB.homework.length;
@@ -3430,6 +3489,23 @@
                 sessionStorage.removeItem('adminLoggedIn');
                 showToast('👋 Logged out', 'warning');
                 renderAdminUI();
+            }
+
+            // ================================================================
+            // TOTAL STUDENTS – ONLY HEADMASTER CAN UPDATE
+            // ================================================================
+            function updateTotalStudents(e) {
+                e.preventDefault();
+                const val = parseInt($('inputTotalStudents').value);
+                if (isNaN(val) || val < 0) {
+                    showToast('❌ Please enter a valid number', 'error');
+                    return;
+                }
+                DB.totalStudents = val;
+                saveData();
+                renderHome();
+                updateAdminStats();
+                showToast('✅ Total students updated successfully!', 'success');
             }
 
             // ================================================================
@@ -3541,15 +3617,15 @@
                     const tr = document.createElement('tr');
                     tr.style.borderBottom = '1px solid var(--border)';
                     tr.innerHTML = `
-                                <td style="padding:6px 10px;">${index + 1}</td>
-                                <td style="padding:6px 10px; font-weight:600;">${s.class}</td>
-                                <td style="padding:6px 10px;">${s.roll}</td>
-                                <td style="padding:6px 10px; font-weight:500;">${s.name}</td>
-                                <td style="padding:6px 10px; font-weight:700; color:var(--primary);">${s.obtained}</td>
-                                <td style="padding:6px 10px;">${s.total}</td>
-                                <td style="padding:6px 10px; font-weight:700; color:var(--gold);">${percFixed}%</td>
-                                <td style="padding:6px 10px; font-weight:700; color:${perc >= 70 ? 'var(--primary)' : '#dc2626'};">${grade}</td>
-                                <td style="padding:6px 10px;">${DB.incharges[s.class] || 'Not Assigned'}</td>
+                                <td style="padding:8px 12px;">${index + 1}</td>
+                                <td style="padding:8px 12px; font-weight:600;">${s.class}</td>
+                                <td style="padding:8px 12px;">${s.roll}</td>
+                                <td style="padding:8px 12px; font-weight:500;">${s.name}</td>
+                                <td style="padding:8px 12px; font-weight:700; color:var(--primary);">${s.obtained}</td>
+                                <td style="padding:8px 12px;">${s.total}</td>
+                                <td style="padding:8px 12px; font-weight:700; color:var(--gold);">${percFixed}%</td>
+                                <td style="padding:8px 12px; font-weight:700; color:${perc >= 70 ? 'var(--primary)' : '#dc2626'};">${grade}</td>
+                                <td style="padding:8px 12px;">${DB.incharges[s.class] || 'Not Assigned'}</td>
                             `;
                     tbody.appendChild(tr);
                 });
@@ -3713,16 +3789,16 @@
                 const slides = DB.slides.length > 0 ? DB.slides : [];
                 if (slides.length === 0) {
                     container.innerHTML =
-                        '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:13px; padding:10px;">No slides uploaded.</p>';
+                        '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:14px; padding:12px;">No slides uploaded.</p>';
                     return;
                 }
                 slides.forEach((s) => {
                     const div = document.createElement('div');
-                    div.style.cssText = 'border-radius:8px; overflow:hidden; background:var(--gray); position:relative;';
+                    div.style.cssText = 'border-radius:10px; overflow:hidden; background:var(--gray); position:relative;';
                     div.innerHTML = `
-                                <img src="${s.img}" style="width:100%; height:65px; object-fit:cover;" loading="lazy" />
-                                <div style="padding:5px 8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
-                                    <span style="font-size:11px; font-weight:600;">${s.title}</span>
+                                <img src="${s.img}" style="width:100%; height:70px; object-fit:cover;" loading="lazy" />
+                                <div style="padding:6px 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
+                                    <span style="font-size:12px; font-weight:600;">${s.title}</span>
                                     <button onclick="deleteSlideImage('${s.id}')" class="btn btn-danger btn-sm">×</button>
                                 </div>
                             `;
@@ -3738,17 +3814,17 @@
                 container.innerHTML = '';
                 if (DB.announcements.length === 0) {
                     container.innerHTML =
-                        '<p style="text-align:center; color:var(--text-light); font-size:13px; padding:8px;">No announcements.</p>';
+                        '<p style="text-align:center; color:var(--text-light); font-size:14px; padding:10px;">No announcements.</p>';
                     return;
                 }
                 DB.announcements.forEach(a => {
                     const div = document.createElement('div');
                     div.style.cssText =
-                        'display:flex; justify-content:space-between; align-items:center; padding:6px 12px; background:var(--gray); border-radius:8px; font-size:13px; flex-wrap:wrap; gap:4px;';
+                        'display:flex; justify-content:space-between; align-items:center; padding:8px 14px; background:var(--gray); border-radius:10px; font-size:14px; flex-wrap:wrap; gap:6px;';
                     div.innerHTML = `
                                 <div>
                                     <strong>${a.title}</strong>
-                                    <p style="font-size:11px; color:var(--text-light);">${a.desc || ''}</p>
+                                    <p style="font-size:12px; color:var(--text-light);">${a.desc || ''}</p>
                                 </div>
                                 <button onclick="deleteAnnouncement('${a.id}')" class="btn btn-danger btn-sm">Del</button>
                             `;
@@ -3762,16 +3838,16 @@
                 container.innerHTML = '';
                 if (DB.homework.length === 0) {
                     container.innerHTML =
-                        '<p style="text-align:center; color:var(--text-light); font-size:13px; padding:8px;">No homework.</p>';
+                        '<p style="text-align:center; color:var(--text-light); font-size:14px; padding:10px;">No homework.</p>';
                     return;
                 }
                 DB.homework.forEach(h => {
                     const div = document.createElement('div');
                     div.style.cssText =
-                        'display:flex; justify-content:space-between; align-items:center; padding:6px 12px; background:var(--gray); border-radius:8px; font-size:13px; flex-wrap:wrap; gap:4px;';
+                        'display:flex; justify-content:space-between; align-items:center; padding:8px 14px; background:var(--gray); border-radius:10px; font-size:14px; flex-wrap:wrap; gap:6px;';
                     div.innerHTML = `
                                 <div>
-                                    <span style="font-size:10px; font-weight:700; background:var(--primary-bg); padding:2px 8px; border-radius:4px;">${h.class}</span>
+                                    <span style="font-size:11px; font-weight:700; background:var(--primary-bg); padding:3px 10px; border-radius:6px;">${h.class}</span>
                                     <strong>${h.subject}:</strong> ${h.title}
                                 </div>
                                 <div>
@@ -3789,16 +3865,16 @@
                 container.innerHTML = '';
                 if (DB.gallery.length === 0) {
                     container.innerHTML =
-                        '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:13px; padding:10px;">No images.</p>';
+                        '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:14px; padding:12px;">No images.</p>';
                     return;
                 }
                 DB.gallery.forEach(img => {
                     const div = document.createElement('div');
-                    div.style.cssText = 'border-radius:8px; overflow:hidden; background:var(--gray);';
+                    div.style.cssText = 'border-radius:10px; overflow:hidden; background:var(--gray);';
                     div.innerHTML = `
-                                <img src="${img.file}" style="width:100%; height:75px; object-fit:cover;" loading="lazy" />
-                                <div style="padding:4px 8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
-                                    <span style="font-size:11px; font-weight:600;">${img.caption}</span>
+                                <img src="${img.file}" style="width:100%; height:80px; object-fit:cover;" loading="lazy" />
+                                <div style="padding:6px 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
+                                    <span style="font-size:12px; font-weight:600;">${img.caption}</span>
                                     <button onclick="deleteGallery('${img.id}')" class="btn btn-danger btn-sm">×</button>
                                 </div>
                             `;
@@ -3812,7 +3888,7 @@
                 const has = Object.values(DB.incharges).some(n => n && n !== 'Not Assigned' && n !== '');
                 if (!has) {
                     container.innerHTML =
-                        '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:13px; padding:10px;">No incharges assigned.</p>';
+                        '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:14px; padding:12px;">No incharges assigned.</p>';
                     return;
                 }
                 Object.keys(DB.incharges).forEach(cls => {
@@ -3820,7 +3896,7 @@
                     if (name && name !== 'Not Assigned' && name !== '') {
                         const div = document.createElement('div');
                         div.style.cssText =
-                            'display:flex; justify-content:space-between; align-items:center; padding:5px 10px; background:var(--gray); border-radius:6px; font-size:13px; flex-wrap:wrap; gap:4px;';
+                            'display:flex; justify-content:space-between; align-items:center; padding:6px 12px; background:var(--gray); border-radius:8px; font-size:14px; flex-wrap:wrap; gap:6px;';
                         div.innerHTML = `
                                     <span><strong>${cls}:</strong> ${name}</span>
                                     <button onclick="removeIncharge('${cls}')" class="btn btn-danger btn-sm">Remove</button>
@@ -4161,14 +4237,15 @@
                 if (overlay) overlay.style.display = 'none';
             }, 3500);
 
-            console.log('🎓 GES Bait Mughal - Smart School System v21.0');
+            console.log('🎓 GES Bait Mughal - Smart School System v23.0');
             console.log('🔑 Admin: admin123 | Teacher PIN: 1234');
             console.log('📱 Fully responsive for all devices!');
             console.log('🔥 Real-time Firebase sync enabled!');
             console.log('📢 Important Notice feature added!');
-            console.log('🎬 Video autoplay with sound!');
-            console.log('🖼️ Slider auto-slides every 4.5 seconds!');
+            console.log('🎬 Video with sound enabled!');
+            console.log('🖼️ Slider auto-slides every 5 seconds!');
             console.log('✅ All issues fixed — changes now reflect instantly!');
+            console.log('👨‍🎓 Total Students on Home page is manually set by Headmaster only.');
         </script>
 
     </body>
