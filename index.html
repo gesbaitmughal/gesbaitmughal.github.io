@@ -94,6 +94,30 @@
         }
 
         /* ================================================================
+                   TOAST NOTIFICATIONS
+                ================================================================ */
+        .toast-container {
+            position: fixed; bottom: 22px; right: 22px;
+            z-index: 99999; display: flex; flex-direction: column; gap: 8px; max-width: 90%;
+        }
+        .toast {
+            padding: 14px 24px; border-radius: 12px;
+            font-size: 14px; font-weight: 600; box-shadow: var(--shadow-xl);
+            animation: toastSlide 0.4s cubic-bezier(0.4,0,0.2,1);
+            display: flex; align-items: center; gap: 10px;
+            min-width: 250px;
+            border-left: 4px solid;
+        }
+        .toast-success { background: var(--primary); color: white; border-color: var(--gold); }
+        .toast-error { background: #dc2626; color: white; border-color: #991b1b; }
+        .toast-warning { background: var(--gold); color: var(--text); border-color: #d4920a; }
+        .toast-info { background: #3b82f6; color: white; border-color: #1d4ed8; }
+        @keyframes toastSlide {
+            from { opacity: 0; transform: translateX(40px) scale(0.95); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
+        }
+
+        /* ================================================================
                    WELCOME OVERLAY
                 ================================================================ */
         .welcome-overlay {
@@ -369,7 +393,7 @@
         .theme-toggle:hover { transform: rotate(60deg) scale(1.1); background: var(--border); }
 
         /* ================================================================
-                   HERO SLIDER
+                   HERO SLIDER - AUTO SLIDE FIXED
                 ================================================================ */
         .hero-slider {
             position: relative; border-radius: var(--radius-lg); overflow: hidden;
@@ -381,8 +405,9 @@
         .hero-slider .slide {
             position: absolute; inset: 0; opacity: 0;
             transition: opacity 0.8s ease, transform 0.8s ease; transform: scale(1.02);
+            will-change: opacity, transform;
         }
-        .hero-slider .slide.active { opacity: 1; transform: scale(1); }
+        .hero-slider .slide.active { opacity: 1; transform: scale(1); z-index: 2; }
         .hero-slider .slide img { width: 100%; height: 100%; object-fit: cover; }
         .hero-slider .slide .overlay {
             position: absolute; inset: 0;
@@ -411,6 +436,7 @@
             position: absolute; top: 50%; transform: translateY(-50%);
             width: 100%; display: flex; justify-content: space-between;
             padding: 0 18px; z-index: 10;
+            pointer-events: none;
         }
         @media (max-width: 768px) { .hero-slider .controls { padding: 0 8px; } }
         .hero-slider .controls button {
@@ -418,6 +444,7 @@
             border-radius: 50%; border: none; background: rgba(0,0,0,0.5);
             color: white; cursor: pointer; transition: var(--transition);
             font-size: 20px; backdrop-filter: blur(4px);
+            pointer-events: all;
         }
         @media (max-width: 768px) { .hero-slider .controls button { width: 34px; height: 34px; font-size: 14px; } }
         .hero-slider .controls button:hover { background: rgba(0,0,0,0.8); transform: scale(1.1); }
@@ -584,7 +611,7 @@
         .timing-row .value { font-weight: 700; text-align: right; }
 
         /* ================================================================
-                   INCHARGE LIST
+                   INCHARGE LIST - FIXED
                 ================================================================ */
         .incharge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         @media (max-width: 768px) { .incharge-grid { gap: 5px; } }
@@ -592,9 +619,10 @@
             display: flex; align-items: center; gap: 8px;
             padding: 10px 14px; background: var(--gray); border-radius: 10px;
             font-size: 14px; transition: var(--transition);
+            border: 1px solid transparent;
         }
         @media (max-width: 768px) { .incharge-item { padding: 6px 10px; font-size: 12px; } }
-        .incharge-item:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+        .incharge-item:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--border); }
         .incharge-item .avatar {
             width: 34px; height: 34px;
             border-radius: 50%; background: var(--primary); color: white;
@@ -602,6 +630,9 @@
             font-size: 13px; font-weight: 700; flex-shrink: 0;
         }
         @media (max-width: 768px) { .incharge-item .avatar { width: 28px; height: 28px; font-size: 11px; } }
+        .incharge-item .incharge-name { font-weight: 600; }
+        .incharge-item .incharge-class { font-size: 11px; color: var(--text-light); margin-left: auto; }
+        @media (max-width: 768px) { .incharge-item .incharge-class { font-size: 9px; } }
 
         /* ================================================================
                    ABOUT SCHOOL
@@ -705,24 +736,6 @@
         .report-card .summary .item .label { font-size: 11px; color: var(--text-light); }
         .report-card .summary .item .value { font-size: 22px; font-weight: 800; color: var(--primary); }
         @media (max-width: 768px) { .report-card .summary .item .value { font-size: 18px; } }
-
-        /* ================================================================
-                   TOAST
-                ================================================================ */
-        .toast-container {
-            position: fixed; bottom: 22px; right: 22px;
-            z-index: 99999; display: flex; flex-direction: column; gap: 6px; max-width: 90%;
-        }
-        .toast {
-            padding: 12px 22px; border-radius: 12px;
-            font-size: 14px; font-weight: 600; box-shadow: var(--shadow-xl);
-            animation: slideUp 0.3s cubic-bezier(0.4,0,0.2,1); display: flex; align-items: center; gap: 8px;
-        }
-        @media (max-width: 768px) { .toast { padding: 8px 14px; font-size: 12px; } }
-        .toast.success { background: var(--primary); color: white; }
-        .toast.error { background: #dc2626; color: white; }
-        .toast.warning { background: var(--gold); color: var(--text); }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
         /* ================================================================
                    FOOTER
@@ -930,7 +943,7 @@
         ============================================================ -->
         <section id="tab-home" class="tab-content active">
 
-            <!-- HERO SLIDER -->
+            <!-- HERO SLIDER - Auto Slide -->
             <div class="hero-slider" id="heroSlider">
                 <div class="slides" id="sliderSlides">
                     <div class="slide active">
@@ -1295,7 +1308,7 @@
         </section>
 
         <!-- ============================================================
-        ADMIN TAB
+        ADMIN TAB (Headmaster)
         ============================================================ -->
         <section id="tab-admin" class="tab-content">
             <div id="adminLogin" class="card card-3d" style="max-width:400px; margin:0 auto;">
@@ -1687,7 +1700,7 @@
         </div>
         <div class="footer-bottom">
             <span>&copy; <span id="footerYear">2026</span> GES Bait Mughal</span>
-            <span><i class="fas fa-shield-alt"></i> Smart School v19.0</span>
+            <span><i class="fas fa-shield-alt"></i> Smart School v21.0</span>
         </div>
     </footer>
 
@@ -1742,23 +1755,34 @@
         // DOM REFS
         // ================================================================
         const $ = id => document.getElementById(id);
-        const toastContainer = $('toastContainer');
         const video = $('schoolVideo');
 
         // ================================================================
-        // TOAST
+        // TOAST NOTIFICATIONS - FIXED
         // ================================================================
         function showToast(message, type = 'success') {
+            const container = $('toastContainer');
             const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-triangle-exclamation' };
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-triangle-exclamation',
+                info: 'fa-info-circle'
+            };
+            const colors = {
+                success: 'toast-success',
+                error: 'toast-error',
+                warning: 'toast-warning',
+                info: 'toast-info'
+            };
+            toast.className = `toast ${colors[type] || 'toast-success'}`;
             toast.innerHTML = `<i class="fas ${icons[type] || icons.success}"></i> ${message}`;
-            toastContainer.appendChild(toast);
+            container.appendChild(toast);
             setTimeout(() => {
                 toast.style.opacity = '0';
-                toast.style.transform = 'translateX(80px)';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+                toast.style.transform = 'translateX(40px) scale(0.95)';
+                setTimeout(() => toast.remove(), 400);
+            }, 3500);
         }
 
         // ================================================================
@@ -1776,6 +1800,7 @@
         themeToggle.addEventListener('click', () => {
             darkMode = !darkMode;
             applyTheme();
+            showToast(darkMode ? '🌙 Dark mode enabled' : '☀️ Light mode enabled', 'info');
         });
         applyTheme();
 
@@ -1834,7 +1859,7 @@
         });
 
         // ================================================================
-        // SLIDER - Auto Slide
+        // SLIDER - AUTO SLIDE FIXED
         // ================================================================
         let currentSlide = 0;
         let sliderInterval;
@@ -1845,6 +1870,8 @@
                 { title: '📚 Quality Education for All', img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80' },
                 { title: '🌟 Empowering Young Minds', img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80' }
             ];
+
+            if (currentSlide >= slides.length) currentSlide = 0;
 
             const container = $('sliderSlides');
             container.innerHTML = slides.map((s, i) => `
@@ -1858,8 +1885,6 @@
             dots.innerHTML = slides.map((_, i) => `
                         <button class="${i === currentSlide ? 'active' : ''}" onclick="goToSlide(${i})"></button>
                     `).join('');
-
-            if (currentSlide >= slides.length) currentSlide = 0;
         }
 
         function goToSlide(index) {
@@ -1873,7 +1898,6 @@
             const total = slides.length > 0 ? slides.length : 3;
             currentSlide = (currentSlide + 1) % total;
             renderSlider();
-            resetSliderInterval();
         }
 
         function prevSlide() {
@@ -1881,12 +1905,16 @@
             const total = slides.length > 0 ? slides.length : 3;
             currentSlide = (currentSlide - 1 + total) % total;
             renderSlider();
-            resetSliderInterval();
         }
 
         function resetSliderInterval() {
             if (sliderInterval) clearInterval(sliderInterval);
-            sliderInterval = setInterval(nextSlide, 4000);
+            sliderInterval = setInterval(() => {
+                const slides = DB.slides.length > 0 ? DB.slides : [];
+                const total = slides.length > 0 ? slides.length : 3;
+                currentSlide = (currentSlide + 1) % total;
+                renderSlider();
+            }, 4000);
         }
 
         // ================================================================
@@ -1898,8 +1926,8 @@
                 overlay.classList.remove('active');
                 return;
             }
-            $('noticeTitle').textContent = DB.notice.title || 'Important Announcement';
-            $('noticeDesc').textContent = DB.notice.desc || 'Welcome to GES Bait Mughal Digital Smart Portal.';
+            $('noticeTitle').textContent = DB.notice.title;
+            $('noticeDesc').textContent = DB.notice.desc;
             const img = $('noticeImg');
             if (DB.notice.img) {
                 img.src = DB.notice.img;
@@ -1928,7 +1956,7 @@
         });
 
         // ================================================================
-        // FIREBASE REAL-TIME SYNC
+        // FIREBASE REAL-TIME SYNC - FIXED
         // ================================================================
         function saveToFirebase() {
             if (!window.firebaseDB) return;
@@ -1936,6 +1964,7 @@
             try {
                 set(ref(db, 'gesData'), DB).catch(err => {
                     console.error('Firebase save error:', err);
+                    showToast('⚠️ Save to cloud failed', 'error');
                 });
             } catch (e) {
                 console.error('Firebase error:', e);
@@ -1953,7 +1982,6 @@
                 const data = snapshot.val();
                 if (data) {
                     // Merge data without overwriting the whole DB object
-                    // This ensures we keep any local state that might not be in Firebase
                     for (const key in data) {
                         if (data.hasOwnProperty(key)) {
                             DB[key] = data[key];
@@ -2016,15 +2044,18 @@
         }
 
         function renderHome() {
+            // Stats - show all students count from DB
             $('statStudents').textContent = DB.students.length;
             $('statNews').textContent = DB.announcements.length;
             $('statGallery').textContent = DB.gallery.length;
 
+            // Timings - show from DB
             $('schoolTimings').textContent = DB.timings;
             $('breakTimings').textContent = DB.breakTime;
             $('footerTimings').textContent = `School: ${DB.timings}`;
             $('footerBreak').textContent = `Break: ${DB.breakTime}`;
 
+            // Headmaster
             $('headmasterName').textContent = DB.headmaster;
             $('aboutText').textContent = DB.about;
 
@@ -2032,7 +2063,6 @@
             if (DB.video) {
                 video.src = DB.video;
                 video.load();
-                // Try to play with sound
                 video.muted = false;
                 video.play().then(() => {
                     $('videoStatus').textContent = '▶️ Playing with sound';
@@ -2051,8 +2081,12 @@
                 $('videoStatus').textContent = '📹 No video uploaded';
             }
 
+            // Announcements - show all from DB
             const list = $('announcementList');
             list.innerHTML = '';
+            if (DB.announcements.length === 0) {
+                list.innerHTML = '<p style="text-align:center; color:var(--text-light); padding:10px; font-size:14px;">No announcements yet.</p>';
+            }
             DB.announcements.forEach(a => {
                 const div = document.createElement('div');
                 div.className = 'announce-item';
@@ -2068,20 +2102,30 @@
                 list.appendChild(div);
             });
 
+            // Incharges - show all from DB
             const inchargeList = $('inchargeList');
             inchargeList.innerHTML = '';
-            Object.keys(DB.incharges).forEach(cls => {
-                const name = DB.incharges[cls];
-                if (name && name !== 'Not Assigned') {
-                    const div = document.createElement('div');
-                    div.className = 'incharge-item';
-                    div.innerHTML = `
-                                <div class="avatar">${cls.replace('Class ','C')}</div>
-                                <div><strong>${name}</strong></div>
-                            `;
-                    inchargeList.appendChild(div);
-                }
-            });
+            const incharges = DB.incharges || {};
+            const hasIncharges = Object.values(incharges).some(name => name && name !== 'Not Assigned');
+            if (!hasIncharges) {
+                inchargeList.innerHTML = '<p style="text-align:center; color:var(--text-light); padding:8px; font-size:13px; grid-column:1/-1;">No incharges assigned yet.</p>';
+            } else {
+                Object.keys(incharges).forEach(cls => {
+                    const name = incharges[cls];
+                    if (name && name !== 'Not Assigned') {
+                        const div = document.createElement('div');
+                        div.className = 'incharge-item';
+                        div.innerHTML = `
+                                    <div class="avatar">${cls.replace('Class ','C')}</div>
+                                    <div>
+                                        <div class="incharge-name">${name}</div>
+                                    </div>
+                                    <div class="incharge-class">${cls}</div>
+                                `;
+                        inchargeList.appendChild(div);
+                    }
+                });
+            }
 
             renderSlider();
             resetSliderInterval();
@@ -2091,7 +2135,7 @@
             const filter = $('hwFilter').value;
             const grid = $('homeworkGrid');
             grid.innerHTML = '';
-            let list = DB.homework;
+            let list = DB.homework || [];
             if (filter !== 'ALL') list = list.filter(h => h.class === filter);
 
             if (list.length === 0) {
@@ -2224,17 +2268,17 @@
             if (DB.teacherPins[cls] === pin) {
                 sessionStorage.setItem('teacherLoggedIn', 'true');
                 sessionStorage.setItem('teacherClass', cls);
-                showToast(`Logged in as ${cls} Teacher`, 'success');
+                showToast(`✅ Logged in as ${cls} Teacher`, 'success');
                 renderTeacherUI();
             } else {
-                showToast('Invalid PIN!', 'error');
+                showToast('❌ Invalid PIN!', 'error');
             }
         }
 
         function teacherLogout() {
             sessionStorage.removeItem('teacherLoggedIn');
             sessionStorage.removeItem('teacherClass');
-            showToast('Logged out', 'warning');
+            showToast('👋 Logged out', 'warning');
             renderTeacherUI();
         }
 
@@ -2249,13 +2293,13 @@
 
             if (editRoll) {
                 DB.students = DB.students.filter(s => !(s.class === cls && s.roll === parseInt(editRoll)));
-                showToast('Student updated!', 'success');
+                showToast('✅ Student updated!', 'success');
             } else {
                 if (DB.students.some(s => s.class === cls && s.roll === roll)) {
-                    showToast('Roll number already exists!', 'error');
+                    showToast('❌ Roll number already exists!', 'error');
                     return;
                 }
-                showToast('Student added!', 'success');
+                showToast('✅ Student added!', 'success');
             }
 
             DB.students.push({ class: cls, roll, name, total, obtained });
@@ -2301,7 +2345,7 @@
                 saveData();
                 renderTeacherStudents();
                 renderHome();
-                showToast('Student deleted', 'warning');
+                showToast('🗑️ Student deleted', 'warning');
             }
         }
 
@@ -2313,6 +2357,11 @@
             const title = $('hwTitle').value;
             const desc = $('hwDesc').value;
             const fileInput = $('hwFile');
+
+            if (!subject || !title || !desc) {
+                showToast('❌ Please fill all fields', 'error');
+                return;
+            }
 
             let file = '';
             if (fileInput.files[0]) {
@@ -2342,7 +2391,7 @@
             $('hwCancelBtn').style.display = 'none';
             renderTeacherHomework();
             renderHomework();
-            showToast('Homework saved!', 'success');
+            showToast('✅ Homework saved!', 'success');
         }
 
         function editHomework(id) {
@@ -2373,7 +2422,7 @@
                 saveData();
                 renderTeacherHomework();
                 renderHomework();
-                showToast('Homework deleted', 'warning');
+                showToast('🗑️ Homework deleted', 'warning');
             }
         }
 
@@ -2423,21 +2472,21 @@
             const pass = $('adminPass').value;
             if (pass === DB.adminPass) {
                 sessionStorage.setItem('adminLoggedIn', 'true');
-                showToast('Welcome Headmaster!', 'success');
+                showToast('✅ Welcome Headmaster!', 'success');
                 renderAdminUI();
             } else {
-                showToast('Invalid password!', 'error');
+                showToast('❌ Invalid password!', 'error');
             }
         }
 
         function adminLogout() {
             sessionStorage.removeItem('adminLoggedIn');
-            showToast('Logged out', 'warning');
+            showToast('👋 Logged out', 'warning');
             renderAdminUI();
         }
 
         // ================================================================
-        // NOTICE FUNCTIONS (Head)
+        // NOTICE FUNCTIONS (Head) - FIXED
         // ================================================================
         function saveNotice(e) {
             e.preventDefault();
@@ -2446,7 +2495,7 @@
             const fileInput = $('noticeImageInput');
 
             if (!title || !desc) {
-                showToast('Please fill title and description', 'error');
+                showToast('❌ Please fill title and description', 'error');
                 return;
             }
 
@@ -2479,7 +2528,7 @@
                 $('noticeImageInput').value = '';
                 $('noticeStatusText').textContent = 'No notice set';
                 closeNotice();
-                showToast('Notice deleted', 'warning');
+                showToast('🗑️ Notice deleted', 'warning');
             }
         }
 
@@ -2569,7 +2618,7 @@
             }
 
             if (students.length === 0) {
-                showToast('No students to export!', 'warning');
+                showToast('❌ No students to export!', 'warning');
                 return;
             }
 
@@ -2640,7 +2689,7 @@
             const student = DB.students.find(s => s.class === cls && s.roll === roll);
 
             if (!student) {
-                showToast('No student found!', 'error');
+                showToast('❌ No student found!', 'error');
                 $('resultDisplay').style.display = 'none';
                 return;
             }
@@ -2656,7 +2705,7 @@
                         <tr><td>Total</td><td>${student.obtained} / ${student.total}</td></tr>
                     `;
             $('resultDisplay').style.display = 'block';
-            showToast('Result found!', 'success');
+            showToast('✅ Result found!', 'success');
         }
 
         function downloadResultPDF() {
@@ -2681,13 +2730,13 @@
             const fileInput = $('slideImageFile');
 
             if (!fileInput.files[0]) {
-                showToast('Please select an image', 'warning');
+                showToast('❌ Please select an image', 'warning');
                 return;
             }
 
             const file = fileInput.files[0];
             if (file.size > 2 * 1024 * 1024) {
-                showToast('Image too large! Use under 2MB.', 'error');
+                showToast('❌ Image too large! Use under 2MB.', 'error');
                 return;
             }
 
@@ -2712,7 +2761,7 @@
                 saveData();
                 renderHome();
                 renderAdminSlider();
-                showToast('Slide deleted', 'warning');
+                showToast('🗑️ Slide deleted', 'warning');
             }
         }
 
@@ -2818,23 +2867,29 @@
 
         function updateTimings(e) {
             e.preventDefault();
-            DB.timings = $('inputSchoolTime').value;
-            DB.breakTime = $('inputBreakTime').value;
+            const newTimings = $('inputSchoolTime').value;
+            const newBreak = $('inputBreakTime').value;
+            if (!newTimings || !newBreak) {
+                showToast('❌ Please fill both fields', 'error');
+                return;
+            }
+            DB.timings = newTimings;
+            DB.breakTime = newBreak;
             saveData();
             renderHome();
-            showToast('Timings updated!', 'success');
+            showToast('✅ Timings updated!', 'success');
         }
 
         function uploadVideo(e) {
             e.preventDefault();
             const fileInput = $('videoFile');
             if (!fileInput.files[0]) {
-                showToast('Please select a video file', 'warning');
+                showToast('❌ Please select a video file', 'warning');
                 return;
             }
             const file = fileInput.files[0];
             if (file.size > 7 * 1024 * 1024) {
-                showToast('Video too large! Use under 7MB.', 'error');
+                showToast('❌ Video too large! Use under 7MB.', 'error');
                 return;
             }
             const reader = new FileReader();
@@ -2842,7 +2897,7 @@
                 DB.video = e.target.result;
                 saveData();
                 renderHome();
-                showToast('Video uploaded!', 'success');
+                showToast('✅ Video uploaded!', 'success');
             };
             reader.readAsDataURL(file);
         }
@@ -2855,13 +2910,18 @@
             const type = $('announceType').value;
             const id = Date.now().toString();
 
+            if (!title || !desc) {
+                showToast('❌ Please fill title and details', 'error');
+                return;
+            }
+
             DB.announcements.unshift({ id, title, desc, date, type });
             saveData();
             $('announceTitle').value = '';
             $('announceDesc').value = '';
             renderHome();
             renderAdminAnnouncements();
-            showToast('Announcement published!', 'success');
+            showToast('✅ Announcement published!', 'success');
         }
 
         function deleteAnnouncement(id) {
@@ -2870,7 +2930,7 @@
                 saveData();
                 renderHome();
                 renderAdminAnnouncements();
-                showToast('Announcement deleted', 'warning');
+                showToast('🗑️ Announcement deleted', 'warning');
             }
         }
 
@@ -2882,6 +2942,11 @@
             const title = $('adminHwTitle').value;
             const desc = $('adminHwDesc').value;
             const fileInput = $('adminHwFile');
+
+            if (!cls || !subject || !title || !desc) {
+                showToast('❌ Please fill all fields', 'error');
+                return;
+            }
 
             if (fileInput.files[0]) {
                 const reader = new FileReader();
@@ -2908,7 +2973,7 @@
             $('adminHwCancelBtn').style.display = 'none';
             renderHomework();
             renderAdminHomework();
-            showToast('Homework saved!', 'success');
+            showToast('✅ Homework saved!', 'success');
         }
 
         function editAdminHomework(id) {
@@ -2940,7 +3005,7 @@
                 saveData();
                 renderHomework();
                 renderAdminHomework();
-                showToast('Homework deleted', 'warning');
+                showToast('🗑️ Homework deleted', 'warning');
             }
         }
 
@@ -2948,20 +3013,22 @@
             e.preventDefault();
             const caption = $('galleryCaption').value;
             const fileInput = $('galleryFile');
-            if (fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const id = Date.now().toString();
-                    DB.gallery.push({ id, caption, file: e.target.result });
-                    saveData();
-                    $('galleryCaption').value = '';
-                    $('galleryFile').value = '';
-                    renderGallery();
-                    renderAdminGallery();
-                    showToast('Photo uploaded!', 'success');
-                };
-                reader.readAsDataURL(fileInput.files[0]);
+            if (!caption || !fileInput.files[0]) {
+                showToast('❌ Please fill caption and select image', 'error');
+                return;
             }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const id = Date.now().toString();
+                DB.gallery.push({ id, caption, file: e.target.result });
+                saveData();
+                $('galleryCaption').value = '';
+                $('galleryFile').value = '';
+                renderGallery();
+                renderAdminGallery();
+                showToast('✅ Photo uploaded!', 'success');
+            };
+            reader.readAsDataURL(fileInput.files[0]);
         }
 
         function deleteGallery(id) {
@@ -2970,7 +3037,7 @@
                 saveData();
                 renderGallery();
                 renderAdminGallery();
-                showToast('Photo deleted', 'warning');
+                showToast('🗑️ Photo deleted', 'warning');
             }
         }
 
@@ -2978,12 +3045,16 @@
             e.preventDefault();
             const cls = $('inchargeClass').value;
             const name = $('inchargeName').value;
+            if (!name) {
+                showToast('❌ Please enter teacher name', 'error');
+                return;
+            }
             DB.incharges[cls] = name;
             saveData();
             $('inchargeName').value = '';
             renderHome();
             renderAdminIncharges();
-            showToast(`Assigned ${name} to ${cls}`, 'success');
+            showToast(`✅ ${name} assigned to ${cls}`, 'success');
         }
 
         function removeIncharge(cls) {
@@ -2992,7 +3063,7 @@
                 saveData();
                 renderHome();
                 renderAdminIncharges();
-                showToast('Incharge removed', 'warning');
+                showToast('🗑️ Incharge removed', 'warning');
             }
         }
 
@@ -3000,13 +3071,13 @@
             e.preventDefault();
             const newPass = $('newAdminPass').value;
             if (newPass.length < 4) {
-                showToast('Password must be at least 4 characters', 'error');
+                showToast('❌ Password must be at least 4 characters', 'error');
                 return;
             }
             DB.adminPass = newPass;
             saveData();
             $('newAdminPass').value = '';
-            showToast('Admin password updated!', 'success');
+            showToast('✅ Admin password updated!', 'success');
         }
 
         function setTeacherPin(e) {
@@ -3014,24 +3085,34 @@
             const cls = $('pinClass').value;
             const pin = $('newTeacherPin').value;
             if (pin.length < 4) {
-                showToast('PIN must be at least 4 characters', 'error');
+                showToast('❌ PIN must be at least 4 characters', 'error');
                 return;
             }
             DB.teacherPins[cls] = pin;
             saveData();
             $('newTeacherPin').value = '';
-            showToast(`PIN for ${cls} updated!`, 'success');
+            showToast(`✅ PIN for ${cls} updated!`, 'success');
         }
 
         function updateAbout(e) {
             e.preventDefault();
-            DB.about = $('aboutInput').value;
-            DB.headmaster = $('headmasterInput').value;
-            DB.contact.address = $('contactAddress').value;
-            DB.contact.phone = $('contactPhone').value;
+            const about = $('aboutInput').value;
+            const headmaster = $('headmasterInput').value;
+            const address = $('contactAddress').value;
+            const phone = $('contactPhone').value;
+
+            if (!about || !headmaster) {
+                showToast('❌ Please fill about and headmaster name', 'error');
+                return;
+            }
+
+            DB.about = about;
+            DB.headmaster = headmaster;
+            DB.contact.address = address || 'Bait Mughal, Jalal Pur Pir Wala, Punjab';
+            DB.contact.phone = phone || '+92 300 1234567';
             saveData();
             renderHome();
-            showToast('About & Contact updated!', 'success');
+            showToast('✅ About & Contact updated!', 'success');
         }
 
         function scrollToSection(id) {
@@ -3041,7 +3122,7 @@
 
         function downloadAllResults() {
             if (DB.students.length === 0) {
-                showToast('No student records!', 'warning');
+                showToast('❌ No student records!', 'warning');
                 return;
             }
 
@@ -3089,7 +3170,7 @@
                 jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
             };
             html2pdf().set(opt).from(container).save();
-            showToast('Downloading all results...', 'success');
+            showToast('📥 Downloading all results...', 'success');
         }
 
         function downloadFile(data, name) {
@@ -3097,6 +3178,7 @@
             link.href = data;
             link.download = name || 'download';
             link.click();
+            showToast('📥 Download started', 'success');
         }
 
         // ================================================================
@@ -3112,13 +3194,14 @@
             if (overlay) overlay.style.display = 'none';
         }, 3500);
 
-        console.log('🎓 GES Bait Mughal - Smart School System v19.0');
+        console.log('🎓 GES Bait Mughal - Smart School System v21.0');
         console.log('🔑 Admin: admin123 | Teacher PIN: 1234');
         console.log('📱 Fully responsive for all devices!');
         console.log('🔥 Real-time Firebase sync enabled!');
         console.log('📢 Important Notice feature added!');
         console.log('🎬 Video autoplay with sound!');
         console.log('🖼️ Slider auto-slides every 4 seconds!');
+        console.log('✅ All issues fixed!');
     </script>
 
 </body>
