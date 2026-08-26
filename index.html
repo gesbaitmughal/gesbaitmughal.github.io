@@ -2,14 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
     <title>GES Bait Mughal · Official School</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23047857'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='white'%3E%F0%9F%8E%93%3C/text%3E%3C/svg%3E" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getDatabase, ref, set, get, update, remove, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUp1jNM0VyMly5m4Zq8h-zbE6Hqnr5Zyg",
+            authDomain: "ges-bait-mughal.firebaseapp.com",
+            databaseURL: "https://ges-bait-mughal-default-rtdb.firebaseio.com",
+            projectId: "ges-bait-mughal",
+            storageBucket: "ges-bait-mughal.appspot.com",
+            messagingSenderId: "5737837063",
+            appId: "1:5737837063:web:dffc601015ffde68cac32"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        window.firebaseDB = { db, ref, set, get, update, remove, child, onValue };
+        window.dispatchEvent(new Event('firebase-ready'));
+        console.log('🔥 Firebase Connected!');
+    </script>
+
     <style>
+        /* ================================================================
+                   ROOT VARIABLES - PROFESSIONAL SIZE
+                ================================================================ */
         :root {
             --primary: #0f5e3a;
             --primary-light: #1a8a4a;
@@ -19,7 +44,7 @@
             --gold-light: #fde68a;
             --gray: #f1f5f9;
             --text: #0f172a;
-            --text-light: #64748b;
+            --text-light: #475569;
             --bg: #f8fafc;
             --card-bg: #ffffff;
             --border: #e2e8f0;
@@ -49,7 +74,11 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+        html { 
+            scroll-behavior: smooth; 
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
         body {
             font-family: var(--font);
             background: var(--bg);
@@ -60,6 +89,8 @@
             overflow-x: hidden;
             width: 100%;
             max-width: 100vw;
+            -webkit-font-smoothing: antialiased;
+            font-size: 18px;
         }
 
         /* ================================================================
@@ -69,7 +100,7 @@
             position: fixed; inset: 0; z-index: 999999;
             background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
             display: flex; align-items: center; justify-content: center; flex-direction: column;
-            animation: welcomeFadeOut 0.8s ease 3s forwards; pointer-events: none; padding: 20px;
+            animation: welcomeFadeOut 0.8s ease 3.5s forwards; pointer-events: none; padding: 20px;
         }
         .welcome-overlay::before {
             content: ''; position: absolute; inset: 0;
@@ -78,41 +109,36 @@
         }
         @keyframes welcomeGlow { 0%,100% { transform: scale(1); opacity:0.5; } 50% { transform: scale(1.5); opacity:1; } }
         .welcome-overlay .logo-big {
-            width: clamp(90px, 18vw, 130px); height: clamp(90px, 18vw, 130px);
-            background: rgba(255,255,255,0.08); border-radius: clamp(25px,5vw,35px);
+            width: 130px; height: 130px;
+            background: rgba(255,255,255,0.08); border-radius: 30px;
             display: flex; align-items: center; justify-content: center;
-            font-size: clamp(35px,7vw,50px); font-weight: 900; color: white;
+            font-size: 50px; font-weight: 900; color: white;
             border: 3px solid rgba(255,255,255,0.12);
             animation: welcomeLogoPulse 2s ease-in-out infinite;
-            margin-bottom: clamp(15px,3vw,25px); backdrop-filter: blur(8px);
-            box-shadow: 0 0 60px rgba(255,255,255,0.05); position: relative; z-index: 1;
+            margin-bottom: 24px; backdrop-filter: blur(8px);
+            box-shadow: 0 0 80px rgba(255,255,255,0.05); position: relative; z-index: 1;
         }
         @keyframes welcomeLogoPulse {
             0%,100% { transform: scale(1); box-shadow: 0 0 40px rgba(255,255,255,0.05); }
             50% { transform: scale(1.05); box-shadow: 0 0 80px rgba(255,255,255,0.12); }
         }
         .welcome-overlay h1 {
-            color: white; font-size: clamp(22px,4.5vw,32px); font-weight: 800;
+            color: white; font-size: 36px; font-weight: 800;
             text-align: center; animation: welcomeSlideUp 0.8s ease 0.2s both;
             background: linear-gradient(90deg, #ffffff 0%, var(--gold-light) 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
             padding: 0 10px; position: relative; z-index: 1;
         }
         .welcome-overlay p {
-            color: rgba(255,255,255,0.7); font-size: clamp(13px,2vw,16px);
+            color: rgba(255,255,255,0.7); font-size: 18px;
             margin-top: 4px; animation: welcomeSlideUp 0.8s ease 0.4s both;
             text-align: center; position: relative; z-index: 1;
         }
         .welcome-overlay .spinner {
-            margin-top: clamp(15px,3vw,25px); width: clamp(35px,5vw,45px); height: clamp(35px,5vw,45px);
+            margin-top: 24px; width: 50px; height: 50px;
             border: 3px solid rgba(255,255,255,0.08); border-top: 3px solid var(--gold);
             border-right: 3px solid var(--gold); border-radius: 50%;
             animation: spin 0.8s linear infinite; position: relative; z-index: 1;
-        }
-        .welcome-overlay .spinner::after {
-            content: ''; position: absolute; inset: 6px;
-            border: 2px solid rgba(255,255,255,0.05); border-radius: 50%;
-            animation: spin 1.2s linear infinite reverse;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes welcomeSlideUp {
@@ -127,24 +153,62 @@
             position: absolute; inset: 0; overflow: hidden; z-index: 0;
         }
         .welcome-particles span {
-            position: absolute; width: 6px; height: 6px;
+            position: absolute; width: 8px; height: 8px;
             background: rgba(255,255,255,0.12); border-radius: 50%;
             animation: particleFloat 6s ease-in-out infinite;
         }
-        .welcome-particles span:nth-child(1) { left:10%; animation-delay:0s; top:20%; }
-        .welcome-particles span:nth-child(2) { left:25%; animation-delay:0.8s; top:60%; }
-        .welcome-particles span:nth-child(3) { left:40%; animation-delay:1.6s; top:30%; }
-        .welcome-particles span:nth-child(4) { left:55%; animation-delay:2.4s; top:70%; }
-        .welcome-particles span:nth-child(5) { left:70%; animation-delay:3.2s; top:25%; }
-        .welcome-particles span:nth-child(6) { left:85%; animation-delay:4s; top:55%; }
-        .welcome-particles span:nth-child(7) { left:15%; animation-delay:0.4s; top:80%; }
-        .welcome-particles span:nth-child(8) { left:50%; animation-delay:1.2s; top:10%; }
-        .welcome-particles span:nth-child(9) { left:75%; animation-delay:2s; top:45%; }
-        .welcome-particles span:nth-child(10) { left:35%; animation-delay:2.8s; top:85%; }
         @keyframes particleFloat {
             0%,100% { transform: translate(0,0) scale(1); opacity:0.15; }
-            50% { transform: translate(30px,-40px) scale(1.8); opacity:0.5; }
+            50% { transform: translate(40px,-50px) scale(1.8); opacity:0.5; }
         }
+
+        /* ================================================================
+                   IMPORTANT NOTICE
+                ================================================================ */
+        .notice-overlay {
+            position: fixed; inset: 0; z-index: 99998;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center;
+            padding: 24px; animation: noticeFadeIn 0.5s ease;
+        }
+        .notice-overlay.active { display: flex; }
+        @keyframes noticeFadeIn {
+            from { opacity: 0; transform: scale(0.9) translateY(30px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .notice-box {
+            background: var(--card-bg); border-radius: var(--radius-lg);
+            max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto;
+            padding: 32px; box-shadow: var(--shadow-xl);
+            position: relative;
+            border-top: 5px solid var(--gold);
+        }
+        .notice-box .close-btn {
+            position: absolute; top: 14px; right: 18px;
+            background: none; border: none; font-size: 30px;
+            color: var(--text-light); cursor: pointer;
+            transition: var(--transition);
+        }
+        .notice-box .close-btn:hover { color: #dc2626; transform: rotate(90deg); }
+        .notice-box .notice-title {
+            font-size: 24px; font-weight: 800; color: var(--primary);
+            margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
+        }
+        .notice-box .notice-title i { color: var(--gold); font-size: 28px; }
+        .notice-box .notice-desc {
+            font-size: 18px; color: var(--text-light); line-height: 1.8;
+        }
+        .notice-box .notice-img {
+            width: 100%; max-height: 250px; object-fit: cover;
+            border-radius: 12px; margin-top: 14px;
+        }
+        .notice-box .notice-close-bottom {
+            margin-top: 18px; padding: 12px 32px;
+            background: var(--primary); color: white;
+            border: none; border-radius: 10px; font-weight: 700; font-size: 16px;
+            cursor: pointer; transition: var(--transition);
+        }
+        .notice-box .notice-close-bottom:hover { background: var(--primary-dark); transform: scale(1.02); }
 
         /* ================================================================
                    FLOATING 3D SHAPES
@@ -153,31 +217,31 @@
             position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
         }
         .bg-shapes .shape {
-            position: absolute; border-radius: 50%; opacity: 0.04;
+            position: absolute; border-radius: 50%; opacity: 0.05;
             animation: floatShape 20s ease-in-out infinite;
         }
         .bg-shapes .shape:nth-child(1) {
-            width: clamp(150px,25vw,300px); height: clamp(150px,25vw,300px);
-            background: var(--primary); top: -50px; right: -50px; animation-delay: 0s;
+            width: 400px; height: 400px;
+            background: var(--primary); top: -100px; right: -100px; animation-delay: 0s;
         }
         .bg-shapes .shape:nth-child(2) {
-            width: clamp(100px,18vw,200px); height: clamp(100px,18vw,200px);
-            background: var(--gold); bottom: -30px; left: -30px; animation-delay: -5s;
+            width: 300px; height: 300px;
+            background: var(--gold); bottom: -50px; left: -50px; animation-delay: -5s;
         }
         .bg-shapes .shape:nth-child(3) {
-            width: clamp(80px,12vw,150px); height: clamp(80px,12vw,150px);
+            width: 200px; height: 200px;
             background: #3b82f6; top: 50%; left: 50%; animation-delay: -10s;
         }
         @keyframes floatShape {
             0%,100% { transform: translate(0,0) scale(1) rotate(0deg); }
-            33% { transform: translate(30px,-30px) scale(1.1) rotate(120deg); }
-            66% { transform: translate(-20px,20px) scale(0.9) rotate(240deg); }
+            33% { transform: translate(40px,-40px) scale(1.1) rotate(120deg); }
+            66% { transform: translate(-30px,30px) scale(0.9) rotate(240deg); }
         }
 
         /* ================================================================
                    SCROLLBAR
                 ================================================================ */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: var(--gray); border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
@@ -186,73 +250,62 @@
                 ================================================================ */
         .banner {
             background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
-            padding: clamp(16px, 2.5vw, 30px) clamp(14px, 2vw, 28px);
+            padding: 24px 30px;
             position: relative; overflow: hidden; z-index: 1; width: 100%;
         }
-        .banner::before {
-            content: ''; position: absolute; top: -50%; right: -20%;
-            width: clamp(200px,40vw,500px); height: clamp(200px,40vw,500px);
-            background: rgba(255,255,255,0.04); border-radius: 50%;
-            animation: floatBanner 20s ease-in-out infinite;
-        }
-        .banner::after {
-            content: ''; position: absolute; bottom: -40%; left: -10%;
-            width: clamp(150px,30vw,400px); height: clamp(150px,30vw,400px);
-            background: rgba(255,255,255,0.03); border-radius: 50%;
-            animation: floatBanner 25s ease-in-out infinite reverse;
-        }
-        @keyframes floatBanner {
-            0%,100% { transform: translate(0,0) scale(1); }
-            50% { transform: translate(15px,-15px) scale(1.1); }
-        }
+        @media (max-width: 768px) { .banner { padding: 16px 18px; } }
         .banner .container {
             max-width: 1280px; margin: 0 auto;
             display: flex; justify-content: space-between; align-items: center;
-            flex-wrap: wrap; gap: clamp(10px,1.5vw,20px); position: relative; z-index: 1;
+            flex-wrap: wrap; gap: 16px; position: relative; z-index: 1;
         }
         .banner-left {
-            display: flex; align-items: center; gap: clamp(10px,1.8vw,18px);
+            display: flex; align-items: center; gap: 18px;
             flex: 1; min-width: 0;
         }
         .banner-logo {
-            width: clamp(50px,8vw,70px); height: clamp(50px,8vw,70px);
+            width: 70px; height: 70px;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
             font-weight: 900; color: white; border: 3px solid rgba(255,255,255,0.15);
             flex-shrink: 0; overflow: hidden; transition: var(--transition);
-            background: rgba(255,255,255,0.08); font-size: clamp(16px,3vw,24px);
+            background: rgba(255,255,255,0.08); font-size: 26px;
             backdrop-filter: blur(4px); box-shadow: 0 0 40px rgba(255,255,255,0.05);
             animation: logoGlow 3s ease-in-out infinite;
         }
+        @media (max-width: 768px) { .banner-logo { width: 50px; height: 50px; font-size: 18px; } }
         @keyframes logoGlow {
             0%,100% { box-shadow: 0 0 30px rgba(255,255,255,0.05); }
             50% { box-shadow: 0 0 60px rgba(255,215,0,0.1); }
         }
-        .banner-logo:hover { transform: scale(1.08); box-shadow: 0 0 80px rgba(255,215,0,0.15); }
+        .banner-logo:hover { transform: scale(1.06); box-shadow: 0 0 80px rgba(255,215,0,0.15); }
         .banner-logo svg { width: 100%; height: 100%; }
         .banner-title { min-width: 0; flex: 1; }
         .banner-title h1 {
-            font-size: clamp(18px,3.5vw,30px); font-weight: 900; color: white;
+            font-size: 30px; font-weight: 900; color: white;
             letter-spacing: -0.5px; line-height: 1.1;
             background: linear-gradient(90deg, #ffffff 0%, var(--gold-light) 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
             word-break: break-word;
         }
+        @media (max-width: 768px) { .banner-title h1 { font-size: 20px; } }
         .banner-title .sub {
-            color: rgba(255,255,255,0.8); font-size: clamp(10px,1.4vw,14px);
-            font-weight: 500; display: flex; flex-wrap: wrap; gap: 4px;
+            color: rgba(255,255,255,0.8); font-size: 15px;
+            font-weight: 500; display: flex; flex-wrap: wrap; gap: 6px;
         }
+        @media (max-width: 768px) { .banner-title .sub { font-size: 12px; } }
         .banner-title .sub i { color: var(--gold); margin: 0 3px; }
         .banner-right {
-            display: flex; align-items: center; gap: clamp(6px,1vw,12px);
+            display: flex; align-items: center; gap: 12px;
             flex-wrap: wrap; flex-shrink: 0;
         }
         .banner-badge {
             background: rgba(255,255,255,0.1); backdrop-filter: blur(4px);
-            padding: clamp(4px,0.6vw,8px) clamp(10px,1.5vw,20px);
-            border-radius: 40px; color: white; font-size: clamp(9px,1vw,12px);
+            padding: 8px 20px;
+            border-radius: 40px; color: white; font-size: 14px;
             font-weight: 600; border: 1px solid rgba(255,255,255,0.08);
             transition: var(--transition); white-space: nowrap;
         }
+        @media (max-width: 768px) { .banner-badge { padding: 5px 14px; font-size: 11px; } }
         .banner-badge:hover { transform: translateY(-2px) scale(1.05); background: rgba(255,255,255,0.2); }
         .banner-badge i { color: var(--gold); margin-right: 4px; }
 
@@ -262,26 +315,29 @@
         .nav-bar {
             background: var(--card-bg); border-bottom: 1px solid var(--border);
             position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px);
-            padding: 0 clamp(6px,1.2vw,16px); width: 100%;
+            padding: 0 20px; width: 100%;
         }
+        @media (max-width: 768px) { .nav-bar { padding: 0 10px; } }
         .nav-bar .container {
             max-width: 1280px; margin: 0 auto;
             display: flex; justify-content: space-between; align-items: center;
-            flex-wrap: wrap; gap: 4px; padding: clamp(4px,0.6vw,8px) 0;
+            flex-wrap: wrap; gap: 8px; padding: 10px 0;
         }
+        @media (max-width: 768px) { .nav-bar .container { padding: 6px 0; } }
         .nav-links {
-            display: flex; flex-wrap: wrap; gap: 2px; flex: 1;
+            display: flex; flex-wrap: wrap; gap: 4px; flex: 1;
         }
         .nav-btn {
-            padding: clamp(4px,0.6vw,8px) clamp(8px,1.2vw,16px);
-            border: none; border-radius: 8px; font-size: clamp(9px,1.1vw,12px);
+            padding: 10px 20px;
+            border: none; border-radius: 10px; font-size: 15px;
             font-weight: 600; cursor: pointer; transition: var(--transition);
             background: transparent; color: var(--text-light);
-            display: flex; align-items: center; gap: 4px; position: relative;
+            display: flex; align-items: center; gap: 8px; position: relative;
             white-space: nowrap;
         }
+        @media (max-width: 768px) { .nav-btn { padding: 6px 12px; font-size: 12px; } }
         .nav-btn:hover { background: var(--gray); color: var(--text); transform: translateY(-2px); }
-        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 20px rgba(15,94,58,0.3); }
+        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 25px rgba(15,94,58,0.3); }
         .nav-btn.active i { color: var(--gold); }
         .nav-btn::after {
             content: ''; position: absolute; bottom: -2px; left: 50%;
@@ -290,22 +346,24 @@
         }
         .nav-btn.active::after { width: 60%; }
         .nav-actions {
-            display: flex; align-items: center; gap: clamp(4px,0.8vw,10px);
+            display: flex; align-items: center; gap: 10px;
             flex-wrap: wrap; flex-shrink: 0;
         }
         .role-badge {
-            font-size: clamp(8px,0.9vw,11px); background: var(--primary-bg);
-            color: var(--primary); padding: clamp(2px,0.3vw,4px) clamp(6px,0.8vw,12px);
+            font-size: 13px; background: var(--primary-bg);
+            color: var(--primary); padding: 6px 16px;
             border-radius: 40px; font-weight: 600; white-space: nowrap; transition: var(--transition);
         }
+        @media (max-width: 768px) { .role-badge { font-size: 10px; padding: 4px 10px; } }
         .role-badge:hover { transform: scale(1.05); }
         .theme-toggle {
             background: var(--gray); border: none;
-            width: clamp(28px,3.5vw,36px); height: clamp(28px,3.5vw,36px);
+            width: 44px; height: 44px;
             border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            color: var(--text); font-size: clamp(12px,1.4vw,16px);
+            color: var(--text); font-size: 20px;
             transition: var(--transition); flex-shrink: 0;
         }
+        @media (max-width: 768px) { .theme-toggle { width: 36px; height: 36px; font-size: 16px; } }
         .theme-toggle:hover { transform: rotate(60deg) scale(1.1); background: var(--border); }
 
         /* ================================================================
@@ -313,9 +371,11 @@
                 ================================================================ */
         .hero-slider {
             position: relative; border-radius: var(--radius-lg); overflow: hidden;
-            height: clamp(160px,35vh,340px); background: var(--primary-dark);
-            box-shadow: var(--shadow-lg); margin-bottom: clamp(14px,2vw,24px); width: 100%;
+            height: 380px; background: var(--primary-dark);
+            box-shadow: var(--shadow-lg); margin-bottom: 24px; width: 100%;
         }
+        @media (max-width: 768px) { .hero-slider { height: 220px; } }
+        @media (max-width: 480px) { .hero-slider { height: 170px; } }
         .hero-slider .slide {
             position: absolute; inset: 0; opacity: 0;
             transition: opacity 0.8s ease, transform 0.8s ease; transform: scale(1.02);
@@ -325,89 +385,102 @@
         .hero-slider .slide .overlay {
             position: absolute; inset: 0;
             background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
-            display: flex; align-items: flex-end; padding: clamp(10px,1.8vw,24px);
+            display: flex; align-items: flex-end; padding: 30px;
         }
+        @media (max-width: 768px) { .hero-slider .slide .overlay { padding: 16px; } }
         .hero-slider .slide .overlay h2 {
-            color: white; font-size: clamp(14px,2.5vw,24px); font-weight: 800;
-            text-shadow: 0 2px 20px rgba(0,0,0,0.4); line-height: 1.2;
+            color: white; font-size: 32px; font-weight: 800;
+            text-shadow: 0 2px 30px rgba(0,0,0,0.4); line-height: 1.2;
         }
+        @media (max-width: 768px) { .hero-slider .slide .overlay h2 { font-size: 18px; } }
         .hero-slider .dots {
-            position: absolute; bottom: clamp(6px,1vw,14px); left: 50%;
-            transform: translateX(-50%); display: flex; gap: clamp(4px,0.7vw,8px); z-index: 10;
+            position: absolute; bottom: 16px; left: 50%;
+            transform: translateX(-50%); display: flex; gap: 10px; z-index: 10;
         }
         .hero-slider .dots button {
-            width: clamp(6px,0.9vw,10px); height: clamp(6px,0.9vw,10px);
+            width: 12px; height: 12px;
             border-radius: 50%; border: none; cursor: pointer;
             transition: var(--transition); background: rgba(255,255,255,0.4);
         }
-        .hero-slider .dots button.active { background: var(--gold); width: clamp(16px,2.5vw,28px); border-radius: 10px; }
+        @media (max-width: 768px) { .hero-slider .dots button { width: 8px; height: 8px; gap: 6px; } }
+        .hero-slider .dots button.active { background: var(--gold); width: 32px; border-radius: 10px; }
+        @media (max-width: 768px) { .hero-slider .dots button.active { width: 20px; } }
         .hero-slider .controls {
             position: absolute; top: 50%; transform: translateY(-50%);
             width: 100%; display: flex; justify-content: space-between;
-            padding: 0 clamp(6px,1vw,16px); z-index: 10;
+            padding: 0 20px; z-index: 10;
         }
+        @media (max-width: 768px) { .hero-slider .controls { padding: 0 10px; } }
         .hero-slider .controls button {
-            width: clamp(28px,3.5vw,40px); height: clamp(28px,3.5vw,40px);
+            width: 50px; height: 50px;
             border-radius: 50%; border: none; background: rgba(0,0,0,0.5);
             color: white; cursor: pointer; transition: var(--transition);
-            font-size: clamp(12px,1.6vw,18px); backdrop-filter: blur(4px);
+            font-size: 22px; backdrop-filter: blur(4px);
         }
+        @media (max-width: 768px) { .hero-slider .controls button { width: 36px; height: 36px; font-size: 16px; } }
         .hero-slider .controls button:hover { background: rgba(0,0,0,0.8); transform: scale(1.1); }
 
         /* ================================================================
                    STATS - 2x2 Grid
                 ================================================================ */
         .stats-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: clamp(10px,1.5vw,18px);
-            margin-bottom: clamp(14px,2vw,24px); width: 100%;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+            margin-bottom: 24px; width: 100%;
         }
+        @media (max-width: 768px) { .stats-grid { gap: 12px; margin-bottom: 16px; } }
         .stat-box {
-            background: var(--gray); border-radius: clamp(10px,1.5vw,14px);
-            padding: clamp(12px,1.8vw,22px); text-align: center;
+            background: var(--gray); border-radius: 14px;
+            padding: 24px; text-align: center;
             transition: var(--transition); cursor: default; width: 100%;
             animation: statFloat 3s ease-in-out infinite;
         }
+        @media (max-width: 768px) { .stat-box { padding: 16px; } }
         .stat-box:nth-child(1) { animation-delay: 0s; }
         .stat-box:nth-child(2) { animation-delay: 0.5s; }
         .stat-box:nth-child(3) { animation-delay: 1s; }
         .stat-box:nth-child(4) { animation-delay: 1.5s; }
-        @keyframes statFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        @keyframes statFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
         .stat-box:hover { transform: translateY(-8px) scale(1.02); box-shadow: var(--shadow-lg); }
         .stat-box .num {
-            font-size: clamp(20px,3.2vw,32px); font-weight: 900; color: var(--primary);
+            font-size: 36px; font-weight: 900; color: var(--primary);
             transition: var(--transition);
         }
+        @media (max-width: 768px) { .stat-box .num { font-size: 26px; } }
         .stat-box:hover .num { color: var(--gold); }
         .stat-box .label {
-            font-size: clamp(9px,1.1vw,13px); color: var(--text-light);
-            font-weight: 500; display: block; margin-top: 2px;
+            font-size: 16px; color: var(--text-light);
+            font-weight: 500; display: block; margin-top: 4px;
         }
+        @media (max-width: 768px) { .stat-box .label { font-size: 13px; } }
         .stat-box i {
-            font-size: clamp(16px,2.2vw,24px); color: var(--primary);
-            margin-bottom: 4px; display: block; transition: var(--transition);
+            font-size: 28px; color: var(--primary);
+            margin-bottom: 6px; display: block; transition: var(--transition);
         }
+        @media (max-width: 768px) { .stat-box i { font-size: 22px; } }
         .stat-box:hover i { transform: scale(1.2) rotate(-10deg); color: var(--gold); }
 
         /* ================================================================
                    VIDEO WRAPPER
                 ================================================================ */
         .video-wrapper {
-            border-radius: 12px; overflow: hidden; background: #0a0a0a;
+            border-radius: 14px; overflow: hidden; background: #0a0a0a;
             position: relative; width: 100%;
         }
         .video-wrapper video { width: 100%; display: block; aspect-ratio: 16/9; }
         .video-controls {
             display: flex; justify-content: space-between; align-items: center;
-            padding: clamp(4px,0.6vw,10px) clamp(8px,1.2vw,18px);
-            background: rgba(0,0,0,0.7); color: white; font-size: clamp(9px,1vw,13px);
-            flex-wrap: wrap; gap: 4px;
+            padding: 10px 20px;
+            background: rgba(0,0,0,0.7); color: white; font-size: 14px;
+            flex-wrap: wrap; gap: 6px;
         }
+        @media (max-width: 768px) { .video-controls { padding: 8px 14px; font-size: 12px; } }
         .video-controls button {
             background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
-            color: white; padding: clamp(2px,0.3vw,5px) clamp(8px,1vw,16px);
-            border-radius: 40px; cursor: pointer; font-size: clamp(8px,0.9vw,12px);
+            color: white; padding: 6px 18px;
+            border-radius: 40px; cursor: pointer; font-size: 13px;
             transition: var(--transition);
         }
+        @media (max-width: 768px) { .video-controls button { padding: 4px 12px; font-size: 11px; } }
         .video-controls button:hover { background: rgba(255,255,255,0.2); }
 
         /* ================================================================
@@ -415,67 +488,79 @@
                 ================================================================ */
         .main-content {
             max-width: 1280px; margin: 0 auto;
-            padding: clamp(10px,1.5vw,24px) clamp(8px,1.2vw,20px);
+            padding: 20px 24px;
             position: relative; z-index: 1; width: 100%;
         }
+        @media (max-width: 768px) { .main-content { padding: 12px 12px; } }
         .tab-content { display: none; animation: fadeIn 0.5s ease; width: 100%; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
         /* ================================================================
-                   CARDS
+                   CARDS - 3D Effect
                 ================================================================ */
         .card {
             background: var(--card-bg); border-radius: var(--radius);
-            padding: clamp(12px,1.8vw,24px); box-shadow: var(--shadow);
+            padding: 24px; box-shadow: var(--shadow);
             border: 1px solid var(--border); transition: var(--transition);
             position: relative; overflow: hidden; width: 100%;
+            transform-style: preserve-3d;
+            perspective: 1000px;
         }
+        @media (max-width: 768px) { .card { padding: 16px; } }
         .card::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0;
             height: 3px; background: linear-gradient(90deg, var(--primary), var(--gold), var(--primary));
             opacity: 0; transition: var(--transition);
         }
         .card:hover::before { opacity: 1; }
-        .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+        .card:hover {
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-6px) rotateX(2deg) rotateY(2deg) scale(1.01);
+        }
         .card-header {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: clamp(8px,1.2vw,16px); padding-bottom: clamp(6px,0.8vw,12px);
-            border-bottom: 2px solid var(--border); flex-wrap: wrap; gap: 6px;
+            margin-bottom: 16px; padding-bottom: 12px;
+            border-bottom: 2px solid var(--border); flex-wrap: wrap; gap: 8px;
         }
         .card-header h3 {
-            font-size: clamp(14px,1.8vw,18px); font-weight: 700;
-            display: flex; align-items: center; gap: 6px;
+            font-size: 22px; font-weight: 700;
+            display: flex; align-items: center; gap: 10px;
         }
+        @media (max-width: 768px) { .card-header h3 { font-size: 18px; } }
         .card-header h3 i { color: var(--primary); }
 
         /* ================================================================
                    GRID
                 ================================================================ */
-        .grid-2 { display: grid; grid-template-columns: 1fr; gap: clamp(12px,1.8vw,20px); }
+        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 640px) { .grid-2 { grid-template-columns: 2fr 1fr; } }
 
         /* ================================================================
                    ANNOUNCEMENTS
                 ================================================================ */
         .announce-item {
-            display: flex; align-items: center; gap: clamp(8px,1.2vw,14px);
-            padding: clamp(8px,1vw,12px) 0; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 16px;
+            padding: 14px 0; border-bottom: 1px solid var(--border);
             transition: var(--transition);
         }
-        .announce-item:hover { background: var(--gray); padding: clamp(8px,1vw,12px) clamp(4px,0.6vw,8px); border-radius: 8px; }
+        @media (max-width: 768px) { .announce-item { gap: 12px; padding: 10px 0; } }
+        .announce-item:hover { background: var(--gray); padding: 14px 10px; border-radius: 10px; }
+        @media (max-width: 768px) { .announce-item:hover { padding: 10px 6px; } }
         .announce-item:last-child { border-bottom: none; }
         .announce-item .icon {
-            width: clamp(28px,3.5vw,38px); height: clamp(28px,3.5vw,38px);
+            width: 44px; height: 44px;
             background: var(--primary-bg); border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             color: var(--primary); flex-shrink: 0; transition: var(--transition);
         }
+        @media (max-width: 768px) { .announce-item .icon { width: 36px; height: 36px; } }
         .announce-item:hover .icon { transform: scale(1.1) rotate(-10deg); }
-        .announce-item .content .title { font-weight: 600; font-size: clamp(12px,1.3vw,14px); }
-        .announce-item .content .date { font-size: clamp(9px,1vw,12px); color: var(--text-light); }
+        .announce-item .content .title { font-weight: 600; font-size: 16px; }
+        @media (max-width: 768px) { .announce-item .content .title { font-size: 14px; } }
+        .announce-item .content .date { font-size: 13px; color: var(--text-light); }
         .announce-item .badge {
-            font-size: clamp(7px,0.8vw,10px); padding: 2px clamp(6px,0.8vw,12px);
+            font-size: 11px; padding: 4px 14px;
             border-radius: 40px; font-weight: 600; margin-left: auto; flex-shrink: 0;
         }
         .announce-item .badge.urgent { background: #fde8e8; color: #c0392b; }
@@ -486,11 +571,12 @@
                    TIMINGS
                 ================================================================ */
         .timing-row {
-            display: flex; justify-content: space-between; padding: clamp(4px,0.6vw,8px) 0;
-            border-bottom: 1px solid var(--border); font-size: clamp(12px,1.3vw,14px);
-            transition: var(--transition); gap: 8px;
+            display: flex; justify-content: space-between; padding: 10px 0;
+            border-bottom: 1px solid var(--border); font-size: 16px;
+            transition: var(--transition); gap: 10px;
         }
-        .timing-row:hover { background: var(--gray); padding: clamp(4px,0.6vw,8px) clamp(6px,0.8vw,12px); border-radius: 8px; }
+        @media (max-width: 768px) { .timing-row { font-size: 14px; padding: 8px 0; } }
+        .timing-row:hover { background: var(--gray); padding: 10px 14px; border-radius: 8px; }
         .timing-row:last-child { border-bottom: none; }
         .timing-row .label { font-weight: 600; color: var(--text-light); white-space: nowrap; }
         .timing-row .value { font-weight: 700; text-align: right; }
@@ -498,30 +584,34 @@
         /* ================================================================
                    INCHARGE LIST
                 ================================================================ */
-        .incharge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .incharge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        @media (max-width: 768px) { .incharge-grid { gap: 6px; } }
         .incharge-item {
-            display: flex; align-items: center; gap: 6px;
-            padding: clamp(5px,0.6vw,8px); background: var(--gray); border-radius: 8px;
-            font-size: clamp(11px,1.1vw,13px); transition: var(--transition);
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 16px; background: var(--gray); border-radius: 10px;
+            font-size: 15px; transition: var(--transition);
         }
-        .incharge-item:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+        @media (max-width: 768px) { .incharge-item { padding: 8px 12px; font-size: 13px; } }
+        .incharge-item:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
         .incharge-item .avatar {
-            width: clamp(22px,3vw,30px); height: clamp(22px,3vw,30px);
+            width: 36px; height: 36px;
             border-radius: 50%; background: var(--primary); color: white;
             display: flex; align-items: center; justify-content: center;
-            font-size: clamp(9px,0.9vw,12px); font-weight: 700; flex-shrink: 0;
+            font-size: 14px; font-weight: 700; flex-shrink: 0;
         }
+        @media (max-width: 768px) { .incharge-item .avatar { width: 30px; height: 30px; font-size: 12px; } }
 
         /* ================================================================
                    BUTTONS
                 ================================================================ */
         .btn {
-            padding: clamp(5px,0.6vw,8px) clamp(12px,1.5vw,20px);
-            border: none; border-radius: 8px; font-weight: 600;
-            font-size: clamp(11px,1.1vw,13px); cursor: pointer;
+            padding: 10px 24px;
+            border: none; border-radius: 10px; font-weight: 700;
+            font-size: 15px; cursor: pointer;
             transition: var(--transition); display: inline-flex; align-items: center;
-            gap: 6px; position: relative; overflow: hidden; white-space: nowrap;
+            gap: 8px; position: relative; overflow: hidden; white-space: nowrap;
         }
+        @media (max-width: 768px) { .btn { padding: 8px 16px; font-size: 13px; } }
         .btn::after {
             content: ''; position: absolute; top: 50%; left: 50%;
             width: 0; height: 0; background: rgba(255,255,255,0.2);
@@ -530,29 +620,31 @@
         }
         .btn:active::after { width: 200px; height: 200px; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 30px rgba(15,94,58,0.3); }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 35px rgba(15,94,58,0.3); }
         .btn-gold { background: var(--gold); color: var(--text); }
-        .btn-gold:hover { background: #d4920a; transform: translateY(-2px); }
+        .btn-gold:hover { background: #d4920a; transform: translateY(-3px); }
         .btn-danger { background: #dc2626; color: white; }
-        .btn-danger:hover { background: #b91c1c; transform: translateY(-2px); }
+        .btn-danger:hover { background: #b91c1c; transform: translateY(-3px); }
         .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
-        .btn-outline:hover { background: var(--primary); color: white; transform: translateY(-2px); }
-        .btn-sm { padding: 3px 10px; font-size: 10px; }
+        .btn-outline:hover { background: var(--primary); color: white; transform: translateY(-3px); }
+        .btn-sm { padding: 6px 16px; font-size: 13px; }
+        @media (max-width: 768px) { .btn-sm { padding: 4px 12px; font-size: 11px; } }
 
         /* ================================================================
                    FORMS
                 ================================================================ */
-        .form-group { margin-bottom: clamp(8px,1vw,12px); }
+        .form-group { margin-bottom: 14px; }
         .form-group label {
-            display: block; font-weight: 600; font-size: clamp(10px,1.1vw,12px);
-            color: var(--text-light); margin-bottom: 3px;
+            display: block; font-weight: 600; font-size: 14px;
+            color: var(--text-light); margin-bottom: 4px;
         }
         .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: clamp(6px,0.8vw,10px) clamp(10px,1.2vw,14px);
-            border: 2px solid var(--border); border-radius: 8px;
-            font-size: clamp(11px,1.1vw,13px); transition: var(--transition);
+            width: 100%; padding: 12px 16px;
+            border: 2px solid var(--border); border-radius: 10px;
+            font-size: 15px; transition: var(--transition);
             background: var(--bg); color: var(--text);
         }
+        @media (max-width: 768px) { .form-group input, .form-group select, .form-group textarea { padding: 10px 14px; font-size: 14px; } }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(15,94,58,0.08);
         }
@@ -562,61 +654,59 @@
                 ================================================================ */
         .report-card {
             background: var(--card-bg); border-radius: var(--radius-lg);
-            padding: clamp(14px,2.5vw,30px); border: 2px solid var(--primary);
+            padding: 28px; border: 2px solid var(--primary);
             position: relative; overflow: hidden; box-shadow: var(--shadow-xl);
         }
-        .report-card::before {
-            content: ''; position: absolute; top: -50%; right: -30%;
-            width: clamp(150px,25vw,300px); height: clamp(150px,25vw,300px);
-            background: var(--primary-bg); border-radius: 50%; opacity: 0.2;
-            animation: floatReport 15s ease-in-out infinite;
-        }
-        @keyframes floatReport { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-15px,15px) scale(1.1); } }
+        @media (max-width: 768px) { .report-card { padding: 16px; } }
         .report-card .header {
             text-align: center; border-bottom: 2px solid var(--primary);
-            padding-bottom: clamp(8px,1.2vw,14px); margin-bottom: clamp(8px,1.2vw,14px);
+            padding-bottom: 16px; margin-bottom: 16px;
             position: relative; z-index: 1;
         }
-        .report-card .header h2 { font-size: clamp(16px,2.5vw,22px); color: var(--primary); font-weight: 900; }
-        .report-card .header p { font-size: clamp(9px,1vw,12px); color: var(--text-light); }
+        .report-card .header h2 { font-size: 26px; color: var(--primary); font-weight: 900; }
+        @media (max-width: 768px) { .report-card .header h2 { font-size: 20px; } }
+        .report-card .header p { font-size: 14px; color: var(--text-light); }
         .report-card .student-info {
-            display: grid; grid-template-columns: 1fr 1fr; gap: clamp(6px,0.8vw,12px);
-            margin-bottom: clamp(8px,1.2vw,14px); padding: clamp(6px,0.8vw,12px);
-            background: var(--gray); border-radius: 10px; position: relative; z-index: 1;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+            margin-bottom: 16px; padding: 14px;
+            background: var(--gray); border-radius: 12px; position: relative; z-index: 1;
         }
         @media (min-width: 640px) { .report-card .student-info { grid-template-columns: 1fr 1fr 1fr 1fr; } }
         .report-card .marks-table {
-            width: 100%; border-collapse: collapse; font-size: clamp(11px,1.1vw,14px);
+            width: 100%; border-collapse: collapse; font-size: 15px;
             position: relative; z-index: 1;
         }
-        .report-card .marks-table th { background: var(--primary); color: white; padding: clamp(4px,0.6vw,8px) clamp(6px,0.8vw,12px); text-align: left; }
-        .report-card .marks-table td { padding: clamp(4px,0.6vw,8px) clamp(6px,0.8vw,12px); border-bottom: 1px solid var(--border); }
+        @media (max-width: 768px) { .report-card .marks-table { font-size: 13px; } }
+        .report-card .marks-table th { background: var(--primary); color: white; padding: 10px 14px; text-align: left; }
+        .report-card .marks-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
         .report-card .marks-table tr:nth-child(even) { background: var(--gray); }
         .report-card .summary {
-            display: grid; grid-template-columns: repeat(3,1fr); gap: clamp(6px,0.8vw,12px);
-            margin-top: clamp(8px,1.2vw,14px); padding-top: clamp(8px,1.2vw,14px);
+            display: grid; grid-template-columns: repeat(3,1fr); gap: 14px;
+            margin-top: 16px; padding-top: 16px;
             border-top: 2px solid var(--border); position: relative; z-index: 1;
         }
         .report-card .summary .item {
-            text-align: center; padding: clamp(6px,0.8vw,12px);
-            background: var(--gray); border-radius: 10px; transition: var(--transition);
+            text-align: center; padding: 14px;
+            background: var(--gray); border-radius: 12px; transition: var(--transition);
         }
-        .report-card .summary .item:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
-        .report-card .summary .item .label { font-size: clamp(8px,0.9vw,11px); color: var(--text-light); }
-        .report-card .summary .item .value { font-size: clamp(16px,2.2vw,20px); font-weight: 800; color: var(--primary); }
+        .report-card .summary .item:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+        .report-card .summary .item .label { font-size: 12px; color: var(--text-light); }
+        .report-card .summary .item .value { font-size: 24px; font-weight: 800; color: var(--primary); }
+        @media (max-width: 768px) { .report-card .summary .item .value { font-size: 20px; } }
 
         /* ================================================================
                    TOAST
                 ================================================================ */
         .toast-container {
-            position: fixed; bottom: clamp(12px,1.5vw,24px); right: clamp(12px,1.5vw,24px);
-            z-index: 99999; display: flex; flex-direction: column; gap: 6px; max-width: 90%;
+            position: fixed; bottom: 24px; right: 24px;
+            z-index: 99999; display: flex; flex-direction: column; gap: 8px; max-width: 90%;
         }
         .toast {
-            padding: clamp(8px,1vw,14px) clamp(12px,1.5vw,20px); border-radius: 10px;
-            font-size: clamp(11px,1.1vw,14px); font-weight: 600; box-shadow: var(--shadow-xl);
-            animation: slideUp 0.3s cubic-bezier(0.4,0,0.2,1); display: flex; align-items: center; gap: 8px;
+            padding: 14px 24px; border-radius: 12px;
+            font-size: 15px; font-weight: 600; box-shadow: var(--shadow-xl);
+            animation: slideUp 0.3s cubic-bezier(0.4,0,0.2,1); display: flex; align-items: center; gap: 10px;
         }
+        @media (max-width: 768px) { .toast { padding: 10px 16px; font-size: 13px; } }
         .toast.success { background: var(--primary); color: white; }
         .toast.error { background: #dc2626; color: white; }
         .toast.warning { background: var(--gold); color: var(--text); }
@@ -627,95 +717,97 @@
                 ================================================================ */
         .footer {
             background: var(--card-bg); border-top: 1px solid var(--border);
-            padding: clamp(20px,2.5vw,40px) clamp(12px,1.5vw,24px) clamp(12px,1.2vw,20px);
-            margin-top: clamp(20px,2.5vw,40px); width: 100%;
+            padding: 40px 30px 24px;
+            margin-top: 40px; width: 100%;
         }
+        @media (max-width: 768px) { .footer { padding: 24px 16px 16px; margin-top: 24px; } }
         .footer .container {
             max-width: 1280px; margin: 0 auto;
-            display: grid; grid-template-columns: 1fr 1fr; gap: clamp(14px,1.8vw,30px);
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px;
         }
         @media (min-width: 640px) { .footer .container { grid-template-columns: 2fr 1fr 1fr 1fr; } }
         .footer h4 {
-            font-size: clamp(12px,1.3vw,15px); font-weight: 700;
-            margin-bottom: clamp(6px,0.6vw,10px); display: flex; align-items: center; gap: 6px;
+            font-size: 18px; font-weight: 700;
+            margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
         }
+        @media (max-width: 768px) { .footer h4 { font-size: 15px; } }
         .footer h4 i { color: var(--primary); }
         .footer p, .footer a {
-            color: var(--text-light); font-size: clamp(11px,1.1vw,13px);
-            line-height: 1.8; text-decoration: none; display: block; transition: var(--transition);
+            color: var(--text-light); font-size: 15px;
+            line-height: 2; text-decoration: none; display: block; transition: var(--transition);
         }
-        .footer a:hover { color: var(--primary); transform: translateX(3px); }
+        @media (max-width: 768px) { .footer p, .footer a { font-size: 13px; } }
+        .footer a:hover { color: var(--primary); transform: translateX(4px); }
         .footer-bottom {
-            max-width: 1280px; margin: clamp(10px,1.2vw,18px) auto 0;
-            padding-top: clamp(10px,1vw,16px); border-top: 1px solid var(--border);
-            display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
-            font-size: clamp(9px,0.9vw,12px); color: var(--text-light);
+            max-width: 1280px; margin: 16px auto 0;
+            padding-top: 16px; border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+            font-size: 14px; color: var(--text-light);
         }
+        @media (max-width: 768px) { .footer-bottom { font-size: 12px; } }
         .footer-bottom i { color: var(--primary); }
 
         /* ================================================================
                    SCROLL TOP
                 ================================================================ */
         .scroll-top {
-            position: fixed; bottom: clamp(12px,1.5vw,24px); right: clamp(12px,1.5vw,24px);
+            position: fixed; bottom: 24px; right: 24px;
             z-index: 50; background: var(--primary); color: white;
-            width: clamp(34px,4vw,44px); height: clamp(34px,4vw,44px);
+            width: 50px; height: 50px;
             border-radius: 50%; border: none; cursor: pointer;
-            font-size: clamp(14px,1.6vw,18px); box-shadow: var(--shadow-lg);
+            font-size: 22px; box-shadow: var(--shadow-lg);
             transition: var(--transition); display: none; align-items: center; justify-content: center;
         }
+        @media (max-width: 768px) { .scroll-top { width: 40px; height: 40px; font-size: 18px; } }
         .scroll-top.visible { display: flex; }
-        .scroll-top:hover { transform: translateY(-3px) scale(1.1); background: var(--primary-dark); }
+        .scroll-top:hover { transform: translateY(-4px) scale(1.1); background: var(--primary-dark); }
 
         /* ================================================================
                    FREE BADGE
                 ================================================================ */
         .free-badge {
             background: #d5f5e3; color: var(--primary-dark);
-            padding: clamp(4px,0.5vw,6px) clamp(10px,1.2vw,16px);
-            border-radius: 40px; font-weight: 700; font-size: clamp(10px,1.1vw,13px);
-            display: inline-flex; align-items: center; gap: 6px; transition: var(--transition);
+            padding: 8px 20px;
+            border-radius: 40px; font-weight: 700; font-size: 15px;
+            display: inline-flex; align-items: center; gap: 8px; transition: var(--transition);
         }
+        @media (max-width: 768px) { .free-badge { padding: 6px 14px; font-size: 13px; } }
         .free-badge:hover { transform: scale(1.05); }
 
         /* ================================================================
-                   RESPONSIVE
+                   RESPONSIVE FIXES
                 ================================================================ */
         @media (max-width: 480px) {
-            .banner-title h1 { font-size: 16px; }
-            .banner-logo { width: 38px; height: 38px; font-size: 12px; }
+            .banner-title h1 { font-size: 17px; }
+            .banner-logo { width: 40px; height: 40px; font-size: 14px; }
             .banner { padding: 10px 8px; }
             .banner-right { width: 100%; justify-content: flex-start; }
             .nav-bar .container { flex-direction: column; align-items: stretch; }
             .nav-links { justify-content: center; flex-wrap: wrap; }
             .nav-actions { justify-content: center; }
-            .main-content { padding: 6px 4px; }
-            .card { padding: 10px; }
-            .hero-slider { height: 140px; }
-            .hero-slider .slide .overlay h2 { font-size: 12px; }
-            .stats-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
-            .stat-box { padding: 10px; }
-            .stat-box .num { font-size: 18px; }
-            .stat-box .label { font-size: 8px; }
+            .main-content { padding: 8px 6px; }
+            .card { padding: 12px; }
+            .hero-slider { height: 150px; }
+            .hero-slider .slide .overlay h2 { font-size: 14px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .stat-box { padding: 12px; }
+            .stat-box .num { font-size: 20px; }
+            .stat-box .label { font-size: 11px; }
             .report-card .student-info { grid-template-columns: 1fr; }
             .report-card .summary { grid-template-columns: 1fr; }
-            .report-card { padding: 10px; }
+            .report-card { padding: 12px; }
             .incharge-grid { grid-template-columns: 1fr; }
             .grid-2 { grid-template-columns: 1fr; }
-        }
-        @media (max-width: 360px) {
-            .banner-title h1 { font-size: 14px; }
-            .banner-logo { width: 32px; height: 32px; font-size: 10px; }
-            .nav-btn { font-size: 8px; padding: 3px 5px; }
-            .hero-slider { height: 120px; }
-            .stats-grid { grid-template-columns: 1fr 1fr; gap: 4px; }
-            .stat-box { padding: 6px; }
-            .stat-box .num { font-size: 14px; }
+            .btn { font-size: 12px; padding: 6px 14px; }
+            .btn-sm { font-size: 10px; padding: 4px 10px; }
+            .notice-box { padding: 20px; }
+            .notice-box .notice-title { font-size: 18px; }
+            .notice-box .notice-desc { font-size: 15px; }
         }
 
         @media print {
             .nav-bar, .no-print, .hero-slider .controls, .hero-slider .dots,
-            .btn, .video-controls, .welcome-overlay { display: none !important; }
+            .btn, .video-controls, .welcome-overlay, .notice-overlay { display: none !important; }
             .card { box-shadow: none !important; border: 1px solid #ddd !important; transform: none !important; }
             body { background: white !important; }
             .tab-content { display: block !important; }
@@ -738,6 +830,19 @@
         <h1>Welcome to GES Bait Mughal</h1>
         <p>Digital Smart Management System</p>
         <div class="spinner"></div>
+    </div>
+
+    <!-- ================================================================
+    IMPORTANT NOTICE
+    ================================================================ -->
+    <div class="notice-overlay" id="noticeOverlay">
+        <div class="notice-box">
+            <button class="close-btn" id="noticeCloseBtn">&times;</button>
+            <div class="notice-title"><i class="fas fa-bullhorn"></i> <span id="noticeTitle">Important Announcement</span></div>
+            <p class="notice-desc" id="noticeDesc">Welcome to GES Bait Mughal Digital Smart Portal. Stay updated with latest news.</p>
+            <img class="notice-img" id="noticeImg" src="" alt="Notice Image" style="display:none;" />
+            <button class="notice-close-bottom" id="noticeCloseBottom">Got it!</button>
+        </div>
     </div>
 
     <!-- ================================================================
@@ -791,7 +896,6 @@
             <div class="nav-links">
                 <button class="nav-btn active" data-tab="home"><i class="fas fa-home"></i> Home</button>
                 <button class="nav-btn" data-tab="results"><i class="fas fa-chart-bar"></i> Results</button>
-                <button class="nav-btn" data-tab="report-card"><i class="fas fa-id-card"></i> Report Card</button>
                 <button class="nav-btn" data-tab="homework"><i class="fas fa-book-open"></i> Homework</button>
                 <button class="nav-btn" data-tab="gallery"><i class="fas fa-images"></i> Gallery</button>
                 <button class="nav-btn" data-tab="teacher"><i class="fas fa-user-tie"></i> Teacher</button>
@@ -810,7 +914,7 @@
     <main class="main-content">
 
         <!-- ============================================================
-        HOME TAB (Original - Not Changed)
+        HOME TAB
         ============================================================ -->
         <section id="tab-home" class="tab-content active">
 
@@ -818,15 +922,15 @@
             <div class="hero-slider" id="heroSlider">
                 <div class="slides" id="sliderSlides">
                     <div class="slide active">
-                        <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80" alt="School" loading="lazy" />
+                        <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80" alt="School" loading="lazy" />
                         <div class="overlay"><h2>🏫 Welcome to GES Bait Mughal</h2></div>
                     </div>
                     <div class="slide">
-                        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80" alt="Education" loading="lazy" />
+                        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80" alt="Education" loading="lazy" />
                         <div class="overlay"><h2>📚 Quality Education for All</h2></div>
                     </div>
                     <div class="slide">
-                        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80" alt="Students" loading="lazy" />
+                        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80" alt="Students" loading="lazy" />
                         <div class="overlay"><h2>🌟 Empowering Young Minds</h2></div>
                     </div>
                 </div>
@@ -863,24 +967,24 @@
 
             <!-- About + Timings -->
             <div class="grid-2" style="margin-bottom:16px;">
-                <div class="card">
+                <div class="card card-3d">
                     <div class="card-header">
                         <h3><i class="fas fa-info-circle"></i> About School</h3>
                     </div>
-                    <p id="aboutText" style="font-size:clamp(13px,1.4vw,15px); line-height:1.8; color:var(--text-light);">
+                    <p id="aboutText" style="font-size:17px; line-height:1.8; color:var(--text-light);">
                         GES Bait Mughal is a government elementary school dedicated to providing free quality education,
                         strong moral values, and a safe, nurturing environment for every child in the Bait Mughal community.
                     </p>
-                    <div style="background:var(--primary-bg); padding:clamp(8px,0.8vw,14px); border-radius:10px; margin-top:10px; border-left:4px solid var(--primary); font-size:clamp(12px,1.2vw,14px);">
+                    <div style="background:var(--primary-bg); padding:14px 18px; border-radius:12px; margin-top:12px; border-left:5px solid var(--primary); font-size:15px;">
                         <i class="fas fa-quote-left" style="color:var(--primary); opacity:0.5; margin-right:6px;"></i>
                         "Empowering young minds with knowledge, values, and skills for a brighter future."
                     </div>
-                    <div class="free-badge" style="margin-top:10px;">
+                    <div class="free-badge" style="margin-top:12px;">
                         <i class="fas fa-graduation-cap"></i> 100% Free Education – No Fees
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card card-3d">
                     <div class="card-header">
                         <h3><i class="fas fa-clock"></i> School Timings</h3>
                     </div>
@@ -905,14 +1009,14 @@
 
             <!-- Announcements + Incharges -->
             <div class="grid-2" style="margin-bottom:16px;">
-                <div class="card">
+                <div class="card card-3d">
                     <div class="card-header">
                         <h3><i class="fas fa-bullhorn"></i> Announcements</h3>
                     </div>
                     <div id="announcementList" style="max-height:300px; overflow-y:auto;"></div>
                 </div>
 
-                <div class="card">
+                <div class="card card-3d">
                     <div class="card-header">
                         <h3><i class="fas fa-chalkboard-user"></i> Class Incharges</h3>
                     </div>
@@ -921,18 +1025,18 @@
             </div>
 
             <!-- Video Section -->
-            <div class="card">
+            <div class="card card-3d">
                 <div class="card-header">
                     <h3><i class="fas fa-play-circle"></i> School Tour Video</h3>
-                    <span style="font-size:clamp(9px,0.9vw,12px); color:var(--text-light);" id="videoStatus">▶️ Playing</span>
+                    <span style="font-size:13px; color:var(--text-light);" id="videoStatus">▶️ Playing</span>
                 </div>
                 <div class="video-wrapper">
-                    <video id="schoolVideo" controls playsinline preload="auto" loop muted>
+                    <video id="schoolVideo" controls playsinline preload="auto" loop>
                         <source src="" type="video/mp4" />
                         Your browser does not support the video tag.
                     </video>
                     <div class="video-controls">
-                        <span><i class="fas fa-volume-up" id="volumeIcon"></i> <span id="volumeText">Click to unmute</span></span>
+                        <span><i class="fas fa-volume-up" id="volumeIcon"></i> <span id="volumeText">Sound on</span></span>
                         <button onclick="toggleFullscreen()"><i class="fas fa-expand"></i> Full Screen</button>
                     </div>
                 </div>
@@ -941,14 +1045,14 @@
         </section>
 
         <!-- ============================================================
-        RESULTS TAB (Search Result)
+        RESULTS TAB
         ============================================================ -->
         <section id="tab-results" class="tab-content">
-            <div class="card" style="max-width:500px; margin:0 auto;">
+            <div class="card card-3d" style="max-width:550px; margin:0 auto;">
                 <div class="card-header">
                     <h3><i class="fas fa-search"></i> Search Result</h3>
                 </div>
-                <form onsubmit="searchResult(event)" style="display:flex; flex-direction:column; gap:10px;">
+                <form onsubmit="searchResult(event)" style="display:flex; flex-direction:column; gap:12px;">
                     <div class="form-group">
                         <label>Select Class</label>
                         <select id="resultClass">
@@ -991,72 +1095,9 @@
                         <div class="item"><span class="label">Obtained</span><span class="value" id="resObtained">0</span></div>
                         <div class="item"><span class="label">Percentage</span><span class="value" id="resPercentage">0%</span></div>
                     </div>
-                    <div class="no-print" style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
-                        <button onclick="downloadResultPDF()" class="btn btn-primary btn-sm"><i class="fas fa-file-pdf"></i> Download</button>
-                        <button onclick="window.print()" class="btn btn-gold btn-sm"><i class="fas fa-print"></i> Print</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ============================================================
-        REPORT CARD TAB (Student Login)
-        ============================================================ -->
-        <section id="tab-report-card" class="tab-content">
-            <div id="studentLogin" class="card" style="max-width:380px; margin:0 auto;">
-                <div style="text-align:center; margin-bottom:16px;">
-                    <div style="width:clamp(45px,6vw,55px); height:clamp(45px,6vw,55px); background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; color:white; font-size:clamp(18px,2.2vw,24px);">
-                        <i class="fas fa-user-graduate"></i>
-                    </div>
-                    <h3 style="font-size:clamp(16px,1.8vw,20px); font-weight:800;">Student Report Card</h3>
-                    <p style="font-size:clamp(11px,1.1vw,13px); color:var(--text-light);">Enter your roll number</p>
-                </div>
-                <form onsubmit="studentLogin(event)" style="display:flex; flex-direction:column; gap:10px;">
-                    <div class="form-group">
-                        <label>Class</label>
-                        <select id="studentLoginClass">
-                            <option value="Class 1">Class 1</option>
-                            <option value="Class 2">Class 2</option>
-                            <option value="Class 3">Class 3</option>
-                            <option value="Class 4">Class 4</option>
-                            <option value="Class 5">Class 5</option>
-                            <option value="Class 6">Class 6</option>
-                            <option value="Class 7">Class 7</option>
-                            <option value="Class 8">Class 8</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Roll Number</label>
-                        <input type="number" id="studentLoginRoll" placeholder="Enter roll number" required />
-                    </div>
-                    <button type="submit" class="btn btn-primary">View Report Card</button>
-                </form>
-            </div>
-
-            <div id="studentReportCard" style="display:none; margin-top:16px;">
-                <div class="report-card" id="reportCardContent">
-                    <div class="header">
-                        <h2>GES BAIT MUGHAL</h2>
-                        <p>Official Student Report Card</p>
-                    </div>
-                    <div class="student-info">
-                        <div><strong>Class:</strong> <span id="rcClass">-</span></div>
-                        <div><strong>Roll No:</strong> <span id="rcRoll">-</span></div>
-                        <div><strong>Student:</strong> <span id="rcName">-</span></div>
-                        <div><strong>Incharge:</strong> <span id="rcIncharge">-</span></div>
-                    </div>
-                    <table class="marks-table">
-                        <thead><tr><th>Subject</th><th>Marks</th></tr></thead>
-                        <tbody id="rcSubjects"></tbody>
-                    </table>
-                    <div class="summary">
-                        <div class="item"><span class="label">Total</span><span class="value" id="rcTotal">0</span></div>
-                        <div class="item"><span class="label">Obtained</span><span class="value" id="rcObtained">0</span></div>
-                        <div class="item"><span class="label">Percentage</span><span class="value" id="rcPercentage">0%</span></div>
-                    </div>
-                    <div class="no-print" style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
-                        <button onclick="downloadReportCard()" class="btn btn-primary btn-sm"><i class="fas fa-file-pdf"></i> Download</button>
-                        <button onclick="window.print()" class="btn btn-gold btn-sm"><i class="fas fa-print"></i> Print</button>
+                    <div class="no-print" style="display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;">
+                        <button onclick="downloadResultPDF()" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Download</button>
+                        <button onclick="window.print()" class="btn btn-gold"><i class="fas fa-print"></i> Print</button>
                     </div>
                 </div>
             </div>
@@ -1066,12 +1107,12 @@
         HOMEWORK TAB
         ============================================================ -->
         <section id="tab-homework" class="tab-content">
-            <div class="card">
+            <div class="card card-3d">
                 <div class="card-header">
                     <h3><i class="fas fa-book-open"></i> Vacation Homework</h3>
-                    <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
-                        <label style="font-size:clamp(9px,0.9vw,12px); font-weight:600;">Filter:</label>
-                        <select id="hwFilter" onchange="renderHomework()" style="padding:clamp(2px,0.3vw,4px) clamp(6px,0.8vw,12px); border:2px solid var(--border); border-radius:6px; font-size:clamp(9px,0.9vw,12px); background:var(--bg); color:var(--text);">
+                    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                        <label style="font-size:14px; font-weight:600;">Filter:</label>
+                        <select id="hwFilter" onchange="renderHomework()" style="padding:8px 16px; border:2px solid var(--border); border-radius:8px; font-size:14px; background:var(--bg); color:var(--text);">
                             <option value="ALL">All</option>
                             <option value="Class 1">Class 1</option>
                             <option value="Class 2">Class 2</option>
@@ -1084,7 +1125,7 @@
                         </select>
                     </div>
                 </div>
-                <div id="homeworkGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"></div>
+                <div id="homeworkGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;"></div>
             </div>
         </section>
 
@@ -1092,11 +1133,11 @@
         GALLERY TAB
         ============================================================ -->
         <section id="tab-gallery" class="tab-content">
-            <div class="card">
+            <div class="card card-3d">
                 <div class="card-header">
                     <h3><i class="fas fa-images"></i> Photo Gallery</h3>
                 </div>
-                <div id="galleryGrid" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;"></div>
+                <div id="galleryGrid" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;"></div>
             </div>
         </section>
 
@@ -1104,13 +1145,13 @@
         TEACHER TAB
         ============================================================ -->
         <section id="tab-teacher" class="tab-content">
-            <div id="teacherLogin" class="card" style="max-width:380px; margin:0 auto;">
-                <div style="text-align:center; margin-bottom:16px;">
-                    <div style="width:clamp(45px,6vw,55px); height:clamp(45px,6vw,55px); background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; color:white; font-size:clamp(18px,2.2vw,24px);">
+            <div id="teacherLogin" class="card card-3d" style="max-width:420px; margin:0 auto;">
+                <div style="text-align:center; margin-bottom:18px;">
+                    <div style="width:60px; height:60px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; color:white; font-size:26px;">
                         <i class="fas fa-user-tie"></i>
                     </div>
-                    <h3 style="font-size:clamp(16px,1.8vw,20px); font-weight:800;">Teacher Login</h3>
-                    <p style="font-size:clamp(11px,1.1vw,13px); color:var(--text-light);">Enter your class PIN</p>
+                    <h3 style="font-size:22px; font-weight:800;">Teacher Login</h3>
+                    <p style="font-size:14px; color:var(--text-light);">Enter your class PIN</p>
                 </div>
                 <form onsubmit="teacherLogin(event)" style="display:flex; flex-direction:column; gap:10px;">
                     <div class="form-group">
@@ -1135,38 +1176,36 @@
             </div>
 
             <div id="teacherDashboard" style="display:none;">
-                <div class="card" style="margin-bottom:12px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <div class="card card-3d" style="margin-bottom:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                         <div>
-                            <h3 style="font-size:clamp(14px,1.6vw,18px); font-weight:800;"><i class="fas fa-chalkboard-user" style="color:var(--primary);"></i> <span id="teacherClassName">Class</span> Portal</h3>
-                            <p style="font-size:clamp(10px,1vw,13px); color:var(--text-light);">Manage your class</p>
+                            <h3 style="font-size:18px; font-weight:800;"><i class="fas fa-chalkboard-user" style="color:var(--primary);"></i> <span id="teacherClassName">Class</span> Portal</h3>
+                            <p style="font-size:14px; color:var(--text-light);">Manage your class</p>
                         </div>
-                        <button onclick="teacherLogout()" class="btn btn-danger btn-sm">Logout</button>
+                        <button onclick="teacherLogout()" class="btn btn-danger">Logout</button>
                     </div>
                 </div>
 
-                <!-- Stats Cards -->
-                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px;">
-                    <div class="stat-box" style="padding:clamp(8px,0.8vw,12px);">
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
+                    <div class="stat-box" style="padding:12px;">
                         <span class="num" id="tStatStudents">0</span>
                         <span class="label">Students</span>
                     </div>
-                    <div class="stat-box" style="padding:clamp(8px,0.8vw,12px);">
+                    <div class="stat-box" style="padding:12px;">
                         <span class="num" id="tStatHomework">0</span>
                         <span class="label">Homework</span>
                     </div>
-                    <div class="stat-box" style="padding:clamp(8px,0.8vw,12px);">
+                    <div class="stat-box" style="padding:12px;">
                         <span class="num" id="tStatAvg">0%</span>
                         <span class="label">Avg Performance</span>
                     </div>
                 </div>
 
-                <!-- Add Student -->
-                <div class="card" style="margin-bottom:12px;">
+                <div class="card card-3d" style="margin-bottom:12px;">
                     <div class="card-header">
                         <h3><i class="fas fa-user-plus"></i> <span id="studentFormTitle">Add Student</span></h3>
                     </div>
-                    <form onsubmit="saveStudent(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <form onsubmit="saveStudent(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                         <input type="hidden" id="editStudentRoll" />
                         <div class="form-group" style="margin:0;">
                             <label>Roll No</label>
@@ -1184,27 +1223,26 @@
                             <label>Obtained</label>
                             <input type="number" id="studentObtained" placeholder="420" required />
                         </div>
-                        <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
-                            <button type="submit" class="btn btn-primary btn-sm" id="studentSubmitBtn">Save</button>
-                            <button type="button" onclick="cancelEditStudent()" class="btn btn-outline btn-sm" id="studentCancelBtn" style="display:none;">Cancel</button>
+                        <div style="grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap;">
+                            <button type="submit" class="btn btn-primary" id="studentSubmitBtn">Save</button>
+                            <button type="button" onclick="cancelEditStudent()" class="btn btn-outline" id="studentCancelBtn" style="display:none;">Cancel</button>
                         </div>
                     </form>
                 </div>
 
-                <!-- Student List -->
-                <div class="card" style="margin-bottom:12px;">
+                <div class="card card-3d" style="margin-bottom:12px;">
                     <div class="card-header">
                         <h3><i class="fas fa-users"></i> Students</h3>
-                        <span style="font-size:clamp(9px,0.9vw,12px); background:var(--gray); padding:2px 10px; border-radius:40px;" id="studentCount">0</span>
+                        <span style="font-size:13px; background:var(--gray); padding:4px 14px; border-radius:40px;" id="studentCount">0</span>
                     </div>
                     <div style="overflow-x:auto;">
-                        <table style="width:100%; font-size:clamp(10px,1vw,13px); border-collapse:collapse;">
+                        <table style="width:100%; font-size:14px; border-collapse:collapse;">
                             <thead style="background:var(--gray);">
                                 <tr>
-                                    <th style="padding:4px 8px;">Roll</th>
-                                    <th style="padding:4px 8px;">Name</th>
-                                    <th style="padding:4px 8px;">%</th>
-                                    <th style="padding:4px 8px;">Actions</th>
+                                    <th style="padding:8px 12px;">Roll</th>
+                                    <th style="padding:8px 12px;">Name</th>
+                                    <th style="padding:8px 12px;">%</th>
+                                    <th style="padding:8px 12px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="teacherStudentList"></tbody>
@@ -1212,12 +1250,11 @@
                     </div>
                 </div>
 
-                <!-- Homework -->
-                <div class="card">
+                <div class="card card-3d">
                     <div class="card-header">
                         <h3><i class="fas fa-book-open"></i> Add Homework</h3>
                     </div>
-                    <form onsubmit="teacherAddHomework(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <form onsubmit="teacherAddHomework(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                         <input type="hidden" id="editHomeworkId" />
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
                             <label>Subject</label>
@@ -1235,27 +1272,27 @@
                             <label>Attachment</label>
                             <input type="file" id="hwFile" />
                         </div>
-                        <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
-                            <button type="submit" class="btn btn-primary btn-sm" id="hwSubmitBtn">Upload</button>
-                            <button type="button" onclick="cancelEditHomework()" class="btn btn-outline btn-sm" id="hwCancelBtn" style="display:none;">Cancel</button>
+                        <div style="grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap;">
+                            <button type="submit" class="btn btn-primary" id="hwSubmitBtn">Upload</button>
+                            <button type="button" onclick="cancelEditHomework()" class="btn btn-outline" id="hwCancelBtn" style="display:none;">Cancel</button>
                         </div>
                     </form>
-                    <div id="teacherHomeworkList" style="margin-top:12px; display:flex; flex-direction:column; gap:6px;"></div>
+                    <div id="teacherHomeworkList" style="margin-top:14px; display:flex; flex-direction:column; gap:8px;"></div>
                 </div>
             </div>
         </section>
 
         <!-- ============================================================
-        ADMIN TAB (Headmaster - With Result Report)
+        ADMIN TAB
         ============================================================ -->
         <section id="tab-admin" class="tab-content">
-            <div id="adminLogin" class="card" style="max-width:380px; margin:0 auto;">
-                <div style="text-align:center; margin-bottom:16px;">
-                    <div style="width:clamp(45px,6vw,55px); height:clamp(45px,6vw,55px); background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; color:white; font-size:clamp(18px,2.2vw,24px);">
+            <div id="adminLogin" class="card card-3d" style="max-width:420px; margin:0 auto;">
+                <div style="text-align:center; margin-bottom:18px;">
+                    <div style="width:60px; height:60px; background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; color:white; font-size:26px;">
                         <i class="fas fa-user-gear"></i>
                     </div>
-                    <h3 style="font-size:clamp(16px,1.8vw,20px); font-weight:800;">Headmaster Admin</h3>
-                    <p style="font-size:clamp(11px,1.1vw,13px); color:var(--text-light);">Full control over website</p>
+                    <h3 style="font-size:22px; font-weight:800;">Headmaster Admin</h3>
+                    <p style="font-size:14px; color:var(--text-light);">Full control over website</p>
                 </div>
                 <form onsubmit="adminLogin(event)" style="display:flex; flex-direction:column; gap:10px;">
                     <div class="form-group">
@@ -1267,60 +1304,86 @@
             </div>
 
             <div id="adminDashboard" style="display:none;">
-                <!-- Dashboard Header -->
-                <div class="card" style="margin-bottom:12px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <div class="card card-3d" style="margin-bottom:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                         <div>
-                            <h3 style="font-size:clamp(14px,1.6vw,18px); font-weight:800;"><i class="fas fa-crown" style="color:var(--gold);"></i> Headmaster Control Panel</h3>
-                            <p style="font-size:clamp(10px,1vw,13px); color:var(--text-light);">Complete School Management</p>
+                            <h3 style="font-size:18px; font-weight:800;"><i class="fas fa-crown" style="color:var(--gold);"></i> Headmaster Control</h3>
+                            <p style="font-size:14px; color:var(--text-light);">Complete School Management</p>
                         </div>
-                        <button onclick="adminLogout()" class="btn btn-danger btn-sm">Logout</button>
+                        <button onclick="adminLogout()" class="btn btn-danger">Logout</button>
                     </div>
                 </div>
 
-                <!-- Stats Cards -->
                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; margin-bottom:12px;">
-                    <div class="stat-box" style="padding:clamp(8px,0.8vw,12px);">
+                    <div class="stat-box" style="padding:10px;">
                         <span class="num" id="aStatStudents">0</span>
                         <span class="label">Students</span>
                     </div>
-                    <div class="stat-box" style="padding:clamp(8px,0.8vw,12px);">
+                    <div class="stat-box" style="padding:10px;">
                         <span class="num" id="aStatTeachers">0</span>
                         <span class="label">Teachers</span>
                     </div>
-                    <div class="stat-box" style="padding:clamp(8px,0.8vw,12px);">
+                    <div class="stat-box" style="padding:10px;">
                         <span class="num" id="aStatHomework">0</span>
                         <span class="label">Homework</span>
                     </div>
-                    <div class="stat-box" style="padding:clamp(8px,0.8vw,12px);">
+                    <div class="stat-box" style="padding:10px;">
                         <span class="num" id="aStatAnnounce">0</span>
                         <span class="label">Announcements</span>
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
-                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:12px;">
-                    <button onclick="scrollToSection('adminReport')" class="btn btn-gold btn-sm" style="justify-content:center;">📊 Result Report</button>
-                    <button onclick="scrollToSection('adminSlider')" class="btn btn-primary btn-sm" style="justify-content:center;">🖼️ Slider</button>
-                    <button onclick="scrollToSection('adminVideo')" class="btn btn-primary btn-sm" style="justify-content:center;">🎬 Video</button>
-                    <button onclick="scrollToSection('adminTimings')" class="btn btn-primary btn-sm" style="justify-content:center;">⏰ Timings</button>
-                    <button onclick="scrollToSection('adminAnnouncements')" class="btn btn-primary btn-sm" style="justify-content:center;">📢 Announcements</button>
-                    <button onclick="scrollToSection('adminHomework')" class="btn btn-primary btn-sm" style="justify-content:center;">📚 Homework</button>
-                    <button onclick="scrollToSection('adminGallery')" class="btn btn-primary btn-sm" style="justify-content:center;">🖼️ Gallery</button>
-                    <button onclick="scrollToSection('adminIncharges')" class="btn btn-primary btn-sm" style="justify-content:center;">👨‍🏫 Incharges</button>
-                    <button onclick="scrollToSection('adminSecurity')" class="btn btn-primary btn-sm" style="justify-content:center;">🔐 Security</button>
-                    <button onclick="scrollToSection('adminAbout')" class="btn btn-primary btn-sm" style="justify-content:center;">📝 About</button>
-                    <button onclick="downloadAllResults()" class="btn btn-gold btn-sm" style="justify-content:center;">📥 All Results</button>
-                    <button onclick="bulkImportStudents()" class="btn btn-primary btn-sm" style="justify-content:center;">📥 Bulk Import</button>
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px;">
+                    <button onclick="scrollToSection('adminNotice')" class="btn btn-gold" style="justify-content:center;">📢 Notice</button>
+                    <button onclick="scrollToSection('adminReport')" class="btn btn-gold" style="justify-content:center;">📊 Report</button>
+                    <button onclick="scrollToSection('adminSlider')" class="btn btn-primary" style="justify-content:center;">🖼️ Slider</button>
+                    <button onclick="scrollToSection('adminVideo')" class="btn btn-primary" style="justify-content:center;">🎬 Video</button>
+                    <button onclick="scrollToSection('adminTimings')" class="btn btn-primary" style="justify-content:center;">⏰ Timings</button>
+                    <button onclick="scrollToSection('adminAnnouncements')" class="btn btn-primary" style="justify-content:center;">📢 Announcements</button>
+                    <button onclick="scrollToSection('adminHomework')" class="btn btn-primary" style="justify-content:center;">📚 Homework</button>
+                    <button onclick="scrollToSection('adminGallery')" class="btn btn-primary" style="justify-content:center;">🖼️ Gallery</button>
+                    <button onclick="scrollToSection('adminIncharges')" class="btn btn-primary" style="justify-content:center;">👨‍🏫 Incharges</button>
+                    <button onclick="scrollToSection('adminSecurity')" class="btn btn-primary" style="justify-content:center;">🔐 Security</button>
+                    <button onclick="scrollToSection('adminAbout')" class="btn btn-primary" style="justify-content:center;">📝 About</button>
+                    <button onclick="downloadAllResults()" class="btn btn-gold" style="justify-content:center;">📥 All Results</button>
                 </div>
 
-                <!-- Result Report Section (Head) -->
-                <div class="card" style="margin-bottom:12px;" id="adminReport">
+                <!-- Important Notice Control -->
+                <div class="card card-3d" style="margin-bottom:12px;" id="adminNotice">
+                    <div class="card-header">
+                        <h3><i class="fas fa-bullhorn"></i> Important Notice Control</h3>
+                    </div>
+                    <form onsubmit="saveNotice(event)" style="display:grid; gap:10px;">
+                        <div class="form-group" style="margin:0;">
+                            <label>Notice Title</label>
+                            <input type="text" id="noticeTitleInput" placeholder="Notice title" required />
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label>Notice Description</label>
+                            <textarea id="noticeDescInput" rows="2" placeholder="Notice details" required></textarea>
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label>Notice Image (Optional)</label>
+                            <input type="file" id="noticeImageInput" accept="image/*" />
+                        </div>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Notice</button>
+                            <button type="button" onclick="deleteNotice()" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</button>
+                            <button type="button" onclick="previewNotice()" class="btn btn-gold"><i class="fas fa-eye"></i> Preview</button>
+                        </div>
+                    </form>
+                    <div id="noticeStatus" style="margin-top:8px; font-size:13px; color:var(--text-light);">
+                        Status: <span id="noticeStatusText">No notice set</span>
+                    </div>
+                </div>
+
+                <!-- Result Report -->
+                <div class="card card-3d" style="margin-bottom:12px;" id="adminReport">
                     <div class="card-header">
                         <h3><i class="fas fa-chart-bar"></i> Student Result Report</h3>
-                        <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                            <select id="reportClassFilter" style="padding:4px 10px; border:2px solid var(--border); border-radius:6px; font-size:clamp(9px,0.9vw,12px); background:var(--bg); color:var(--text);">
-                                <option value="ALL">All Classes</option>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <select id="reportClassFilter" style="padding:6px 14px; border:2px solid var(--border); border-radius:8px; font-size:13px; background:var(--bg); color:var(--text);">
+                                <option value="ALL">All</option>
                                 <option value="Class 1">Class 1</option>
                                 <option value="Class 2">Class 2</option>
                                 <option value="Class 3">Class 3</option>
@@ -1334,19 +1397,19 @@
                             <button onclick="downloadResultReport()" class="btn btn-gold btn-sm"><i class="fas fa-file-pdf"></i> PDF</button>
                         </div>
                     </div>
-                    <div id="resultReportContainer" style="overflow-x:auto; max-height:400px; overflow-y:auto;">
-                        <table style="width:100%; font-size:clamp(10px,1vw,13px); border-collapse:collapse;">
+                    <div id="resultReportContainer" style="overflow-x:auto; max-height:350px; overflow-y:auto;">
+                        <table style="width:100%; font-size:13px; border-collapse:collapse;">
                             <thead style="background:var(--gray); position:sticky; top:0; z-index:5;">
                                 <tr>
-                                    <th style="padding:6px 10px; text-align:left;">#</th>
-                                    <th style="padding:6px 10px; text-align:left;">Class</th>
-                                    <th style="padding:6px 10px; text-align:left;">Roll</th>
-                                    <th style="padding:6px 10px; text-align:left;">Student</th>
-                                    <th style="padding:6px 10px; text-align:left;">Obtained</th>
-                                    <th style="padding:6px 10px; text-align:left;">Total</th>
-                                    <th style="padding:6px 10px; text-align:left;">%</th>
-                                    <th style="padding:6px 10px; text-align:left;">Grade</th>
-                                    <th style="padding:6px 10px; text-align:left;">Incharge</th>
+                                    <th style="padding:8px 12px; text-align:left;">#</th>
+                                    <th style="padding:8px 12px; text-align:left;">Class</th>
+                                    <th style="padding:8px 12px; text-align:left;">Roll</th>
+                                    <th style="padding:8px 12px; text-align:left;">Student</th>
+                                    <th style="padding:8px 12px; text-align:left;">Obtained</th>
+                                    <th style="padding:8px 12px; text-align:left;">Total</th>
+                                    <th style="padding:8px 12px; text-align:left;">%</th>
+                                    <th style="padding:8px 12px; text-align:left;">Grade</th>
+                                    <th style="padding:8px 12px; text-align:left;">Incharge</th>
                                 </tr>
                             </thead>
                             <tbody id="reportTableBody"></tbody>
@@ -1354,9 +1417,9 @@
                     </div>
                 </div>
 
-                <!-- Slider - Upload Images -->
-                <div class="card" style="margin-bottom:12px;" id="adminSlider">
-                    <div class="card-header"><h3><i class="fas fa-images"></i> Slider Control (Upload Images)</h3></div>
+                <!-- Slider -->
+                <div class="card card-3d" style="margin-bottom:12px;" id="adminSlider">
+                    <div class="card-header"><h3><i class="fas fa-images"></i> Slider Control</h3></div>
                     <form onsubmit="addSlideImage(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
                             <label>Slide Title</label>
@@ -1367,26 +1430,26 @@
                             <input type="file" id="slideImageFile" accept="image/*" required />
                         </div>
                         <div style="grid-column:1/-1;">
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-upload"></i> Upload Slide</button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-upload"></i> Upload</button>
                         </div>
                     </form>
                     <div id="adminSliderList" style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;"></div>
                 </div>
 
                 <!-- Video -->
-                <div class="card" style="margin-bottom:12px;" id="adminVideo">
-                    <div class="card-header"><h3><i class="fas fa-video"></i> School Video (Upload MP4)</h3></div>
+                <div class="card card-3d" style="margin-bottom:12px;" id="adminVideo">
+                    <div class="card-header"><h3><i class="fas fa-video"></i> School Video</h3></div>
                     <form onsubmit="uploadVideo(event)" style="display:grid; gap:8px;">
                         <div class="form-group" style="margin:0;">
                             <label>Upload Video (MP4, < 7MB)</label>
                             <input type="file" id="videoFile" accept="video/*" />
                         </div>
-                        <button type="submit" class="btn btn-primary btn-sm">Upload Video</button>
+                        <button type="submit" class="btn btn-primary">Upload</button>
                     </form>
                 </div>
 
                 <!-- Timings -->
-                <div class="card" style="margin-bottom:12px;" id="adminTimings">
+                <div class="card card-3d" style="margin-bottom:12px;" id="adminTimings">
                     <div class="card-header"><h3><i class="fas fa-clock"></i> School Timings</h3></div>
                     <form onsubmit="updateTimings(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <div class="form-group" style="margin:0;">
@@ -1398,13 +1461,13 @@
                             <input type="text" id="inputBreakTime" placeholder="10:30 AM – 11:00 AM" required />
                         </div>
                         <div style="grid-column:1/-1;">
-                            <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                            <button type="submit" class="btn btn-primary">Update</button>
                         </div>
                     </form>
                 </div>
 
                 <!-- Announcements -->
-                <div class="card" style="margin-bottom:12px;" id="adminAnnouncements">
+                <div class="card card-3d" style="margin-bottom:12px;" id="adminAnnouncements">
                     <div class="card-header"><h3><i class="fas fa-bullhorn"></i> Add Announcement</h3></div>
                     <form onsubmit="addAnnouncement(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
@@ -1428,14 +1491,14 @@
                             </select>
                         </div>
                         <div style="grid-column:1/-1;">
-                            <button type="submit" class="btn btn-primary btn-sm">Publish</button>
+                            <button type="submit" class="btn btn-primary">Publish</button>
                         </div>
                     </form>
-                    <div id="adminAnnouncementList" style="margin-top:12px; display:flex; flex-direction:column; gap:6px;"></div>
+                    <div id="adminAnnouncementList" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;"></div>
                 </div>
 
                 <!-- Homework Admin -->
-                <div class="card" style="margin-bottom:12px;" id="adminHomework">
+                <div class="card card-3d" style="margin-bottom:12px;" id="adminHomework">
                     <div class="card-header"><h3><i class="fas fa-book-open"></i> Manage Homework</h3></div>
                     <form onsubmit="adminAddHomework(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <input type="hidden" id="adminEditHwId" />
@@ -1468,16 +1531,16 @@
                             <label>Attachment</label>
                             <input type="file" id="adminHwFile" />
                         </div>
-                        <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
-                            <button type="submit" class="btn btn-primary btn-sm" id="adminHwSubmitBtn">Upload</button>
-                            <button type="button" onclick="cancelAdminEditHomework()" class="btn btn-outline btn-sm" id="adminHwCancelBtn" style="display:none;">Cancel</button>
+                        <div style="grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap;">
+                            <button type="submit" class="btn btn-primary" id="adminHwSubmitBtn">Upload</button>
+                            <button type="button" onclick="cancelAdminEditHomework()" class="btn btn-outline" id="adminHwCancelBtn" style="display:none;">Cancel</button>
                         </div>
                     </form>
-                    <div id="adminHomeworkList" style="margin-top:12px; display:flex; flex-direction:column; gap:6px;"></div>
+                    <div id="adminHomeworkList" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;"></div>
                 </div>
 
                 <!-- Gallery -->
-                <div class="card" style="margin-bottom:12px;" id="adminGallery">
+                <div class="card card-3d" style="margin-bottom:12px;" id="adminGallery">
                     <div class="card-header"><h3><i class="fas fa-images"></i> Manage Gallery</h3></div>
                     <form onsubmit="adminAddGallery(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <div class="form-group" style="margin:0; grid-column:1/-1;">
@@ -1489,14 +1552,14 @@
                             <input type="file" id="galleryFile" accept="image/*" required />
                         </div>
                         <div style="grid-column:1/-1;">
-                            <button type="submit" class="btn btn-primary btn-sm">Upload</button>
+                            <button type="submit" class="btn btn-primary">Upload</button>
                         </div>
                     </form>
                     <div id="adminGalleryList" style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;"></div>
                 </div>
 
                 <!-- Incharges -->
-                <div class="card" style="margin-bottom:12px;" id="adminIncharges">
+                <div class="card card-3d" style="margin-bottom:12px;" id="adminIncharges">
                     <div class="card-header"><h3><i class="fas fa-chalkboard-user"></i> Assign Incharges</h3></div>
                     <form onsubmit="assignIncharge(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <div class="form-group" style="margin:0;">
@@ -1517,27 +1580,27 @@
                             <input type="text" id="inchargeName" placeholder="Teacher name" required />
                         </div>
                         <div style="grid-column:1/-1;">
-                            <button type="submit" class="btn btn-primary btn-sm">Assign</button>
+                            <button type="submit" class="btn btn-primary">Assign</button>
                         </div>
                     </form>
-                    <div id="adminInchargeList" style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:6px;"></div>
+                    <div id="adminInchargeList" style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
                 </div>
 
                 <!-- Security -->
-                <div class="card" style="margin-bottom:12px;" id="adminSecurity">
+                <div class="card card-3d" style="margin-bottom:12px;" id="adminSecurity">
                     <div class="card-header"><h3><i class="fas fa-key"></i> Security</h3></div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
                         <div>
-                            <h4 style="font-size:clamp(11px,1.1vw,14px); font-weight:700; margin-bottom:6px;">Change Admin Password</h4>
-                            <form onsubmit="changeAdminPass(event)" style="display:flex; gap:6px; flex-wrap:wrap;">
-                                <input type="password" id="newAdminPass" placeholder="New password" required style="flex:1; min-width:100px; padding:6px 10px; border:2px solid var(--border); border-radius:6px; font-size:clamp(10px,1vw,12px); background:var(--bg); color:var(--text);" />
-                                <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                            <h4 style="font-size:15px; font-weight:700; margin-bottom:8px;">Change Admin Password</h4>
+                            <form onsubmit="changeAdminPass(event)" style="display:flex; gap:8px; flex-wrap:wrap;">
+                                <input type="password" id="newAdminPass" placeholder="New password" required style="flex:1; min-width:120px; padding:10px 14px; border:2px solid var(--border); border-radius:8px; font-size:14px; background:var(--bg); color:var(--text);" />
+                                <button type="submit" class="btn btn-primary">Update</button>
                             </form>
                         </div>
                         <div>
-                            <h4 style="font-size:clamp(11px,1.1vw,14px); font-weight:700; margin-bottom:6px;">Set Teacher PIN</h4>
-                            <form onsubmit="setTeacherPin(event)" style="display:flex; gap:6px; flex-wrap:wrap;">
-                                <select id="pinClass" style="padding:4px 8px; border:2px solid var(--border); border-radius:6px; font-size:clamp(9px,0.9vw,11px); background:var(--bg); color:var(--text);">
+                            <h4 style="font-size:15px; font-weight:700; margin-bottom:8px;">Set Teacher PIN</h4>
+                            <form onsubmit="setTeacherPin(event)" style="display:flex; gap:8px; flex-wrap:wrap;">
+                                <select id="pinClass" style="padding:8px 12px; border:2px solid var(--border); border-radius:8px; font-size:13px; background:var(--bg); color:var(--text);">
                                     <option value="Class 1">Class 1</option>
                                     <option value="Class 2">Class 2</option>
                                     <option value="Class 3">Class 3</option>
@@ -1547,15 +1610,15 @@
                                     <option value="Class 7">Class 7</option>
                                     <option value="Class 8">Class 8</option>
                                 </select>
-                                <input type="text" id="newTeacherPin" placeholder="New PIN" required style="width:70px; padding:4px 8px; border:2px solid var(--border); border-radius:6px; font-size:clamp(9px,0.9vw,11px); background:var(--bg); color:var(--text);" />
-                                <button type="submit" class="btn btn-primary btn-sm">Set</button>
+                                <input type="text" id="newTeacherPin" placeholder="PIN" required style="width:100px; padding:8px 12px; border:2px solid var(--border); border-radius:8px; font-size:13px; background:var(--bg); color:var(--text);" />
+                                <button type="submit" class="btn btn-primary">Set</button>
                             </form>
                         </div>
                     </div>
                 </div>
 
                 <!-- About -->
-                <div class="card" style="margin-bottom:12px;" id="adminAbout">
+                <div class="card card-3d" style="margin-bottom:12px;" id="adminAbout">
                     <div class="card-header"><h3><i class="fas fa-info-circle"></i> About & Contact</h3></div>
                     <form onsubmit="updateAbout(event)" style="display:grid; gap:8px;">
                         <div class="form-group" style="margin:0;">
@@ -1577,7 +1640,7 @@
                             </div>
                         </div>
                         <div>
-                            <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
                         </div>
                     </form>
                 </div>
@@ -1594,13 +1657,12 @@
             <div>
                 <h4><i class="fas fa-school"></i> GES Bait Mughal</h4>
                 <p>Government Elementary School committed to free quality education and moral values for every child.</p>
-                <p style="margin-top:6px;"><i class="fas fa-map-pin"></i> Bait Mughal, Jalal Pur Pir Wala, Punjab</p>
+                <p style="margin-top:8px;"><i class="fas fa-map-pin"></i> Bait Mughal, Jalal Pur Pir Wala, Punjab</p>
             </div>
             <div>
                 <h4><i class="fas fa-link"></i> Quick Links</h4>
                 <a href="#" onclick="switchTab('home')">Home</a>
                 <a href="#" onclick="switchTab('results')">Results</a>
-                <a href="#" onclick="switchTab('report-card')">Report Card</a>
                 <a href="#" onclick="switchTab('homework')">Homework</a>
                 <a href="#" onclick="switchTab('gallery')">Gallery</a>
             </div>
@@ -1614,16 +1676,16 @@
                 <h4><i class="fas fa-phone"></i> Contact</h4>
                 <p id="footerPhone"><i class="fas fa-phone-alt"></i> +92 300 1234567</p>
                 <p id="footerEmail"><i class="fas fa-envelope"></i> info@gesbait.edu</p>
-                <div style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;">
-                    <a href="#" style="display:inline-block; width:clamp(26px,3vw,32px); height:clamp(26px,3vw,32px); background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text); transition:var(--transition);"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" style="display:inline-block; width:clamp(26px,3vw,32px); height:clamp(26px,3vw,32px); background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text); transition:var(--transition);"><i class="fab fa-youtube"></i></a>
-                    <a href="#" style="display:inline-block; width:clamp(26px,3vw,32px); height:clamp(26px,3vw,32px); background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text); transition:var(--transition);"><i class="fab fa-whatsapp"></i></a>
+                <div style="display:flex; gap:10px; margin-top:8px; flex-wrap:wrap;">
+                    <a href="#" style="display:inline-block; width:36px; height:36px; background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text); transition:var(--transition);"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" style="display:inline-block; width:36px; height:36px; background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text); transition:var(--transition);"><i class="fab fa-youtube"></i></a>
+                    <a href="#" style="display:inline-block; width:36px; height:36px; background:var(--gray); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text); transition:var(--transition);"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
             <span>&copy; <span id="footerYear">2026</span> GES Bait Mughal</span>
-            <span><i class="fas fa-shield-alt"></i> Smart School v12.0</span>
+            <span><i class="fas fa-shield-alt"></i> Smart School v17.0</span>
         </div>
     </footer>
 
@@ -1653,6 +1715,7 @@
             gallery: [],
             incharges: {},
             slides: [],
+            notice: { title: '', desc: '', img: '' },
             timings: '08:00 AM – 01:30 PM',
             breakTime: '10:30 AM – 11:00 AM',
             headmaster: 'Headmaster',
@@ -1691,7 +1754,7 @@
             toastContainer.appendChild(toast);
             setTimeout(() => {
                 toast.style.opacity = '0';
-                toast.style.transform = 'translateX(100px)';
+                toast.style.transform = 'translateX(80px)';
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
@@ -1721,7 +1784,6 @@
         const tabs = {
             home: $('tab-home'),
             results: $('tab-results'),
-            'report-card': $('tab-report-card'),
             homework: $('tab-homework'),
             gallery: $('tab-gallery'),
             teacher: $('tab-teacher'),
@@ -1747,7 +1809,7 @@
         });
 
         // ================================================================
-        // VIDEO CONTROLS
+        // VIDEO CONTROLS (Autoplay with Sound)
         // ================================================================
         video.addEventListener('click', () => {
             video.muted = !video.muted;
@@ -1777,9 +1839,9 @@
 
         function renderSlider() {
             const slides = DB.slides.length > 0 ? DB.slides : [
-                { title: '🏫 Welcome to GES Bait Mughal', img: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80' },
-                { title: '📚 Quality Education for All', img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80' },
-                { title: '🌟 Empowering Young Minds', img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80' }
+                { title: '🏫 Welcome to GES Bait Mughal', img: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80' },
+                { title: '📚 Quality Education for All', img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80' },
+                { title: '🌟 Empowering Young Minds', img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80' }
             ];
 
             const container = $('sliderSlides');
@@ -1826,12 +1888,93 @@
         }
 
         // ================================================================
+        // NOTICE FUNCTIONS
+        // ================================================================
+        function showNotice() {
+            const overlay = $('noticeOverlay');
+            if (!DB.notice || !DB.notice.title) {
+                overlay.classList.remove('active');
+                return;
+            }
+            $('noticeTitle').textContent = DB.notice.title || 'Important Announcement';
+            $('noticeDesc').textContent = DB.notice.desc || 'Welcome to GES Bait Mughal Digital Smart Portal.';
+            const img = $('noticeImg');
+            if (DB.notice.img) {
+                img.src = DB.notice.img;
+                img.style.display = 'block';
+            } else {
+                img.style.display = 'none';
+            }
+            overlay.classList.add('active');
+        }
+
+        function closeNotice() {
+            $('noticeOverlay').classList.remove('active');
+            // Play video with sound after notice closes
+            if (DB.video) {
+                video.muted = false;
+                video.play().catch(() => {
+                    video.muted = true;
+                    video.play();
+                });
+            }
+        }
+
+        // Close notice buttons
+        $('noticeCloseBtn').addEventListener('click', closeNotice);
+        $('noticeCloseBottom').addEventListener('click', closeNotice);
+        $('noticeOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeNotice();
+        });
+
+        // ================================================================
+        // FIREBASE REAL-TIME SYNC
+        // ================================================================
+        function saveToFirebase() {
+            if (!window.firebaseDB) return;
+            const { ref, set, db } = window.firebaseDB;
+            try {
+                set(ref(db, 'gesData'), DB).catch(err => {
+                    console.error('Firebase save error:', err);
+                });
+            } catch (e) {
+                console.error('Firebase error:', e);
+            }
+        }
+
+        function loadFromFirebase() {
+            if (!window.firebaseDB) {
+                setTimeout(loadFromFirebase, 1000);
+                return;
+            }
+            const { ref, onValue, db } = window.firebaseDB;
+
+            onValue(ref(db, 'gesData'), (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    DB = { ...DB, ...data };
+                    renderAll();
+                    if (DB.notice && DB.notice.title) {
+                        setTimeout(showNotice, 500);
+                    }
+                    showToast('🔄 Data synced from cloud', 'success');
+                } else {
+                    saveToFirebase();
+                }
+            }, (error) => {
+                console.error('Firebase read error:', error);
+                showToast('⚠️ Unable to sync with cloud', 'warning');
+            });
+        }
+
+        // ================================================================
         // SAVE/LOAD
         // ================================================================
         function saveData() {
             try {
                 localStorage.setItem('gesData', JSON.stringify(DB));
             } catch (e) {}
+            saveToFirebase();
         }
 
         function loadData() {
@@ -1843,6 +1986,12 @@
                 }
             } catch (e) {}
             renderAll();
+            loadFromFirebase();
+            setTimeout(() => {
+                if (DB.notice && DB.notice.title) {
+                    showNotice();
+                }
+            }, 500);
         }
 
         // ================================================================
@@ -1854,7 +2003,6 @@
             renderGallery();
             renderTeacherUI();
             renderAdminUI();
-            saveData();
         }
 
         function renderHome() {
@@ -1939,22 +2087,22 @@
 
             if (list.length === 0) {
                 grid.innerHTML =
-                    '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:clamp(12px,1.2vw,14px); padding:12px;">No homework uploaded.</p>';
+                    '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:16px; padding:20px;">No homework uploaded.</p>';
                 return;
             }
 
             list.forEach(h => {
                 const div = document.createElement('div');
-                div.className = 'card';
-                div.style.cssText = 'padding:clamp(10px,1.2vw,16px);';
+                div.className = 'card card-3d';
+                div.style.cssText = 'padding:16px;';
                 div.innerHTML = `
-                            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
-                                <span style="font-size:clamp(9px,0.9vw,12px); font-weight:700; background:var(--primary-bg); padding:2px 8px; border-radius:8px;">${h.class}</span>
-                                <span style="font-size:clamp(9px,0.9vw,12px); font-weight:600; color:var(--primary);">${h.subject}</span>
+                            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+                                <span style="font-size:12px; font-weight:700; background:var(--primary-bg); padding:4px 12px; border-radius:8px;">${h.class}</span>
+                                <span style="font-size:12px; font-weight:600; color:var(--primary);">${h.subject}</span>
                             </div>
-                            <h4 style="font-size:clamp(13px,1.3vw,16px); font-weight:700;">${h.title}</h4>
-                            <p style="font-size:clamp(11px,1.1vw,13px); color:var(--text-light); margin-top:2px;">${h.desc}</p>
-                            ${h.file ? `<button onclick="downloadFile('${h.file}','${h.title}')" class="btn btn-primary btn-sm" style="margin-top:6px;"><i class="fas fa-download"></i> Download</button>` : ''}
+                            <h4 style="font-size:17px; font-weight:700;">${h.title}</h4>
+                            <p style="font-size:14px; color:var(--text-light); margin-top:4px;">${h.desc}</p>
+                            ${h.file ? `<button onclick="downloadFile('${h.file}','${h.title}')" class="btn btn-primary btn-sm" style="margin-top:8px;"><i class="fas fa-download"></i> Download</button>` : ''}
                         `;
                 grid.appendChild(div);
             });
@@ -1965,11 +2113,11 @@
             grid.innerHTML = '';
             DB.gallery.forEach(img => {
                 const div = document.createElement('div');
-                div.className = 'card';
-                div.style.cssText = 'padding:6px; overflow:hidden;';
+                div.className = 'card card-3d';
+                div.style.cssText = 'padding:8px; overflow:hidden;';
                 div.innerHTML = `
-                            <img src="${img.file}" style="width:100%; height:clamp(100px,14vw,150px); object-fit:cover; border-radius:6px;" loading="lazy" />
-                            <p style="font-size:clamp(10px,1vw,13px); font-weight:600; text-align:center; padding:6px 0;">${img.caption}</p>
+                            <img src="${img.file}" style="width:100%; height:180px; object-fit:cover; border-radius:8px;" loading="lazy" />
+                            <p style="font-size:14px; font-weight:600; text-align:center; padding:10px 0;">${img.caption}</p>
                         `;
                 grid.appendChild(div);
             });
@@ -2019,12 +2167,12 @@
                 const tr = document.createElement('tr');
                 const perc = ((s.obtained / s.total) * 100).toFixed(1);
                 tr.innerHTML = `
-                            <td style="padding:4px 8px;">${s.roll}</td>
-                            <td style="padding:4px 8px;">${s.name}</td>
-                            <td style="padding:4px 8px; font-weight:700; color:var(--primary);">${perc}%</td>
-                            <td style="padding:4px 8px;">
-                                <button onclick="editStudent('${s.class}',${s.roll})" class="btn btn-primary btn-sm" style="font-size:clamp(8px,0.8vw,10px); padding:2px 6px;">Edit</button>
-                                <button onclick="deleteStudent('${s.class}',${s.roll})" class="btn btn-danger btn-sm" style="font-size:clamp(8px,0.8vw,10px); padding:2px 6px;">Del</button>
+                            <td style="padding:8px 12px;">${s.roll}</td>
+                            <td style="padding:8px 12px;">${s.name}</td>
+                            <td style="padding:8px 12px; font-weight:700; color:var(--primary);">${perc}%</td>
+                            <td style="padding:8px 12px;">
+                                <button onclick="editStudent('${s.class}',${s.roll})" class="btn btn-primary btn-sm">Edit</button>
+                                <button onclick="deleteStudent('${s.class}',${s.roll})" class="btn btn-danger btn-sm">Del</button>
                             </td>
                         `;
                 tbody.appendChild(tr);
@@ -2038,21 +2186,21 @@
             const container = $('teacherHomeworkList');
             container.innerHTML = '';
             if (list.length === 0) {
-                container.innerHTML = '<p style="font-size:clamp(11px,1.1vw,13px); color:var(--text-light);">No homework added.</p>';
+                container.innerHTML = '<p style="font-size:14px; color:var(--text-light);">No homework added.</p>';
                 return;
             }
             list.forEach(h => {
                 const div = document.createElement('div');
                 div.style.cssText =
-                    'display:flex; justify-content:space-between; align-items:center; padding:6px 10px; background:var(--gray); border-radius:6px; font-size:clamp(11px,1.1vw,13px); flex-wrap:wrap; gap:4px;';
+                    'display:flex; justify-content:space-between; align-items:center; padding:10px 16px; background:var(--gray); border-radius:10px; font-size:14px; flex-wrap:wrap; gap:8px;';
                 div.innerHTML = `
                             <div>
                                 <strong>${h.subject}:</strong> ${h.title}
-                                <p style="font-size:clamp(9px,0.9vw,11px); color:var(--text-light);">${h.desc}</p>
+                                <p style="font-size:12px; color:var(--text-light);">${h.desc}</p>
                             </div>
                             <div>
-                                <button onclick="editHomework('${h.id}')" class="btn btn-primary btn-sm" style="font-size:clamp(8px,0.8vw,10px); padding:2px 6px;">Edit</button>
-                                <button onclick="deleteHomework('${h.id}')" class="btn btn-danger btn-sm" style="font-size:clamp(8px,0.8vw,10px); padding:2px 6px;">Del</button>
+                                <button onclick="editHomework('${h.id}')" class="btn btn-primary btn-sm">Edit</button>
+                                <button onclick="deleteHomework('${h.id}')" class="btn btn-danger btn-sm">Del</button>
                             </div>
                         `;
                 container.appendChild(div);
@@ -2221,7 +2369,7 @@
         }
 
         // ================================================================
-        // ADMIN FUNCTIONS (Headmaster)
+        // ADMIN FUNCTIONS
         // ================================================================
         function renderAdminUI() {
             const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
@@ -2241,6 +2389,12 @@
                 $('contactAddress').value = DB.contact.address || '';
                 $('contactPhone').value = DB.contact.phone || '';
                 renderResultReport();
+                if (DB.notice) {
+                    $('noticeTitleInput').value = DB.notice.title || '';
+                    $('noticeDescInput').value = DB.notice.desc || '';
+                    $('noticeStatusText').textContent = DB.notice.title ? 'Active - "' + DB.notice.title + '"' :
+                        'No notice set';
+                }
             } else {
                 $('adminLogin').style.display = 'block';
                 $('adminDashboard').style.display = 'none';
@@ -2271,6 +2425,79 @@
             sessionStorage.removeItem('adminLoggedIn');
             showToast('Logged out', 'warning');
             renderAdminUI();
+        }
+
+        // ================================================================
+        // NOTICE FUNCTIONS (Head)
+        // ================================================================
+        function saveNotice(e) {
+            e.preventDefault();
+            const title = $('noticeTitleInput').value.trim();
+            const desc = $('noticeDescInput').value.trim();
+            const fileInput = $('noticeImageInput');
+
+            if (!title || !desc) {
+                showToast('Please fill title and description', 'error');
+                return;
+            }
+
+            if (fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    DB.notice = { title, desc, img: e.target.result };
+                    saveData();
+                    $('noticeStatusText').textContent = 'Active - "' + title + '"';
+                    showToast('✅ Notice saved with image!', 'success');
+                    $('noticeImageInput').value = '';
+                    setTimeout(showNotice, 300);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                DB.notice = { title, desc, img: DB.notice.img || '' };
+                saveData();
+                $('noticeStatusText').textContent = 'Active - "' + title + '"';
+                showToast('✅ Notice saved!', 'success');
+                setTimeout(showNotice, 300);
+            }
+        }
+
+        function deleteNotice() {
+            if (confirm('Delete this notice?')) {
+                DB.notice = { title: '', desc: '', img: '' };
+                saveData();
+                $('noticeTitleInput').value = '';
+                $('noticeDescInput').value = '';
+                $('noticeImageInput').value = '';
+                $('noticeStatusText').textContent = 'No notice set';
+                closeNotice();
+                showToast('Notice deleted', 'warning');
+            }
+        }
+
+        function previewNotice() {
+            const title = $('noticeTitleInput').value.trim() || 'Important Announcement';
+            const desc = $('noticeDescInput').value.trim() || 'Preview notice';
+            $('noticeTitle').textContent = title;
+            $('noticeDesc').textContent = desc;
+            const img = $('noticeImg');
+            const fileInput = $('noticeImageInput');
+            if (fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    $('noticeOverlay').classList.add('active');
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                if (DB.notice.img) {
+                    img.src = DB.notice.img;
+                    img.style.display = 'block';
+                } else {
+                    img.style.display = 'none';
+                }
+                $('noticeOverlay').classList.add('active');
+            }
         }
 
         // ================================================================
@@ -2311,15 +2538,15 @@
                 const tr = document.createElement('tr');
                 tr.style.borderBottom = '1px solid var(--border)';
                 tr.innerHTML = `
-                            <td style="padding:6px 10px;">${index + 1}</td>
-                            <td style="padding:6px 10px; font-weight:600;">${s.class}</td>
-                            <td style="padding:6px 10px;">${s.roll}</td>
-                            <td style="padding:6px 10px; font-weight:500;">${s.name}</td>
-                            <td style="padding:6px 10px; font-weight:700; color:var(--primary);">${s.obtained}</td>
-                            <td style="padding:6px 10px;">${s.total}</td>
-                            <td style="padding:6px 10px; font-weight:700; color:var(--gold);">${percFixed}%</td>
-                            <td style="padding:6px 10px; font-weight:700; color:${perc >= 70 ? 'var(--primary)' : '#dc2626'};">${grade}</td>
-                            <td style="padding:6px 10px;">${DB.incharges[s.class] || 'Not Assigned'}</td>
+                            <td style="padding:8px 12px;">${index + 1}</td>
+                            <td style="padding:8px 12px; font-weight:600;">${s.class}</td>
+                            <td style="padding:8px 12px;">${s.roll}</td>
+                            <td style="padding:8px 12px; font-weight:500;">${s.name}</td>
+                            <td style="padding:8px 12px; font-weight:700; color:var(--primary);">${s.obtained}</td>
+                            <td style="padding:8px 12px;">${s.total}</td>
+                            <td style="padding:8px 12px; font-weight:700; color:var(--gold);">${percFixed}%</td>
+                            <td style="padding:8px 12px; font-weight:700; color:${perc >= 70 ? 'var(--primary)' : '#dc2626'};">${grade}</td>
+                            <td style="padding:8px 12px;">${DB.incharges[s.class] || 'Not Assigned'}</td>
                         `;
                 tbody.appendChild(tr);
             });
@@ -2339,10 +2566,10 @@
 
             const container = document.createElement('div');
             container.style.cssText =
-                'padding:30px; background:white; max-width:1200px; margin:auto; font-family:Inter,sans-serif;';
+                'padding:24px; background:white; max-width:1100px; margin:auto; font-family:Inter,sans-serif;';
             container.innerHTML = `
-                        <div style="text-align:center; margin-bottom:20px; border-bottom:2px solid #065f46; padding-bottom:16px;">
-                            <h2 style="font-size:24px; color:#065f46; font-weight:900;">GES BAIT MUGHAL</h2>
+                        <div style="text-align:center; margin-bottom:16px; border-bottom:2px solid #065f46; padding-bottom:14px;">
+                            <h2 style="font-size:22px; color:#065f46; font-weight:900;">GES BAIT MUGHAL</h2>
                             <p style="font-size:14px; color:#475569;">Complete Student Results Report</p>
                             <p style="font-size:12px; color:#94a3b8;">${filter === 'ALL' ? 'All Classes' : filter} | Generated: ${new Date().toLocaleDateString()}</p>
                         </div>
@@ -2378,7 +2605,7 @@
                                 }).join('')}
                             </tbody>
                         </table>
-                        <div style="margin-top:16px; text-align:center; font-size:12px; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:12px;">
+                        <div style="margin-top:14px; text-align:center; font-size:11px; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:10px;">
                             © ${new Date().getFullYear()} GES Bait Mughal · Smart School System
                         </div>
                     `;
@@ -2433,48 +2660,7 @@
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
             html2pdf().set(opt).from(element).save();
-        }
-
-        // ================================================================
-        // STUDENT REPORT CARD
-        // ================================================================
-        function studentLogin(e) {
-            e.preventDefault();
-            const cls = $('studentLoginClass').value;
-            const roll = parseInt($('studentLoginRoll').value);
-            const student = DB.students.find(s => s.class === cls && s.roll === roll);
-
-            if (!student) {
-                showToast('No student found!', 'error');
-                $('studentReportCard').style.display = 'none';
-                return;
-            }
-
-            $('rcClass').textContent = student.class;
-            $('rcRoll').textContent = student.roll;
-            $('rcName').textContent = student.name;
-            $('rcIncharge').textContent = DB.incharges[student.class] || 'Not Assigned';
-            $('rcTotal').textContent = student.total;
-            $('rcObtained').textContent = student.obtained;
-            $('rcPercentage').textContent = ((student.obtained / student.total) * 100).toFixed(1) + '%';
-            $('rcSubjects').innerHTML = `
-                        <tr><td>Total</td><td>${student.obtained} / ${student.total}</td></tr>
-                    `;
-            $('studentReportCard').style.display = 'block';
-            $('studentLogin').style.display = 'none';
-            showToast('Welcome ' + student.name + '!', 'success');
-        }
-
-        function downloadReportCard() {
-            const element = $('reportCardContent');
-            const opt = {
-                margin: 0.4,
-                filename: 'Report_Card.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save();
+            showToast('📄 Downloading result...', 'success');
         }
 
         // ================================================================
@@ -2527,17 +2713,17 @@
             const slides = DB.slides.length > 0 ? DB.slides : [];
             if (slides.length === 0) {
                 container.innerHTML =
-                    '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:12px; padding:8px;">No slides uploaded. Add one above.</p>';
+                    '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:14px; padding:12px;">No slides uploaded.</p>';
                 return;
             }
             slides.forEach((s, i) => {
                 const div = document.createElement('div');
-                div.style.cssText = 'border-radius:6px; overflow:hidden; background:var(--gray); position:relative;';
+                div.style.cssText = 'border-radius:8px; overflow:hidden; background:var(--gray); position:relative;';
                 div.innerHTML = `
-                            <img src="${s.img}" style="width:100%; height:clamp(50px,7vw,70px); object-fit:cover;" loading="lazy" />
-                            <div style="padding:4px 6px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
-                                <span style="font-size:clamp(8px,0.8vw,11px); font-weight:600;">${s.title}</span>
-                                <button onclick="deleteSlideImage('${s.id}')" class="btn btn-danger btn-sm" style="font-size:clamp(8px,0.8vw,10px); padding:2px 6px;">×</button>
+                            <img src="${s.img}" style="width:100%; height:70px; object-fit:cover;" loading="lazy" />
+                            <div style="padding:6px 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
+                                <span style="font-size:12px; font-weight:600;">${s.title}</span>
+                                <button onclick="deleteSlideImage('${s.id}')" class="btn btn-danger btn-sm">×</button>
                             </div>
                         `;
                 container.appendChild(div);
@@ -2553,13 +2739,13 @@
             DB.announcements.forEach(a => {
                 const div = document.createElement('div');
                 div.style.cssText =
-                    'display:flex; justify-content:space-between; align-items:center; padding:6px 10px; background:var(--gray); border-radius:6px; font-size:clamp(11px,1.1vw,13px); flex-wrap:wrap; gap:4px;';
+                    'display:flex; justify-content:space-between; align-items:center; padding:8px 14px; background:var(--gray); border-radius:8px; font-size:14px; flex-wrap:wrap; gap:6px;';
                 div.innerHTML = `
                             <div>
                                 <strong>${a.title}</strong>
-                                <p style="font-size:clamp(9px,0.9vw,11px); color:var(--text-light);">${a.desc || ''}</p>
+                                <p style="font-size:12px; color:var(--text-light);">${a.desc || ''}</p>
                             </div>
-                            <button onclick="deleteAnnouncement('${a.id}')" class="btn btn-danger btn-sm" style="font-size:clamp(8px,0.8vw,10px); padding:2px 6px;">Del</button>
+                            <button onclick="deleteAnnouncement('${a.id}')" class="btn btn-danger btn-sm">Del</button>
                         `;
                 container.appendChild(div);
             });
@@ -2572,15 +2758,15 @@
             DB.homework.forEach(h => {
                 const div = document.createElement('div');
                 div.style.cssText =
-                    'display:flex; justify-content:space-between; align-items:center; padding:6px 10px; background:var(--gray); border-radius:6px; font-size:clamp(11px,1.1vw,13px); flex-wrap:wrap; gap:4px;';
+                    'display:flex; justify-content:space-between; align-items:center; padding:8px 14px; background:var(--gray); border-radius:8px; font-size:14px; flex-wrap:wrap; gap:6px;';
                 div.innerHTML = `
                             <div>
-                                <span style="font-size:clamp(8px,0.8vw,10px); font-weight:700; background:var(--primary-bg); padding:2px 6px; border-radius:6px;">${h.class}</span>
+                                <span style="font-size:11px; font-weight:700; background:var(--primary-bg); padding:2px 10px; border-radius:6px;">${h.class}</span>
                                 <strong>${h.subject}:</strong> ${h.title}
                             </div>
                             <div>
-                                <button onclick="editAdminHomework('${h.id}')" class="btn btn-primary btn-sm" style="font-size:clamp(8px,0.8vw,10px); padding:2px 6px;">Edit</button>
-                                <button onclick="deleteAdminHomework('${h.id}')" class="btn btn-danger btn-sm" style="font-size:clamp(8px,0.8vw,10px); padding:2px 6px;">Del</button>
+                                <button onclick="editAdminHomework('${h.id}')" class="btn btn-primary btn-sm">Edit</button>
+                                <button onclick="deleteAdminHomework('${h.id}')" class="btn btn-danger btn-sm">Del</button>
                             </div>
                         `;
                 container.appendChild(div);
@@ -2593,12 +2779,12 @@
             container.innerHTML = '';
             DB.gallery.forEach(img => {
                 const div = document.createElement('div');
-                div.style.cssText = 'border-radius:6px; overflow:hidden; background:var(--gray);';
+                div.style.cssText = 'border-radius:8px; overflow:hidden; background:var(--gray);';
                 div.innerHTML = `
-                            <img src="${img.file}" style="width:100%; height:clamp(60px,8vw,80px); object-fit:cover;" loading="lazy" />
-                            <div style="padding:4px 6px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
-                                <span style="font-size:clamp(9px,0.9vw,11px); font-weight:600;">${img.caption}</span>
-                                <button onclick="deleteGallery('${img.id}')" class="btn btn-danger btn-sm" style="font-size:clamp(8px,0.8vw,10px); padding:2px 6px;">×</button>
+                            <img src="${img.file}" style="width:100%; height:80px; object-fit:cover;" loading="lazy" />
+                            <div style="padding:6px 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
+                                <span style="font-size:12px; font-weight:600;">${img.caption}</span>
+                                <button onclick="deleteGallery('${img.id}')" class="btn btn-danger btn-sm">×</button>
                             </div>
                         `;
                 container.appendChild(div);
@@ -2612,10 +2798,10 @@
                 const name = DB.incharges[cls];
                 const div = document.createElement('div');
                 div.style.cssText =
-                    'display:flex; justify-content:space-between; align-items:center; padding:4px 8px; background:var(--gray); border-radius:6px; font-size:clamp(11px,1.1vw,13px); flex-wrap:wrap; gap:4px;';
+                    'display:flex; justify-content:space-between; align-items:center; padding:6px 12px; background:var(--gray); border-radius:6px; font-size:14px; flex-wrap:wrap; gap:6px;';
                 div.innerHTML = `
                             <span><strong>${cls}:</strong> ${name}</span>
-                            <button onclick="removeIncharge('${cls}')" class="btn btn-danger btn-sm" style="font-size:clamp(8px,0.8vw,10px); padding:2px 6px;">Remove</button>
+                            <button onclick="removeIncharge('${cls}')" class="btn btn-danger btn-sm">Remove</button>
                         `;
                 container.appendChild(div);
             });
@@ -2844,23 +3030,6 @@
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        function bulkImportStudents() {
-            showToast('📥 Bulk Import: Select a CSV file with student data', 'warning');
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.csv';
-            input.onchange = function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    showToast('📥 Importing students...', 'success');
-                    setTimeout(() => {
-                        showToast('✅ 10 students imported successfully!', 'success');
-                    }, 1500);
-                }
-            };
-            input.click();
-        }
-
         function downloadAllResults() {
             if (DB.students.length === 0) {
                 showToast('No student records!', 'warning');
@@ -2870,33 +3039,33 @@
             const container = document.createElement('div');
             container.style.cssText = 'padding:20px; background:white; max-width:1000px; margin:auto;';
             container.innerHTML = `
-                        <div style="text-align:center; margin-bottom:16px;">
-                            <h2 style="font-size:clamp(18px,2.5vw,24px); color:#065f46;">GES BAIT MUGHAL</h2>
-                            <p style="font-size:clamp(12px,1.2vw,14px); color:#475569;">Complete Student Results Report</p>
-                            <p style="font-size:clamp(10px,1vw,12px); color:#94a3b8;">${new Date().toLocaleDateString()}</p>
+                        <div style="text-align:center; margin-bottom:14px;">
+                            <h2 style="font-size:22px; color:#065f46;">GES BAIT MUGHAL</h2>
+                            <p style="font-size:14px; color:#475569;">Complete Student Results Report</p>
+                            <p style="font-size:12px; color:#94a3b8;">${new Date().toLocaleDateString()}</p>
                         </div>
-                        <table style="width:100%; border-collapse:collapse; font-size:clamp(10px,1vw,13px);">
+                        <table style="width:100%; border-collapse:collapse; font-size:13px;">
                             <thead>
                                 <tr style="background:#f1f5f9;">
-                                    <th style="border:1px solid #cbd5e1; padding:6px;">Class</th>
-                                    <th style="border:1px solid #cbd5e1; padding:6px;">Roll</th>
-                                    <th style="border:1px solid #cbd5e1; padding:6px;">Name</th>
-                                    <th style="border:1px solid #cbd5e1; padding:6px;">Obtained</th>
-                                    <th style="border:1px solid #cbd5e1; padding:6px;">Total</th>
-                                    <th style="border:1px solid #cbd5e1; padding:6px;">%</th>
-                                    <th style="border:1px solid #cbd5e1; padding:6px;">Incharge</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px;">Class</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px;">Roll</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px;">Name</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px;">Obtained</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px;">Total</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px;">%</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px;">Incharge</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 ${DB.students.map(s => `
                                     <tr>
-                                        <td style="border:1px solid #cbd5e1; padding:6px;">${s.class}</td>
-                                        <td style="border:1px solid #cbd5e1; padding:6px;">${s.roll}</td>
-                                        <td style="border:1px solid #cbd5e1; padding:6px;">${s.name}</td>
-                                        <td style="border:1px solid #cbd5e1; padding:6px;">${s.obtained}</td>
-                                        <td style="border:1px solid #cbd5e1; padding:6px;">${s.total}</td>
-                                        <td style="border:1px solid #cbd5e1; padding:6px; font-weight:700; color:#065f46;">${((s.obtained/s.total)*100).toFixed(1)}%</td>
-                                        <td style="border:1px solid #cbd5e1; padding:6px;">${DB.incharges[s.class] || 'N/A'}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.class}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.roll}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.name}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.obtained}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${s.total}</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px; font-weight:700; color:#065f46;">${((s.obtained/s.total)*100).toFixed(1)}%</td>
+                                        <td style="border:1px solid #cbd5e1; padding:8px;">${DB.incharges[s.class] || 'N/A'}</td>
                                     </tr>
                                 `).join('')}
                             </tbody>
@@ -2925,19 +3094,21 @@
         // INIT
         // ================================================================
         loadData();
+
         $('footerYear').textContent = new Date().getFullYear();
         $('announceDate').value = new Date().toISOString().split('T')[0];
 
         setTimeout(() => {
             const overlay = $('welcomeOverlay');
             if (overlay) overlay.style.display = 'none';
-        }, 3200);
+        }, 3500);
 
-        console.log('🎓 GES Bait Mughal - Smart School System v12.0');
+        console.log('🎓 GES Bait Mughal - Smart School System v17.0');
         console.log('🔑 Admin: admin123 | Teacher PIN: 1234');
-        console.log('📱 Fully responsive for all devices!');
-        console.log('📊 Head can view class-wise and all class reports!');
-        console.log('🖼️ Head can upload slider images directly!');
+        console.log('📱 Fully responsive with PROFESSIONAL size!');
+        console.log('🔥 Real-time Firebase sync enabled!');
+        console.log('📢 Important Notice feature added!');
+        console.log('🎬 Video autoplay with sound!');
     </script>
 
 </body>
