@@ -6,7 +6,7 @@
     <title>GES Bait Mughal · Official School</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23047857'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='white'%3E%F0%9F%8E%93%3C/text%3E%3C/svg%3E" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
     </script>
 
@@ -95,7 +95,7 @@
             width: 100%;
             max-width: 100vw;
             -webkit-font-smoothing: antialiased;
-            font-size: 18px;
+            font-size: 16px;
         }
 
         /* Toast */
@@ -184,6 +184,25 @@
             50% {
                 transform: scale(1.5);
                 opacity: 1;
+            }
+        }
+        .welcome-overlay .welcome-bismillah {
+            font-family: 'Noto Nastaliq Urdu', serif;
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--gold-light);
+            margin-bottom: 22px;
+            text-align: center;
+            line-height: 2;
+            animation: welcomeSlideUp 0.8s ease 0s both;
+            position: relative;
+            z-index: 1;
+            padding: 0 12px;
+        }
+        @media (max-width:480px) {
+            .welcome-overlay .welcome-bismillah {
+                font-size: 24px;
+                margin-bottom: 14px;
             }
         }
         .welcome-overlay .logo-big {
@@ -1018,10 +1037,16 @@
         /* Stats */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 22px;
             margin-bottom: 30px;
             width: 100%;
+        }
+        @media (max-width:900px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+            }
         }
         @media (max-width:768px) {
             .stats-grid {
@@ -1741,7 +1766,7 @@
             padding: 12px 16px;
             border: 2px solid var(--border);
             border-radius: 12px;
-            font-size: 15px;
+            font-size: 16px;
             transition: var(--transition);
             background: var(--bg);
             color: var(--text);
@@ -1751,7 +1776,7 @@
             .form-group select,
             .form-group textarea {
                 padding: 10px 14px;
-                font-size: 14px;
+                font-size: 16px;
             }
         }
         @media (max-width:480px) {
@@ -1759,7 +1784,7 @@
             .form-group select,
             .form-group textarea {
                 padding: 8px 10px;
-                font-size: 12px;
+                font-size: 16px;
             }
         }
         .form-group input:focus,
@@ -2161,6 +2186,7 @@
 
     <!-- Welcome Overlay -->
     <div class="welcome-overlay" id="welcomeOverlay">
+        <p class="welcome-bismillah" lang="ur" dir="rtl">بِسْمِ اللّٰہِ الرَّحْمٰنِ الرَّحِیْمِ</p>
         <div class="logo-big">GBM</div>
         <h1>Welcome to GES Bait Mughal</h1>
         <p>Digital Smart Management System</p>
@@ -2278,6 +2304,11 @@
                     <span class="label">Classes</span>
                 </div>
                 <div class="stat-box">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span class="num" id="statTeachers">0</span>
+                    <span class="label">Teachers</span>
+                </div>
+                <div class="stat-box">
                     <i class="fas fa-bullhorn"></i>
                     <span class="num" id="statNews">0</span>
                     <span class="label">Announcements</span>
@@ -2355,7 +2386,7 @@
                     <span style="font-size:13px; color:var(--text-light);" id="videoStatus">▶️ Playing with sound</span>
                 </div>
                 <div class="video-wrapper">
-                    <video id="schoolVideo" controls playsinline preload="auto" loop>
+                    <video id="schoolVideo" controls playsinline preload="auto">
                         <source src="" type="video/mp4" />
                         Your browser does not support the video tag.
                     </video>
@@ -3137,17 +3168,21 @@
             // ================================================================
             // VIDEO - with sound auto-play
             // ================================================================
+            let videoPlayedOnce = false;
+
             function initVideo() {
                 if (DB.video) {
                     video.src = DB.video;
                     video.load();
+                    video.loop = false;
+                    videoPlayedOnce = false;
                     video.muted = false;
-                    video.loop = true;
                     video.play().then(() => {
                         $('videoStatus').textContent = '▶️ Playing with sound';
                         $('volumeText').textContent = 'Sound on';
                         $('volumeIcon').className = 'fas fa-volume-up';
                     }).catch(() => {
+                        // Autoplay with sound blocked by browser - fall back to muted autoplay
                         video.muted = true;
                         video.play();
                         $('videoStatus').textContent = '🔇 Muted (click to unmute)';
@@ -3159,6 +3194,19 @@
                     $('videoStatus').textContent = '📹 No video uploaded';
                 }
             }
+
+            // Video plays once with sound, then automatically mutes and loops silently
+            video.addEventListener('ended', () => {
+                if (!videoPlayedOnce) {
+                    videoPlayedOnce = true;
+                    video.muted = true;
+                    video.loop = true;
+                    $('volumeIcon').className = 'fas fa-volume-mute';
+                    $('volumeText').textContent = 'Muted';
+                    $('videoStatus').textContent = '🔇 Muted (played once with sound)';
+                    video.play();
+                }
+            });
 
             video.addEventListener('click', () => {
                 video.muted = !video.muted;
@@ -3361,6 +3409,7 @@
             // ================================================================
             function renderHome() {
                 $('statStudents').textContent = DB.totalStudents || 0;
+                $('statTeachers').textContent = getTeacherCount();
                 $('statNews').textContent = DB.announcements.length;
                 $('statGallery').textContent = DB.gallery.length;
 
@@ -3762,10 +3811,14 @@
                 }
             }
 
+            function getTeacherCount() {
+                const incharges = DB.incharges || {};
+                return Object.values(incharges).filter(name => name && name !== 'Not Assigned' && name.trim() !== '').length;
+            }
+
             function updateAdminStats() {
                 $('aStatStudents').textContent = DB.totalStudents || 0;
-                const teachers = new Set(DB.students.map(s => s.class));
-                $('aStatTeachers').textContent = teachers.size;
+                $('aStatTeachers').textContent = getTeacherCount();
                 $('aStatHomework').textContent = DB.homework.length;
                 $('aStatAnnounce').textContent = DB.announcements.length;
             }
@@ -3985,11 +4038,23 @@
                     margin: 0.4,
                     filename: `Student_Report_${filter === 'ALL' ? 'All_Classes' : filter.replace(' ', '_')}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true },
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
                     jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
                 };
-                html2pdf().set(opt).from(container).save();
+                // The element must be attached to the DOM (off-screen) for html2canvas
+                // to measure and render it correctly - otherwise the PDF comes out blank.
+                container.style.position = 'fixed';
+                container.style.left = '-99999px';
+                container.style.top = '0';
+                document.body.appendChild(container);
                 showToast('📊 Report downloading...', 'success');
+                html2pdf().set(opt).from(container).save().then(() => {
+                    document.body.removeChild(container);
+                }).catch(err => {
+                    console.error('PDF generation error:', err);
+                    if (container.parentNode) document.body.removeChild(container);
+                    showToast('❌ PDF generation failed, please try again', 'error');
+                });
             }
 
             // ================================================================
@@ -4023,15 +4088,28 @@
 
             function downloadResultPDF() {
                 const element = $('resultCard');
+                if (!element || element.offsetParent === null) {
+                    showToast('❌ Please search a result first', 'error');
+                    return;
+                }
                 const opt = {
                     margin: 0.4,
-                    filename: 'Student_Result.pdf',
+                    filename: `Result_${$('resName') ? $('resName').textContent.replace(/\s+/g, '_') : 'Student'}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: '#ffffff',
+                        // Skip the on-screen Download/Print buttons - they shouldn't appear in the PDF
+                        ignoreElements: (el) => el.classList && el.classList.contains('no-print')
+                    },
                     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
                 };
-                html2pdf().set(opt).from(element).save();
                 showToast('📄 Downloading result...', 'success');
+                html2pdf().set(opt).from(element).save().catch(err => {
+                    console.error('PDF generation error:', err);
+                    showToast('❌ PDF generation failed, please try again', 'error');
+                });
             }
 
             // ================================================================
@@ -4394,6 +4472,7 @@
                 $('inchargeName').value = '';
                 renderHome();
                 renderAdminIncharges();
+                updateAdminStats();
                 showToast(`✅ ${name} assigned to ${cls}`, 'success');
             }
 
@@ -4403,6 +4482,7 @@
                     saveData();
                     renderHome();
                     renderAdminIncharges();
+                    updateAdminStats();
                     showToast('🗑️ Incharge removed', 'warning');
                 }
             }
@@ -4504,11 +4584,23 @@
                     margin: 0.4,
                     filename: 'All_Students_Results.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true },
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
                     jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
                 };
-                html2pdf().set(opt).from(container).save();
+                // Attach off-screen before rendering - a detached element has no
+                // layout box and produces a blank PDF page.
+                container.style.position = 'fixed';
+                container.style.left = '-99999px';
+                container.style.top = '0';
+                document.body.appendChild(container);
                 showToast('📥 Downloading all results...', 'success');
+                html2pdf().set(opt).from(container).save().then(() => {
+                    document.body.removeChild(container);
+                }).catch(err => {
+                    console.error('PDF generation error:', err);
+                    if (container.parentNode) document.body.removeChild(container);
+                    showToast('❌ PDF generation failed, please try again', 'error');
+                });
             }
 
             function downloadFile(data, name) {
