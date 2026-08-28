@@ -1300,8 +1300,8 @@
       <div>
         <h4><i class="fas fa-envelope"></i> Contact</h4>
         <div class="contact-item"><i class="fas fa-phone"></i> <span id="footerPhone">+92 300 1234567</span></div>
-        <div class="contact-item"><i class="fas fa-envelope"></i> <span id="footerEmail">info@gesbaitmughal.edu.pk</span></div>
-        <div class="contact-item"><i class="fas fa-globe"></i> <span>gesbaitmughal.edu.pk</span></div>
+        <div class="contact-item"><i class="fas fa-envelope"></i> <span id="footerEmail">gesbaitmughal@gmail.com</span></div>
+        <div class="contact-item"><i class="fas fa-globe"></i> <span>gesbaitmughal.github.io</span></div>
       </div>
     </div>
     <div class="footer-bottom">
@@ -1484,7 +1484,6 @@
           DB._loaded = true;
           dataLoadComplete = true;
           renderAll();
-          // hide welcome
           document.getElementById('welcomeOverlay').classList.add('hidden');
           if (DB.notice && DB.notice.title) setTimeout(showNotice, 400);
           else setTimeout(initVideo, 400);
@@ -1726,13 +1725,19 @@
       let students = DB.students;
       if (filter!=='ALL') students = students.filter(s=>s.class===filter);
       if (students.length===0) { showToast('❌ No students to export!','warning'); return; }
-      const container=document.createElement('div');
-      container.style.cssText='padding:22px; background:white; max-width:1100px; margin:auto; font-family:Inter,sans-serif;';
-      container.innerHTML=`<div style="text-align:center; margin-bottom:14px; border-bottom:2px solid #065f46; padding-bottom:12px;"><h2 style="font-size:22px; color:#065f46; font-weight:900;">GES BAIT MUGHAL</h2><p style="font-size:13px; color:#475569;">Complete Student Results Report</p><p style="font-size:11px; color:#94a3b8;">${filter==='ALL'?'All Classes':filter} | Generated: ${new Date().toLocaleDateString()}</p></div><table style="width:100%; border-collapse:collapse; font-size:12px;"><thead><tr style="background:#f1f5f9;"><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">#</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Class</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Roll</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Name</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Obtained</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Total</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Percentage</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Grade</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Incharge</th></tr></thead><tbody>${students.map((s,i)=>{ const perc=((s.obtained/s.total)*100).toFixed(1); let grade=perc>=90?'A+':perc>=80?'A':perc>=70?'B':perc>=60?'C':perc>=50?'D':'F'; return `<tr><td style="border:1px solid #cbd5e1; padding:6px;">${i+1}</td><td style="border:1px solid #cbd5e1; padding:6px;">${s.class}</td><td style="border:1px solid #cbd5e1; padding:6px;">${s.roll}</td><td style="border:1px solid #cbd5e1; padding:6px;">${s.name}</td><td style="border:1px solid #cbd5e1; padding:6px; font-weight:700; color:#065f46;">${s.obtained}</td><td style="border:1px solid #cbd5e1; padding:6px;">${s.total}</td><td style="border:1px solid #cbd5e1; padding:6px; font-weight:700; color:#f5a623;">${perc}%</td><td style="border:1px solid #cbd5e1; padding:6px; font-weight:700; color:${perc>=70?'#065f46':'#dc2626'};">${grade}</td><td style="border:1px solid #cbd5e1; padding:6px;">${DB.incharges[s.class]||'N/A'}</td></tr>`; }).join('')}</tbody></table><div style="margin-top:12px; text-align:center; font-size:10px; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:8px;">© ${new Date().getFullYear()} GES Bait Mughal · Smart School System</div>`;
+      // Build HTML for PDF
+      const content = document.createElement('div');
+      content.style.cssText = 'padding:22px; background:white; max-width:1100px; margin:auto; font-family:Inter,sans-serif;';
+      let tableRows = students.map((s,i)=>{
+        const perc = ((s.obtained/s.total)*100).toFixed(1);
+        let grade = perc>=90?'A+':perc>=80?'A':perc>=70?'B':perc>=60?'C':perc>=50?'D':'F';
+        return `<tr><td style="border:1px solid #cbd5e1; padding:6px;">${i+1}</td><td style="border:1px solid #cbd5e1; padding:6px;">${s.class}</td><td style="border:1px solid #cbd5e1; padding:6px;">${s.roll}</td><td style="border:1px solid #cbd5e1; padding:6px;">${s.name}</td><td style="border:1px solid #cbd5e1; padding:6px; font-weight:700; color:#065f46;">${s.obtained}</td><td style="border:1px solid #cbd5e1; padding:6px;">${s.total}</td><td style="border:1px solid #cbd5e1; padding:6px; font-weight:700; color:#f5a623;">${perc}%</td><td style="border:1px solid #cbd5e1; padding:6px; font-weight:700; color:${perc>=70?'#065f46':'#dc2626'};">${grade}</td><td style="border:1px solid #cbd5e1; padding:6px;">${DB.incharges[s.class]||'N/A'}</td></tr>`;
+      }).join('');
+      content.innerHTML = `<div style="text-align:center; margin-bottom:14px; border-bottom:2px solid #065f46; padding-bottom:12px;"><h2 style="font-size:22px; color:#065f46; font-weight:900;">GES BAIT MUGHAL</h2><p style="font-size:13px; color:#475569;">Complete Student Results Report</p><p style="font-size:11px; color:#94a3b8;">${filter==='ALL'?'All Classes':filter} | Generated: ${new Date().toLocaleDateString()}</p></div><table style="width:100%; border-collapse:collapse; font-size:12px;"><thead><tr style="background:#f1f5f9;"><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">#</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Class</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Roll</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Name</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Obtained</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Total</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Percentage</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Grade</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Incharge</th></tr></thead><tbody>${tableRows}</tbody></table><div style="margin-top:12px; text-align:center; font-size:10px; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:8px;">© ${new Date().getFullYear()} GES Bait Mughal · Smart School System</div>`;
       const opt={ margin:0.4, filename:`Student_Report_${filter==='ALL'?'All_Classes':filter.replace(' ','_')}.pdf`, image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff'}, jsPDF:{unit:'in',format:'a4',orientation:'landscape'} };
-      container.style.position='fixed'; container.style.left='-99999px'; container.style.top='0'; document.body.appendChild(container);
+      content.style.position='fixed'; content.style.left='-99999px'; content.style.top='0'; document.body.appendChild(content);
       showToast('📊 Report downloading...','success');
-      html2pdf().set(opt).from(container).save().then(()=>{ document.body.removeChild(container); }).catch(err=>{ console.error(err); if(container.parentNode) document.body.removeChild(container); showToast('❌ PDF generation failed','error'); });
+      html2pdf().set(opt).from(content).save().then(()=>{ document.body.removeChild(content); }).catch(err=>{ console.error(err); if(content.parentNode) document.body.removeChild(content); showToast('❌ PDF generation failed','error'); });
     }
 
     // ─── RESULT (visitor) ───────────────────────────────────────────
@@ -1746,14 +1751,18 @@
       $('resIncharge').textContent=DB.incharges[student.class]||'Not Assigned';
       $('resTotal').textContent=student.total; $('resObtained').textContent=student.obtained;
       $('resPercentage').textContent=((student.obtained/student.total)*100).toFixed(1)+'%';
-      $('resSubjects').innerHTML=`<tr><td>Total</td><td>${student.obtained} / ${student.total}</td></tr>`;
+      // Show subject breakdown
+      $('resSubjects').innerHTML = `
+        <tr><td><strong>Total</strong></td><td>${student.obtained} / ${student.total}</td></tr>
+        <tr><td><strong>Percentage</strong></td><td>${((student.obtained/student.total)*100).toFixed(1)}%</td></tr>
+      `;
       $('resultDisplay').style.display='block';
       showToast('✅ Result found!','success');
     }
     function downloadResultPDF() {
       const el = $('resultCard');
       if (!el || el.offsetParent===null) { showToast('❌ Please search a result first','error'); return; }
-      // ensure element is visible
+      // Ensure all data is visible
       const display = el.style.display;
       el.style.display = 'block';
       const opt={ margin:0.4, filename:`Result_${$('resName')?$('resName').textContent.replace(/\s+/g,'_'):'Student'}.pdf`, image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',ignoreElements:(el)=>el.classList&&el.classList.contains('no-print')}, jsPDF:{unit:'in',format:'letter',orientation:'portrait'} };
@@ -1821,7 +1830,6 @@
         const parsed = JSON.parse(saved);
         for (const k in parsed) if (parsed.hasOwnProperty(k) && k!=='_loaded') DB[k] = parsed[k];
         DB._loaded = true;
-        // render immediately but keep welcome overlay visible
         renderAll();
       }
     } catch(e) {}
