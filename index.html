@@ -57,6 +57,7 @@
             --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             --slider-height: 520px;
+            --urdu-font: 'Noto Nastaliq Urdu', 'Inter', -apple-system, sans-serif;
         }
 
         [data-theme="dark"] {
@@ -98,31 +99,47 @@
             font-size: 16px;
         }
 
-        /* Urdu language mode */
+        /* ================================================================
+           URDU LANGUAGE MODE - PURE NASTALIQ
+        ================================================================ */
         body.lang-ur {
-            font-family: 'Noto Nastaliq Urdu', 'Inter', -apple-system, sans-serif;
-            line-height: 2.1;
+            font-family: var(--urdu-font) !important;
+            line-height: 2.2 !important;
         }
-        html[dir="rtl"] body.lang-ur .nav-links,
-        html[dir="rtl"] body.lang-ur .banner-left,
+        body.lang-ur * {
+            font-family: var(--urdu-font) !important;
+        }
+        body.lang-ur .num,
+        body.lang-ur .stat-box .num,
+        body.lang-ur .timing-row .value,
+        body.lang-ur .report-card .summary .item .value,
+        body.lang-ur .btn,
+        body.lang-ur .nav-btn,
+        body.lang-ur input,
+        body.lang-ur select,
+        body.lang-ur textarea,
+        body.lang-ur .banner-badge,
+        body.lang-ur .lang-toggle,
+        body.lang-ur .role-badge,
+        body.lang-ur .free-badge {
+            font-family: var(--urdu-font) !important;
+        }
+        /* Keep numbers and codes LTR */
+        body.lang-ur .num,
+        body.lang-ur input[type="number"],
+        body.lang-ur input[type="password"],
+        body.lang-ur .marks-table td:nth-child(2),
+        body.lang-ur .video-controls,
+        body.lang-ur #schoolVideo {
+            direction: ltr !important;
+        }
+        html[dir="rtl"] body.lang-ur .banner-title .sub,
         html[dir="rtl"] body.lang-ur .banner-right,
+        html[dir="rtl"] body.lang-ur .nav-links,
         html[dir="rtl"] body.lang-ur .card-header,
         html[dir="rtl"] body.lang-ur .timing-row,
         html[dir="rtl"] body.lang-ur .stat-box .label {
-            font-family: 'Noto Nastaliq Urdu', 'Inter', -apple-system, sans-serif;
-        }
-        /* Numbers, video controls, and codes always stay LTR for readability */
-        html[dir="rtl"] .num,
-        html[dir="rtl"] #schoolVideo,
-        html[dir="rtl"] .video-controls,
-        html[dir="rtl"] input[type="number"],
-        html[dir="rtl"] input[type="password"],
-        html[dir="rtl"] .marks-table td:nth-child(2) {
-            direction: ltr;
-        }
-        html[dir="rtl"] .banner-badge i,
-        html[dir="rtl"] .lang-toggle i {
-            margin-right: 0;
+            font-family: var(--urdu-font) !important;
         }
 
         /* Toast */
@@ -191,7 +208,7 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            animation: welcomeFadeOut 0.8s ease 3.5s forwards;
+            animation: welcomeFadeOut 0.8s ease 3.8s forwards;
             pointer-events: none;
             padding: 24px;
             overflow: hidden;
@@ -233,27 +250,28 @@
             flex-direction: column;
             align-items: center;
             max-width: 92vw;
+            text-align: center;
         }
         .welcome-overlay .welcome-bismillah {
-            font-family: 'Noto Nastaliq Urdu', serif;
-            font-size: clamp(22px, 6vw, 34px);
-            font-weight: 600;
+            font-family: var(--urdu-font) !important;
+            font-size: clamp(24px, 6vw, 38px);
+            font-weight: 700;
             color: var(--gold-light);
             margin-bottom: clamp(14px, 3vw, 24px);
             text-align: center;
-            line-height: 2;
+            line-height: 2.4;
             animation: welcomeSlideUp 0.8s ease 0s both;
             padding: 0 12px;
         }
         .welcome-overlay .logo-big {
-            width: clamp(96px, 20vw, 140px);
-            height: clamp(96px, 20vw, 140px);
+            width: clamp(100px, 20vw, 150px);
+            height: clamp(100px, 20vw, 150px);
             background: rgba(255, 255, 255, 0.08);
             border-radius: 30%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: clamp(36px, 8vw, 52px);
+            font-size: clamp(40px, 8vw, 56px);
             font-weight: 900;
             color: white;
             border: 3px solid rgba(255, 255, 255, 0.18);
@@ -275,7 +293,7 @@
         }
         .welcome-overlay h1 {
             color: white;
-            font-size: clamp(22px, 5.2vw, 36px);
+            font-size: clamp(24px, 5.2vw, 38px);
             font-weight: 900;
             text-align: center;
             animation: welcomeSlideUp 0.8s ease 0.2s both;
@@ -284,11 +302,11 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             padding: 0 10px;
-            line-height: 1.25;
+            line-height: 1.3;
         }
         .welcome-overlay p {
             color: rgba(255, 255, 255, 0.85);
-            font-size: clamp(13px, 2.6vw, 16px);
+            font-size: clamp(14px, 2.6vw, 17px);
             margin-top: 8px;
             animation: welcomeSlideUp 0.8s ease 0.4s both;
             text-align: center;
@@ -367,24 +385,24 @@
         .notice-box {
             background: var(--card-bg);
             border-radius: var(--radius-lg);
-            max-width: 640px;
+            max-width: 620px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            padding: clamp(24px, 4vw, 40px) clamp(20px, 4vw, 40px);
+            padding: clamp(28px, 4vw, 44px) clamp(24px, 4vw, 44px);
             box-shadow: var(--shadow-xl);
             position: relative;
             border-top: 6px solid var(--gold);
         }
         .notice-box .close-btn {
             position: absolute;
-            top: 12px;
-            right: 14px;
+            top: 14px;
+            right: 16px;
             background: var(--gray);
             border: none;
             font-size: 20px;
-            width: 34px;
-            height: 34px;
+            width: 36px;
+            height: 36px;
             color: var(--text-light);
             cursor: pointer;
             transition: var(--transition);
@@ -400,26 +418,26 @@
             transform: rotate(90deg);
         }
         .notice-box .notice-title {
-            font-size: clamp(19px, 3.6vw, 24px);
+            font-size: clamp(20px, 3.6vw, 26px);
             font-weight: 800;
             color: var(--primary);
             margin-bottom: 12px;
             margin-right: 34px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             line-height: 1.3;
         }
         .notice-box .notice-title i {
             color: var(--gold);
-            font-size: clamp(20px, 3.6vw, 24px);
+            font-size: clamp(22px, 3.6vw, 28px);
             flex-shrink: 0;
         }
         .notice-box .notice-desc {
-            font-size: clamp(14px, 2.4vw, 16px);
+            font-size: clamp(15px, 2.4vw, 17px);
             color: var(--text-light);
-            line-height: 1.9;
-            margin-bottom: 16px;
+            line-height: 2;
+            margin-bottom: 18px;
         }
         .notice-box .notice-img-wrap {
             width: 100%;
@@ -437,14 +455,14 @@
             background: var(--gray);
         }
         .notice-box .notice-close-bottom {
-            margin-top: 20px;
-            padding: 12px 40px;
+            margin-top: 22px;
+            padding: 14px 40px;
             background: var(--primary);
             color: white;
             border: none;
             border-radius: 12px;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 16px;
             cursor: pointer;
             transition: var(--transition);
             width: 100%;
@@ -687,32 +705,58 @@
             color: var(--gold);
             margin-right: 6px;
         }
-        .lang-toggle {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            padding: 8px 18px;
-            border-radius: 40px;
-            color: white;
-            font-size: clamp(12px, 2.2vw, 14px);
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            white-space: nowrap;
-            display: inline-flex;
+        /* Language Toggle Switch */
+        .lang-switch {
+            display: flex;
             align-items: center;
             gap: 8px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(4px);
+            border-radius: 40px;
+            padding: 4px 8px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            cursor: pointer;
+            transition: var(--transition);
         }
-        .lang-toggle:hover {
-            background: var(--gold);
+        .lang-switch:hover {
+            background: rgba(255, 255, 255, 0.2);
             border-color: var(--gold);
-            color: var(--primary-dark);
-            transform: translateY(-2px) scale(1.05);
         }
-        @media (max-width:480px) {
-            .lang-toggle {
-                padding: 5px 14px;
-            }
+        .lang-switch .lang-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 0 4px;
+            transition: var(--transition);
+        }
+        .lang-switch .lang-label.active {
+            color: white;
+        }
+        .lang-switch .toggle-track {
+            width: 40px;
+            height: 22px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 40px;
+            position: relative;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+        .lang-switch .toggle-track .toggle-thumb {
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .lang-switch .toggle-track.active {
+            background: var(--gold);
+        }
+        .lang-switch .toggle-track.active .toggle-thumb {
+            left: 20px;
         }
 
         /* Navigation */
@@ -1947,13 +1991,13 @@
         .footer {
             background: var(--card-bg);
             border-top: 1px solid var(--border);
-            padding: 40px 32px 24px;
-            margin-top: 44px;
+            padding: 30px 30px 16px;
+            margin-top: 40px;
             width: 100%;
         }
         @media (max-width:768px) {
             .footer {
-                padding: 24px 16px 16px;
+                padding: 24px 16px 14px;
                 margin-top: 28px;
             }
         }
@@ -1967,22 +2011,29 @@
             max-width: 1280px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 32px;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 24px;
         }
-        @media (max-width:640px) {
+        @media (max-width:768px) {
+            .footer .container {
+                grid-template-columns: 1fr 1fr;
+                gap: 18px;
+            }
+        }
+        @media (max-width:480px) {
             .footer .container {
                 grid-template-columns: 1fr;
-                gap: 20px;
+                gap: 14px;
             }
         }
         .footer h4 {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 8px;
+            color: var(--primary);
         }
         @media (max-width:768px) {
             .footer h4 {
@@ -1994,14 +2045,11 @@
                 font-size: 14px;
             }
         }
-        .footer h4 i {
-            color: var(--primary);
-        }
         .footer p,
         .footer a {
             color: var(--text-light);
-            font-size: 15px;
-            line-height: 2.2;
+            font-size: 14px;
+            line-height: 2;
             text-decoration: none;
             display: block;
             transition: var(--transition);
@@ -2022,21 +2070,33 @@
             color: var(--primary);
             transform: translateX(5px);
         }
+        .footer .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-light);
+            line-height: 2;
+        }
+        .footer .contact-item i {
+            width: 20px;
+            color: var(--primary);
+        }
         .footer-bottom {
             max-width: 1280px;
-            margin: 18px auto 0;
-            padding-top: 16px;
+            margin: 14px auto 0;
+            padding-top: 14px;
             border-top: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 10px;
-            font-size: 14px;
+            gap: 8px;
+            font-size: 13px;
             color: var(--text-light);
         }
         @media (max-width:768px) {
             .footer-bottom {
-                font-size: 12px;
+                font-size: 11px;
             }
         }
         @media (max-width:480px) {
@@ -2126,8 +2186,23 @@
             transform: scale(1.05);
         }
 
-        /* Universal safety net: prevent inline multi-column grids (forms, lists)
-           from cramping or clipping content on small screens */
+        /* Loading State */
+        .loading-spinner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            gap: 12px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        .loading-spinner i {
+            font-size: 28px;
+            color: var(--primary);
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Universal safety net */
         @media (max-width:640px) {
             .card [style*="grid-template-columns:1fr 1fr 1fr 1fr"],
             .card [style*="grid-template-columns:1fr 1fr 1fr"] {
@@ -2231,9 +2306,14 @@
                 </div>
             </div>
             <div class="banner-right">
-                <button class="lang-toggle" id="langToggle" title="Switch Language / زبان تبدیل کریں">
-                    <i class="fas fa-language"></i> <span id="langToggleLabel">اردو</span>
-                </button>
+                <!-- Language Toggle Switch -->
+                <div class="lang-switch" id="langSwitch" title="Switch Language / زبان تبدیل کریں">
+                    <span class="lang-label" id="langLabelEn">EN</span>
+                    <div class="toggle-track" id="langTrack">
+                        <div class="toggle-thumb" id="langThumb"></div>
+                    </div>
+                    <span class="lang-label" id="langLabelUr">UR</span>
+                </div>
                 <span class="banner-badge"><i class="fas fa-graduation-cap"></i> <span data-i18n="free_education">Free Education</span></span>
             </div>
         </div>
@@ -3007,7 +3087,7 @@
                 <div>
                     <h4><i class="fas fa-school"></i> GES Bait Mughal</h4>
                     <p data-i18n="footer_about">Government Elementary School committed to free quality education and moral values for every child.</p>
-                    <p style="margin-top:8px;"><i class="fas fa-map-pin"></i> <span data-i18n="footer_address">Bait Mughal, Jalal Pur Pir Wala, Punjab</span></p>
+                    <p style="margin-top:6px;"><i class="fas fa-map-pin"></i> <span data-i18n="footer_address">Bait Mughal, Jalal Pur Pir Wala, Punjab</span></p>
                 </div>
                 <div>
                     <h4><i class="fas fa-link"></i> <span data-i18n="quick_links">Quick Links</span></h4>
@@ -3021,6 +3101,12 @@
                     <p><span data-i18n="footer_school_label">School:</span> <span id="footerTimings">08:00 – 01:30</span></p>
                     <p><span data-i18n="footer_break_label">Break:</span> <span id="footerBreak">10:30 – 11:00</span></p>
                     <p><span data-i18n="footer_working_label">Working:</span> <span data-i18n="mon_fri">Monday – Friday</span></p>
+                </div>
+                <div>
+                    <h4><i class="fas fa-envelope"></i> Contact</h4>
+                    <div class="contact-item"><i class="fas fa-phone"></i> <span id="footerPhone">+92 300 1234567</span></div>
+                    <div class="contact-item"><i class="fas fa-envelope"></i> <span id="footerEmail">info@gesbaitmughal.edu.pk</span></div>
+                    <div class="contact-item"><i class="fas fa-globe"></i> <span>gesbaitmughal.edu.pk</span></div>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -3158,18 +3244,21 @@
                 });
 
                 const html = document.documentElement;
+                const track = document.getElementById('langTrack');
                 if (lang === 'ur') {
                     html.setAttribute('lang', 'ur');
                     html.setAttribute('dir', 'rtl');
                     document.body.classList.add('lang-ur');
-                    const label = $('langToggleLabel');
-                    if (label) label.textContent = 'English';
+                    document.getElementById('langLabelEn').classList.remove('active');
+                    document.getElementById('langLabelUr').classList.add('active');
+                    if (track) track.classList.add('active');
                 } else {
                     html.setAttribute('lang', 'en');
                     html.setAttribute('dir', 'ltr');
                     document.body.classList.remove('lang-ur');
-                    const label = $('langToggleLabel');
-                    if (label) label.textContent = 'اردو';
+                    document.getElementById('langLabelEn').classList.add('active');
+                    document.getElementById('langLabelUr').classList.remove('active');
+                    if (track) track.classList.remove('active');
                 }
                 localStorage.setItem('siteLang', lang);
             }
@@ -3179,6 +3268,9 @@
                 const next = current === 'ur' ? 'en' : 'ur';
                 applyLanguage(next);
             }
+
+            // Language toggle switch
+            document.getElementById('langSwitch').addEventListener('click', toggleLanguage);
 
             // ================================================================
             // DATA STORE
@@ -3207,8 +3299,9 @@
                     'Class 7': '1234',
                     'Class 8': '1234'
                 },
-                contact: { address: 'Bait Mughal, Jalal Pur Pir Wala, Punjab', phone: '+92 300 1234567' },
-                totalStudents: 0
+                contact: { address: 'Bait Mughal, Jalal Pur Pir Wala, Punjab', phone: '+92 300 1234567', email: 'info@gesbaitmughal.edu.pk' },
+                totalStudents: 0,
+                _loaded: false
             };
 
             // ================================================================
@@ -3217,6 +3310,7 @@
             const $ = id => document.getElementById(id);
             const video = $('schoolVideo');
             let noticeShown = false;
+            let dataLoaded = false;
 
             // ================================================================
             // TOAST
@@ -3265,19 +3359,6 @@
             applyTheme();
 
             // ================================================================
-            // LANGUAGE TOGGLE (EN / UR)
-            // ================================================================
-            const langToggle = $('langToggle');
-            if (langToggle) {
-                langToggle.addEventListener('click', () => {
-                    toggleLanguage();
-                    const newLang = getCurrentLang();
-                    showToast(newLang === 'ur' ? '✅ اردو زبان منتخب کر لی گئی' : '✅ Switched to English', 'success');
-                });
-            }
-            applyLanguage(getCurrentLang());
-
-            // ================================================================
             // NAVIGATION
             // ================================================================
             const navBtns = document.querySelectorAll('.nav-btn');
@@ -3324,7 +3405,6 @@
                         $('volumeText').textContent = 'Sound on';
                         $('volumeIcon').className = 'fas fa-volume-up';
                     }).catch(() => {
-                        // Autoplay with sound blocked by browser - fall back to muted autoplay
                         video.muted = true;
                         video.play();
                         $('videoStatus').textContent = '🔇 Muted (click to unmute)';
@@ -3337,7 +3417,6 @@
                 }
             }
 
-            // Video plays once with sound, then automatically mutes and loops silently
             video.addEventListener('ended', () => {
                 if (!videoPlayedOnce) {
                     videoPlayedOnce = true;
@@ -3459,7 +3538,6 @@
 
             function closeNotice() {
                 $('noticeOverlay').classList.remove('active');
-                // Start video after notice is closed
                 setTimeout(() => {
                     initVideo();
                 }, 300);
@@ -3474,6 +3552,9 @@
             // ================================================================
             // FIREBASE
             // ================================================================
+            let firebaseReady = false;
+            let firebaseRetries = 0;
+
             function saveToFirebase() {
                 if (!window.firebaseDB) return;
                 const { ref, set, db } = window.firebaseDB;
@@ -3485,30 +3566,85 @@
             }
 
             function loadFromFirebase() {
-                if (!window.firebaseDB) { setTimeout(loadFromFirebase, 1000); return; }
+                if (!window.firebaseDB) {
+                    if (firebaseRetries < 10) {
+                        firebaseRetries++;
+                        setTimeout(loadFromFirebase, 600);
+                    }
+                    return;
+                }
                 const { ref, onValue, db } = window.firebaseDB;
-                onValue(ref(db, 'gesData'), (snapshot) => {
+                const dataRef = ref(db, 'gesData');
+                // Show loading state
+                showLoadingState(true);
+
+                onValue(dataRef, (snapshot) => {
                     const data = snapshot.val();
                     if (data) {
                         for (const key in data) {
-                            if (data.hasOwnProperty(key)) {
+                            if (data.hasOwnProperty(key) && key !== '_loaded') {
                                 DB[key] = data[key];
                             }
                         }
+                        DB._loaded = true;
+                        dataLoaded = true;
+                        showLoadingState(false);
                         renderAll();
                         if (DB.notice && DB.notice.title) {
-                            setTimeout(showNotice, 800);
+                            setTimeout(showNotice, 500);
                         } else {
-                            setTimeout(initVideo, 800);
+                            setTimeout(initVideo, 500);
                         }
                     } else {
+                        // No data in Firebase, save defaults
+                        DB._loaded = true;
+                        dataLoaded = true;
+                        showLoadingState(false);
                         saveToFirebase();
-                        setTimeout(initVideo, 800);
+                        renderAll();
+                        setTimeout(initVideo, 500);
                     }
                 }, (error) => {
                     console.error('Firebase read error:', error);
-                    setTimeout(initVideo, 800);
+                    // If Firebase fails, use localStorage data
+                    if (!dataLoaded) {
+                        try {
+                            const saved = localStorage.getItem('gesData');
+                            if (saved) {
+                                const parsed = JSON.parse(saved);
+                                for (const key in parsed) {
+                                    if (parsed.hasOwnProperty(key) && key !== '_loaded') {
+                                        DB[key] = parsed[key];
+                                    }
+                                }
+                                DB._loaded = true;
+                                dataLoaded = true;
+                            }
+                        } catch (e) {}
+                        showLoadingState(false);
+                        renderAll();
+                        setTimeout(initVideo, 500);
+                    }
                 });
+            }
+
+            function showLoadingState(show) {
+                // Show/hide loading spinner on home tab
+                const homeTab = $('tab-home');
+                if (!homeTab) return;
+                let spinner = document.getElementById('loadingSpinner');
+                if (show) {
+                    if (!spinner) {
+                        spinner = document.createElement('div');
+                        spinner.id = 'loadingSpinner';
+                        spinner.className = 'loading-spinner';
+                        spinner.innerHTML = '<i class="fas fa-spinner"></i> Loading data...';
+                        homeTab.prepend(spinner);
+                    }
+                    spinner.style.display = 'flex';
+                } else {
+                    if (spinner) spinner.style.display = 'none';
+                }
             }
 
             // ================================================================
@@ -3520,18 +3656,22 @@
             }
 
             function loadData() {
+                // First try localStorage for instant display
                 try {
                     const saved = localStorage.getItem('gesData');
                     if (saved) {
                         const parsed = JSON.parse(saved);
                         for (const key in parsed) {
-                            if (parsed.hasOwnProperty(key)) {
+                            if (parsed.hasOwnProperty(key) && key !== '_loaded') {
                                 DB[key] = parsed[key];
                             }
                         }
+                        DB._loaded = true;
+                        dataLoaded = true;
                     }
                 } catch (e) {}
                 renderAll();
+                // Then load from Firebase for latest data
                 loadFromFirebase();
             }
 
@@ -3544,6 +3684,8 @@
                 renderGallery();
                 renderTeacherUI();
                 renderAdminUI();
+                // Apply language again after render
+                applyLanguage(getCurrentLang());
             }
 
             // ================================================================
@@ -3561,6 +3703,8 @@
 
                 $('headmasterName').textContent = DB.headmaster;
                 $('aboutText').textContent = DB.about;
+                $('footerPhone').textContent = DB.contact.phone || '+92 300 1234567';
+                $('footerEmail').textContent = DB.contact.email || 'info@gesbaitmughal.edu.pk';
 
                 // Announcements
                 const list = $('announcementList');
@@ -4182,8 +4326,6 @@
                     html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
                     jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
                 };
-                // The element must be attached to the DOM (off-screen) for html2canvas
-                // to measure and render it correctly - otherwise the PDF comes out blank.
                 container.style.position = 'fixed';
                 container.style.left = '-99999px';
                 container.style.top = '0';
@@ -4241,7 +4383,6 @@
                         scale: 2,
                         useCORS: true,
                         backgroundColor: '#ffffff',
-                        // Skip the on-screen Download/Print buttons - they shouldn't appear in the PDF
                         ignoreElements: (el) => el.classList && el.classList.contains('no-print')
                     },
                     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
@@ -4728,8 +4869,6 @@
                     html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
                     jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
                 };
-                // Attach off-screen before rendering - a detached element has no
-                // layout box and produces a blank PDF page.
                 container.style.position = 'fixed';
                 container.style.left = '-99999px';
                 container.style.top = '0';
@@ -4755,16 +4894,19 @@
             // ================================================================
             // INIT
             // ================================================================
+            // Apply initial language
+            applyLanguage(getCurrentLang());
+
+            // Load data
             loadData();
 
             $('footerYear').textContent = new Date().getFullYear();
             $('announceDate').value = new Date().toISOString().split('T')[0];
 
-            // Hide welcome overlay after animation
             setTimeout(() => {
                 const overlay = $('welcomeOverlay');
                 if (overlay) overlay.style.display = 'none';
-            }, 3600);
+            }, 3800);
 
             console.log('🎓 GES Bait Mughal - Smart School System v23.0');
             console.log('🔑 Admin: admin123 | Teacher PIN: 1234');
