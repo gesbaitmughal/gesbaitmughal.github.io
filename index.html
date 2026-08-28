@@ -1559,12 +1559,14 @@
             animation: spin 0.8s linear infinite;
         }
 
-        /* Print Styles - Only Print, No Download */
+        /* ───────── PRINT STYLES ───────── */
         @media print {
+            /* Hide all non-print elements */
             .no-print {
                 display: none !important;
             }
             .nav-bar,
+            .hero-slider,
             .hero-slider .controls,
             .hero-slider .dots,
             .btn,
@@ -1574,135 +1576,154 @@
             .theme-toggle,
             .role-badge,
             .scroll-top,
-            .toast-container {
+            .toast-container,
+            .stats-grid,
+            .grid-2:not(.print-grid),
+            .footer,
+            .bg-shapes,
+            .banner-right,
+            .banner .container .banner-right,
+            .banner .container .banner-badge {
                 display: none !important;
             }
-            .card {
-                box-shadow: none !important;
-                border: 1px solid #ddd !important;
-                transform: none !important;
-                break-inside: avoid;
-            }
+
+            /* Show only the report card and its content */
             body {
                 background: #fff !important;
                 color: #000 !important;
+                padding: 0 !important;
+                margin: 0 !important;
             }
+
+            .main-content {
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+            }
+
             .tab-content {
                 display: block !important;
             }
             .tab-content:not(.active) {
                 display: none !important;
             }
+
+            /* Report card styling for print */
             .report-card {
                 border: 2px solid #000 !important;
-                break-inside: avoid;
-                page-break-inside: avoid;
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 20px !important;
+                border-radius: 0 !important;
+                background: #fff !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
             }
+
+            .report-card .header h2 {
+                color: #000 !important;
+                font-size: 22px !important;
+            }
+            .report-card .header p {
+                color: #333 !important;
+            }
+
             .report-card .student-info {
                 background: #f5f5f5 !important;
+                border: 1px solid #ddd !important;
+                padding: 12px !important;
             }
+
+            .report-card .student-info div {
+                color: #000 !important;
+            }
+            .report-card .student-info strong {
+                color: #000 !important;
+            }
+
             .report-card .marks-table th {
                 background: #333 !important;
                 color: #fff !important;
+                border: 1px solid #000 !important;
+            }
+            .report-card .marks-table td {
+                border: 1px solid #ddd !important;
+                color: #000 !important;
             }
             .report-card .marks-table tr:nth-child(even) {
                 background: #f9f9f9 !important;
             }
+
             .report-card .summary .item {
                 background: #f5f5f5 !important;
+                border: 1px solid #ddd !important;
             }
-            .banner {
-                background: #0a5c3a !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            .banner h1 {
-                color: #fff !important;
-                -webkit-text-fill-color: #fff !important;
-                background: none !important;
-            }
-            .banner .sub {
-                color: rgba(255, 255, 255, 0.85) !important;
-            }
-            .banner-badge {
-                background: rgba(255, 255, 255, 0.12) !important;
-                color: #fff !important;
-            }
-            .stat-box {
-                background: #f5f5f5 !important;
-            }
-            .stat-box .num {
-                color: #0a5c3a !important;
-            }
-            .footer {
-                background: #f5f5f5 !important;
-                border-top: 1px solid #ddd !important;
-            }
-            .footer h4 {
-                color: #0a5c3a !important;
-            }
-            .footer p,
-            .footer a {
-                color: #333 !important;
-            }
-            .free-badge {
-                background: #d5f5e3 !important;
-                color: #064026 !important;
-            }
-            .about-text {
-                color: #333 !important;
-            }
-            .timing-row .label {
+            .report-card .summary .item .label {
                 color: #555 !important;
             }
-            .timing-row .value {
+            .report-card .summary .item .value {
                 color: #000 !important;
             }
-            .incharge-item {
-                background: #f5f5f5 !important;
+
+            /* Hide result display wrapper if empty */
+            #resultDisplay {
+                display: block !important;
             }
-            .incharge-item .avatar {
-                background: #0a5c3a !important;
+
+            /* Ensure no extra pages */
+            .report-card .header,
+            .report-card .student-info,
+            .report-card .marks-table,
+            .report-card .summary {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            /* Print container for admin reports */
+            .print-container {
+                display: block !important;
+                padding: 20px !important;
+                background: #fff !important;
+            }
+            .print-container table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+            }
+            .print-container table th,
+            .print-container table td {
+                border: 1px solid #000 !important;
+                padding: 6px !important;
+                text-align: left !important;
+            }
+            .print-container table th {
+                background: #333 !important;
                 color: #fff !important;
             }
-            .announce-item .icon {
-                background: #e8f5ee !important;
-                color: #0a5c3a !important;
+            .print-container table tr:nth-child(even) {
+                background: #f9f9f9 !important;
             }
-            .announce-item .badge.urgent {
-                background: #fde8e8 !important;
-                color: #c0392b !important;
+            .print-container h2 {
+                color: #000 !important;
             }
-            .announce-item .badge.event {
-                background: #d6eaf8 !important;
-                color: #2471a3 !important;
-            }
-            .announce-item .badge.important {
-                background: #fdebd0 !important;
-                color: #d35400 !important;
-            }
-            .notice-box {
-                background: #fff !important;
-                border-top: 6px solid #f5a623 !important;
-            }
-            .notice-box .notice-title {
-                color: #0a5c3a !important;
-            }
-            .notice-box .notice-title i {
-                color: #f5a623 !important;
-            }
-            .notice-box .notice-desc {
+            .print-container p {
                 color: #333 !important;
             }
         }
 
-        /* Print Button - Only Print, No Download */
-        .print-btn {
-            background: var(--primary);
-            color: #fff;
+        /* Print helper class */
+        .print-container {
+            display: none;
         }
-        .print-btn:hover {
-            background: var(--primary-dark);
+        .print-container.active {
+            display: block;
+        }
+
+        /* Fix for result display */
+        #resultDisplay {
+            display: none;
+        }
+        #resultDisplay.active {
+            display: block;
         }
     </style>
 </head>
@@ -2250,7 +2271,6 @@
             headmaster: 'Headmaster',
             about: 'GES Bait Mughal is a government elementary school dedicated to providing free quality education, strong moral values, and a safe, nurturing environment for every child in the Bait Mughal community.',
             video: '',
-            // Credentials stored in Firebase, not in code
             contact: { address: 'Bait Mughal, Jalal Pur Pir Wala, Punjab', phone: '+92 300 1234567',
                 email: 'gesbaitmughal@gmail.com' },
             totalStudents: 0,
@@ -2999,86 +3019,112 @@
         });
     }
 
+    // ─── PRINT FUNCTIONS ──────────────────────────────────────────────
+
     function printResultReport() {
         const filter = $('reportClassFilter').value;
         let students = DB.students;
         if (filter !== 'ALL') students = students.filter(s => s.class === filter);
         if (students.length === 0) { showToast('❌ No students to print!', 'warning'); return; }
 
-        // Build a printable container
+        // Build a clean print container
         const printContainer = document.createElement('div');
+        printContainer.className = 'print-container active';
         printContainer.style.cssText =
-            'padding:20px; background:white; max-width:1100px; margin:auto; font-family:Inter,sans-serif;';
+            'padding:20px; background:white; max-width:1100px; margin:0 auto; font-family:Inter,sans-serif;';
+
         let tableRows = students.map((s, i) => {
             const perc = ((s.obtained / s.total) * 100).toFixed(1);
             const gradeInfo = calculateGrade(parseFloat(perc));
-            return `<tr><td style="border:1px solid #cbd5e1; padding:6px;">${i+1}</td><td style="border:1px solid #cbd5e1; padding:6px;">${s.class}</td><td style="border:1px solid #cbd5e1; padding:6px;">${s.roll}</td><td style="border:1px solid #cbd5e1; padding:6px;">${s.name}</td><td style="border:1px solid #cbd5e1; padding:6px; font-weight:700; color:#065f46;">${s.obtained}</td><td style="border:1px solid #cbd5e1; padding:6px;">${s.total}</td><td style="border:1px solid #cbd5e1; padding:6px; font-weight:700; color:#f5a623;">${perc}%</td><td style="border:1px solid #cbd5e1; padding:6px; font-weight:700; color:${gradeInfo.pass ? '#065f46' : '#dc2626'};">${gradeInfo.grade}</td><td style="border:1px solid #cbd5e1; padding:6px;">${DB.incharges[s.class]||'N/A'}</td></tr>`;
+            return `<tr><td style="border:1px solid #000; padding:6px;">${i+1}</td><td style="border:1px solid #000; padding:6px;">${s.class}</td><td style="border:1px solid #000; padding:6px;">${s.roll}</td><td style="border:1px solid #000; padding:6px;">${s.name}</td><td style="border:1px solid #000; padding:6px; font-weight:700;">${s.obtained}</td><td style="border:1px solid #000; padding:6px;">${s.total}</td><td style="border:1px solid #000; padding:6px; font-weight:700;">${perc}%</td><td style="border:1px solid #000; padding:6px; font-weight:700;">${gradeInfo.grade}</td><td style="border:1px solid #000; padding:6px;">${DB.incharges[s.class]||'N/A'}</td></tr>`;
         }).join('');
+
         printContainer.innerHTML = `
-                <div style="text-align:center; margin-bottom:14px; border-bottom:2px solid #065f46; padding-bottom:12px;">
-                    <h2 style="font-size:22px; color:#065f46; font-weight:900;">GES BAIT MUGHAL</h2>
-                    <p style="font-size:13px; color:#475569;">Complete Student Results Report</p>
-                    <p style="font-size:11px; color:#94a3b8;">${filter==='ALL'?'All Classes':filter} | Generated: ${new Date().toLocaleDateString()}</p>
+                <div style="text-align:center; margin-bottom:14px; border-bottom:2px solid #000; padding-bottom:12px;">
+                    <h2 style="font-size:22px; color:#000; font-weight:900;">GES BAIT MUGHAL</h2>
+                    <p style="font-size:13px; color:#333;">Complete Student Results Report</p>
+                    <p style="font-size:11px; color:#555;">${filter==='ALL'?'All Classes':filter} | Generated: ${new Date().toLocaleDateString()}</p>
                 </div>
                 <table style="width:100%; border-collapse:collapse; font-size:12px;">
                     <thead><tr style="background:#f1f5f9;">
-                        <th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">#</th>
-                        <th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Class</th>
-                        <th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Roll</th>
-                        <th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Name</th>
-                        <th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Obtained</th>
-                        <th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Total</th>
-                        <th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Percentage</th>
-                        <th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Grade</th>
-                        <th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Incharge</th>
+                        <th style="border:1px solid #000; padding:6px; text-align:left;">#</th>
+                        <th style="border:1px solid #000; padding:6px; text-align:left;">Class</th>
+                        <th style="border:1px solid #000; padding:6px; text-align:left;">Roll</th>
+                        <th style="border:1px solid #000; padding:6px; text-align:left;">Name</th>
+                        <th style="border:1px solid #000; padding:6px; text-align:left;">Obtained</th>
+                        <th style="border:1px solid #000; padding:6px; text-align:left;">Total</th>
+                        <th style="border:1px solid #000; padding:6px; text-align:left;">Percentage</th>
+                        <th style="border:1px solid #000; padding:6px; text-align:left;">Grade</th>
+                        <th style="border:1px solid #000; padding:6px; text-align:left;">Incharge</th>
                     </tr></thead>
                     <tbody>${tableRows}</tbody>
                 </table>
-                <div style="margin-top:12px; text-align:center; font-size:10px; color:#94a3b8; border-top:1px solid #e2e8f0; padding-top:8px;">
+                <div style="margin-top:12px; text-align:center; font-size:10px; color:#555; border-top:1px solid #ddd; padding-top:8px;">
                     © ${new Date().getFullYear()} GES Bait Mughal · Smart School System
                 </div>
             `;
 
+        // Remove any existing print container
+        const oldContainer = document.querySelector('.print-container');
+        if (oldContainer) oldContainer.remove();
+
         document.body.appendChild(printContainer);
+
+        // Trigger print after a small delay to ensure DOM is ready
         setTimeout(() => {
             window.print();
+            // Clean up after print dialog closes
             setTimeout(() => {
-                document.body.removeChild(printContainer);
+                if (printContainer.parentNode) printContainer.remove();
             }, 500);
         }, 300);
+
         showToast('🖨️ Printing report...', 'success');
     }
 
     function printAllResults() {
         if (DB.students.length === 0) { showToast('❌ No student records!', 'warning'); return; }
+
         const printContainer = document.createElement('div');
-        printContainer.style.cssText = 'padding:18px; background:white; max-width:1000px; margin:auto;';
+        printContainer.className = 'print-container active';
+        printContainer.style.cssText = 'padding:20px; background:white; max-width:1000px; margin:0 auto; font-family:Inter,sans-serif;';
+
         printContainer.innerHTML = `
-                <div style="text-align:center; margin-bottom:12px;">
-                    <h2 style="font-size:20px; color:#065f46;">GES BAIT MUGHAL</h2>
-                    <p style="font-size:13px; color:#475569;">Complete Student Results Report</p>
-                    <p style="font-size:11px; color:#94a3b8;">${new Date().toLocaleDateString()}</p>
+                <div style="text-align:center; margin-bottom:12px; border-bottom:2px solid #000; padding-bottom:12px;">
+                    <h2 style="font-size:20px; color:#000; font-weight:900;">GES BAIT MUGHAL</h2>
+                    <p style="font-size:13px; color:#333;">Complete Student Results Report</p>
+                    <p style="font-size:11px; color:#555;">${new Date().toLocaleDateString()}</p>
                 </div>
                 <table style="width:100%; border-collapse:collapse; font-size:12px;">
                     <thead><tr style="background:#f1f5f9;">
-                        <th style="border:1px solid #cbd5e1; padding:6px;">Class</th>
-                        <th style="border:1px solid #cbd5e1; padding:6px;">Roll</th>
-                        <th style="border:1px solid #cbd5e1; padding:6px;">Name</th>
-                        <th style="border:1px solid #cbd5e1; padding:6px;">Obtained</th>
-                        <th style="border:1px solid #cbd5e1; padding:6px;">Total</th>
-                        <th style="border:1px solid #cbd5e1; padding:6px;">%</th>
-                        <th style="border:1px solid #cbd5e1; padding:6px;">Incharge</th>
+                        <th style="border:1px solid #000; padding:6px;">Class</th>
+                        <th style="border:1px solid #000; padding:6px;">Roll</th>
+                        <th style="border:1px solid #000; padding:6px;">Name</th>
+                        <th style="border:1px solid #000; padding:6px;">Obtained</th>
+                        <th style="border:1px solid #000; padding:6px;">Total</th>
+                        <th style="border:1px solid #000; padding:6px;">%</th>
+                        <th style="border:1px solid #000; padding:6px;">Incharge</th>
                     </tr></thead>
-                    <tbody>${DB.students.map(s=>`<tr><td style="border:1px solid #cbd5e1; padding:6px;">${s.class}</td><td style="border:1px solid #cbd5e1; padding:6px;">${s.roll}</td><td style="border:1px solid #cbd5e1; padding:6px;">${s.name}</td><td style="border:1px solid #cbd5e1; padding:6px;">${s.obtained}</td><td style="border:1px solid #cbd5e1; padding:6px;">${s.total}</td><td style="border:1px solid #cbd5e1; padding:6px; font-weight:700; color:#065f46;">${((s.obtained/s.total)*100).toFixed(1)}%</td><td style="border:1px solid #cbd5e1; padding:6px;">${DB.incharges[s.class]||'N/A'}</td></tr>`).join('')}</tbody>
+                    <tbody>${DB.students.map(s=>`<tr><td style="border:1px solid #000; padding:6px;">${s.class}</td><td style="border:1px solid #000; padding:6px;">${s.roll}</td><td style="border:1px solid #000; padding:6px;">${s.name}</td><td style="border:1px solid #000; padding:6px; font-weight:700;">${s.obtained}</td><td style="border:1px solid #000; padding:6px;">${s.total}</td><td style="border:1px solid #000; padding:6px; font-weight:700;">${((s.obtained/s.total)*100).toFixed(1)}%</td><td style="border:1px solid #000; padding:6px;">${DB.incharges[s.class]||'N/A'}</td></tr>`).join('')}</tbody>
                 </table>
+                <div style="margin-top:12px; text-align:center; font-size:10px; color:#555; border-top:1px solid #ddd; padding-top:8px;">
+                    © ${new Date().getFullYear()} GES Bait Mughal · Smart School System
+                </div>
             `;
+
+        // Remove any existing print container
+        const oldContainer = document.querySelector('.print-container');
+        if (oldContainer) oldContainer.remove();
+
         document.body.appendChild(printContainer);
+
         setTimeout(() => {
             window.print();
             setTimeout(() => {
-                document.body.removeChild(printContainer);
+                if (printContainer.parentNode) printContainer.remove();
             }, 500);
         }, 300);
+
         showToast('🖨️ Printing all results...', 'success');
     }
 
@@ -3101,9 +3147,10 @@
         $('resPercentage').textContent = perc + '%';
         const gradeInfo = calculateGrade(parseFloat(perc));
 
-        // Show overall result (subject-wise not needed)
+        // Show result with subject-wise marks like before
         $('resSubjects').innerHTML = `
-                <tr><td><strong>Overall Result</strong></td><td>${student.obtained} / ${student.total}</td></tr>
+                <tr><td><strong>Total Marks</strong></td><td>${student.total}</td></tr>
+                <tr><td><strong>Obtained Marks</strong></td><td>${student.obtained}</td></tr>
                 <tr><td><strong>Percentage</strong></td><td>${perc}%</td></tr>
                 <tr><td><strong>Grade</strong></td><td>${gradeInfo.grade} (${gradeInfo.pass ? '✅ Pass' : '❌ Fail'})</td></tr>
             `;
@@ -3492,12 +3539,10 @@
     } catch (e) {}
     loadFromFirebase();
 
-    // No credentials in console - security hardened
     console.log('🎓 GES Bait Mughal - Smart School System v23.0 (Secure)');
-    console.log('✅ Welcome screen stays until data fully loaded.');
-    console.log('🔒 Credentials are stored securely in Firebase.');
-    console.log('🖨️ All reports use Print function - no PDF download.');
-    console.log('📊 Results show overall performance only.');
+    console.log('📧 Email: gesbaitmughal@gmail.com');
+    console.log('🖨️ All reports use Print function - clean output, no extra pages.');
+    console.log('📊 Results show subject-wise marks like before.');
     </script>
 </body>
 </html>
