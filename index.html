@@ -120,8 +120,13 @@
       position: fixed; inset:0; z-index:999999;
       background: radial-gradient(ellipse at 30% 20%, #1a8a4a 0%, #0a5c3a 45%, #064026 100%);
       display:flex; align-items:center; justify-content:center; flex-direction:column;
-      animation: welcomeFadeOut 0.9s ease 4s forwards;
-      pointer-events:none; padding:24px; overflow:hidden;
+      padding:24px; overflow:hidden;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    .welcome-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
     }
     .welcome-overlay::before {
       content:''; position:absolute; inset:0;
@@ -197,10 +202,6 @@
     @keyframes welcomeSlideUp {
       from { opacity:0; transform:translateY(50px) scale(0.94); }
       to { opacity:1; transform:translateY(0) scale(1); }
-    }
-    @keyframes welcomeFadeOut {
-      from { opacity:1; visibility:visible; }
-      to { opacity:0; visibility:hidden; }
     }
     @keyframes welcomeGlow {
       0%,100% { transform:scale(1); opacity:0.5; }
@@ -766,7 +767,7 @@
 </head>
 <body>
 
-  <!-- Welcome Overlay (floral Bismillah) -->
+  <!-- Welcome Overlay (floral Bismillah) - stays until data loaded -->
   <div class="welcome-overlay" id="welcomeOverlay">
     <div class="floral-frame">
       <div class="bismillah">
@@ -1344,6 +1345,7 @@
     const $ = id => document.getElementById(id);
     const video = $('schoolVideo');
     let noticeShown = false;
+    let dataLoadComplete = false;
 
     // ─── TOAST ─────────────────────────────────────────────────────────
     function showToast(msg, type='success') {
@@ -1448,7 +1450,7 @@
 
     // ─── NOTICE ──────────────────────────────────────────────────────
     function showNotice() {
-      if (noticeShown) return;
+      if (noticeShown || !dataLoadComplete) return;
       const overlay = $('noticeOverlay');
       if (!DB.notice || !DB.notice.title) { overlay.classList.remove('active'); return; }
       $('noticeTitle').textContent = DB.notice.title;
@@ -1464,7 +1466,6 @@
     $('noticeOverlay').addEventListener('click', function(e){ if(e.target===this) closeNotice(); });
 
     // ─── FIREBASE ────────────────────────────────────────────────────
-    let firebaseReady = false;
     function saveToFirebase() {
       if (!window.firebaseDB) return;
       const { ref, set, db } = window.firebaseDB;
@@ -1481,20 +1482,27 @@
             if (data.hasOwnProperty(key) && key !== '_loaded') DB[key] = data[key];
           }
           DB._loaded = true;
+          dataLoadComplete = true;
           renderAll();
+          // hide welcome
+          document.getElementById('welcomeOverlay').classList.add('hidden');
           if (DB.notice && DB.notice.title) setTimeout(showNotice, 400);
           else setTimeout(initVideo, 400);
         } else {
           DB._loaded = true;
+          dataLoadComplete = true;
           saveToFirebase();
           renderAll();
+          document.getElementById('welcomeOverlay').classList.add('hidden');
           setTimeout(initVideo, 400);
         }
       }, (error) => {
         console.error('Firebase read error:', error);
         if (!DB._loaded) {
           try { const saved=localStorage.getItem('gesData'); if(saved){ const p=JSON.parse(saved); for(const k in p) if(p.hasOwnProperty(k)&&k!=='_loaded') DB[k]=p[k]; DB._loaded=true; } } catch(e){}
+          dataLoadComplete = true;
           renderAll();
+          document.getElementById('welcomeOverlay').classList.add('hidden');
           setTimeout(initVideo, 400);
         }
       });
@@ -1745,9 +1753,12 @@
     function downloadResultPDF() {
       const el = $('resultCard');
       if (!el || el.offsetParent===null) { showToast('❌ Please search a result first','error'); return; }
+      // ensure element is visible
+      const display = el.style.display;
+      el.style.display = 'block';
       const opt={ margin:0.4, filename:`Result_${$('resName')?$('resName').textContent.replace(/\s+/g,'_'):'Student'}.pdf`, image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',ignoreElements:(el)=>el.classList&&el.classList.contains('no-print')}, jsPDF:{unit:'in',format:'letter',orientation:'portrait'} };
       showToast('📄 Downloading result...','success');
-      html2pdf().set(opt).from(el).save().catch(err=>{ console.error(err); showToast('❌ PDF generation failed','error'); });
+      html2pdf().set(opt).from(el).save().then(()=>{ el.style.display = display; }).catch(err=>{ console.error(err); el.style.display = display; showToast('❌ PDF generation failed','error'); });
     }
 
     // ─── ADMIN SLIDER ───────────────────────────────────────────────
@@ -1810,18 +1821,16 @@
         const parsed = JSON.parse(saved);
         for (const k in parsed) if (parsed.hasOwnProperty(k) && k!=='_loaded') DB[k] = parsed[k];
         DB._loaded = true;
+        // render immediately but keep welcome overlay visible
+        renderAll();
       }
     } catch(e) {}
-    renderAll();
-    // Firebase sync
+    // Firebase sync – will hide welcome when data loads
     loadFromFirebase();
-
-    // Auto close welcome overlay after 4s
-    setTimeout(() => { const ov=$('welcomeOverlay'); if(ov) ov.style.display='none'; }, 4000);
 
     console.log('🎓 GES Bait Mughal - Smart School System v23.0 (English)');
     console.log('🔑 Admin: admin123 | Teacher PIN: 1234');
-    console.log('✅ Fully responsive, no Urdu, elegant notice & welcome.');
+    console.log('✅ Welcome screen stays until data fully loaded.');
   </script>
 </body>
 </html>
