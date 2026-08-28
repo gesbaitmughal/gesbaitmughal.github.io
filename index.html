@@ -86,7 +86,7 @@
             font-family: var(--font);
             background: var(--bg);
             color: var(--text);
-            line-height: 1.6;
+            line-height: 1.7;
             transition: background 0.3s, color 0.3s;
             min-height: 100vh;
             overflow-x: hidden;
@@ -110,6 +110,89 @@
         }
         ::-webkit-scrollbar-thumb:hover {
             background: var(--primary-dark);
+        }
+
+        /* ───────── ANIMATIONS ───────── */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes glowPulse {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(245, 166, 35, 0.1);
+            }
+            50% {
+                box-shadow: 0 0 60px rgba(245, 166, 35, 0.3);
+            }
+        }
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        @keyframes shimmer {
+            0% {
+                background-position: -200% center;
+            }
+            100% {
+                background-position: 200% center;
+            }
+        }
+        @keyframes borderGlow {
+            0%,
+            100% {
+                border-color: var(--gold);
+            }
+            50% {
+                border-color: var(--primary-light);
+            }
+        }
+
+        .animate-fade-up {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        .animate-slide-left {
+            animation: slideInLeft 0.5s ease forwards;
+        }
+        .animate-slide-right {
+            animation: slideInRight 0.5s ease forwards;
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        .animate-glow {
+            animation: glowPulse 2s ease-in-out infinite;
         }
 
         /* ───────── TOAST ───────── */
@@ -189,15 +272,25 @@
         .welcome-overlay .floral-frame {
             position: relative;
             z-index: 2;
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(6px);
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
             border-radius: 60px 60px 40px 40px;
             padding: clamp(20px, 4vw, 42px) clamp(18px, 4vw, 42px) clamp(20px, 4vw, 36px);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            box-shadow: 0 0 80px rgba(255, 215, 0, 0.06);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 80px rgba(255, 215, 0, 0.08), inset 0 0 60px rgba(255, 215, 0, 0.03);
             max-width: 94vw;
             text-align: center;
-            animation: welcomeSlideUp 0.8s ease 0s both;
+            animation: welcomeSlideUp 0.8s ease 0s both, borderGlow 3s ease-in-out infinite;
+        }
+        .floral-frame::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 62px 62px 42px 42px;
+            background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            z-index: -1;
+            animation: shimmer 3s linear infinite;
+            background-size: 200% 100%;
         }
         .floral-frame .bismillah {
             font-family: 'Inter', sans-serif;
@@ -224,9 +317,13 @@
         .floral-frame .bismillah .flower-left,
         .floral-frame .bismillah .flower-right {
             font-size: clamp(24px, 5vw, 48px);
-            opacity: 0.8;
+            opacity: 0.9;
             filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.2));
             flex-shrink: 0;
+            animation: float 4s ease-in-out infinite;
+        }
+        .floral-frame .bismillah .flower-right {
+            animation-delay: 2s;
         }
         .floral-frame .logo-big {
             width: clamp(80px, 18vw, 140px);
@@ -343,6 +440,7 @@
             position: relative;
             border-top: 6px solid var(--gold);
             background: linear-gradient(145deg, var(--card-bg) 0%, var(--gray) 100%);
+            animation: fadeInUp 0.5s ease;
         }
         .notice-box .close-btn {
             position: absolute;
@@ -480,6 +578,16 @@
             z-index: 1;
             width: 100%;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.6s ease;
+        }
+        .banner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            animation: shimmer 4s linear infinite;
+            background-size: 200% 100%;
+            pointer-events: none;
         }
         .banner .container {
             max-width: 1280px;
@@ -615,6 +723,7 @@
             backdrop-filter: blur(20px);
             padding: 0 clamp(8px, 1.5vw, 20px);
             width: 100%;
+            animation: fadeInUp 0.6s ease 0.2s both;
         }
         .nav-bar .container {
             max-width: 1280px;
@@ -658,6 +767,22 @@
             align-items: center;
             gap: clamp(4px, 0.6vw, 8px);
             white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: var(--transition);
+            transform: translateX(-50%);
+        }
+        .nav-btn:hover::after {
+            width: 60%;
         }
         @media (max-width: 480px) {
             .nav-btn {
@@ -737,6 +862,7 @@
             box-shadow: var(--shadow-lg);
             margin-bottom: clamp(16px, 2.5vw, 30px);
             width: 100%;
+            animation: fadeInUp 0.8s ease 0.3s both;
         }
         .hero-slider .slide {
             position: absolute;
@@ -870,6 +996,19 @@
             border: 1px solid transparent;
             position: relative;
             overflow: hidden;
+            animation: fadeInUp 0.6s ease both;
+        }
+        .stat-box:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        .stat-box:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .stat-box:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+        .stat-box:nth-child(4) {
+            animation-delay: 0.4s;
         }
         .stat-box::after {
             content: '';
@@ -966,21 +1105,11 @@
         }
         .tab-content {
             display: none;
-            animation: fadeIn 0.6s ease;
+            animation: fadeInUp 0.6s ease;
             width: 100%;
         }
         .tab-content.active {
             display: block;
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         /* ───────── CARDS ───────── */
@@ -994,6 +1123,7 @@
             position: relative;
             overflow: hidden;
             width: 100%;
+            animation: fadeInUp 0.6s ease both;
         }
         .card::before {
             content: '';
@@ -1203,6 +1333,18 @@
             gap: clamp(4px, 0.6vw, 8px);
             overflow: hidden;
             white-space: nowrap;
+            position: relative;
+        }
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+        .btn:hover::after {
+            transform: translateX(100%);
         }
         @media (max-width: 480px) {
             .btn {
@@ -1298,6 +1440,7 @@
             position: relative;
             overflow: hidden;
             box-shadow: var(--shadow-xl);
+            animation: fadeInUp 0.6s ease;
         }
         .report-card .header {
             text-align: center;
@@ -1396,6 +1539,7 @@
             padding: clamp(16px, 2vw, 32px) clamp(12px, 2vw, 30px) clamp(12px, 1.5vw, 20px);
             margin-top: clamp(20px, 3vw, 40px);
             width: 100%;
+            animation: fadeInUp 0.6s ease;
         }
         .footer .container {
             max-width: 1280px;
@@ -1561,7 +1705,6 @@
 
         /* ───────── PRINT STYLES ───────── */
         @media print {
-            /* Hide all non-print elements */
             .no-print {
                 display: none !important;
             }
@@ -1587,7 +1730,6 @@
                 display: none !important;
             }
 
-            /* Show only the report card and its content */
             body {
                 background: #fff !important;
                 color: #000 !important;
@@ -1608,7 +1750,6 @@
                 display: none !important;
             }
 
-            /* Report card styling for print */
             .report-card {
                 border: 2px solid #000 !important;
                 box-shadow: none !important;
@@ -1665,48 +1806,16 @@
                 color: #000 !important;
             }
 
-            /* Hide result display wrapper if empty */
             #resultDisplay {
                 display: block !important;
             }
 
-            /* Ensure no extra pages */
             .report-card .header,
             .report-card .student-info,
             .report-card .marks-table,
             .report-card .summary {
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
-            }
-
-            /* Print container for admin reports */
-            .print-container {
-                display: block !important;
-                padding: 20px !important;
-                background: #fff !important;
-            }
-            .print-container table {
-                width: 100% !important;
-                border-collapse: collapse !important;
-            }
-            .print-container table th,
-            .print-container table td {
-                border: 1px solid #000 !important;
-                padding: 6px !important;
-                text-align: left !important;
-            }
-            .print-container table th {
-                background: #333 !important;
-                color: #fff !important;
-            }
-            .print-container table tr:nth-child(even) {
-                background: #f9f9f9 !important;
-            }
-            .print-container h2 {
-                color: #000 !important;
-            }
-            .print-container p {
-                color: #333 !important;
             }
         }
 
@@ -1718,7 +1827,6 @@
             display: block;
         }
 
-        /* Fix for result display */
         #resultDisplay {
             display: none;
         }
@@ -2236,9 +2344,9 @@
             </div>
             <div>
                 <h4><i class="fas fa-envelope"></i> Contact</h4>
-                <div class="contact-item"><i class="fas fa-phone"></i> <span id="footerPhone">+92 300 1234567</span></div>
+                <div class="contact-item"><i class="fas fa-phone"></i> <span id="footerPhone">03027319839</span></div>
                 <div class="contact-item"><i class="fas fa-envelope"></i> <span id="footerEmail">gesbaitmughal@gmail.com</span></div>
-                <div class="contact-item"><i class="fas fa-globe"></i> <span>gesbaitmughal.edu.pk</span></div>
+                <div class="contact-item"><i class="fas fa-globe"></i> <span>gesbaitmughal.github.io</span></div>
             </div>
         </div>
         <div class="footer-bottom">
@@ -2271,7 +2379,7 @@
             headmaster: 'Headmaster',
             about: 'GES Bait Mughal is a government elementary school dedicated to providing free quality education, strong moral values, and a safe, nurturing environment for every child in the Bait Mughal community.',
             video: '',
-            contact: { address: 'Bait Mughal, Jalal Pur Pir Wala, Punjab', phone: '+92 300 1234567',
+            contact: { address: 'Bait Mughal, Jalal Pur Pir Wala, Punjab', phone: '03027319839',
                 email: 'gesbaitmughal@gmail.com' },
             totalStudents: 0,
             _loaded: false,
@@ -2524,7 +2632,7 @@
         $('footerBreak').textContent = DB.breakTime;
         $('headmasterName').textContent = DB.headmaster;
         $('aboutText').textContent = DB.about;
-        $('footerPhone').textContent = DB.contact.phone || '+92 300 1234567';
+        $('footerPhone').textContent = DB.contact.phone || '03027319839';
         $('footerEmail').textContent = DB.contact.email || 'gesbaitmughal@gmail.com';
 
         const list = $('announcementList');
@@ -3027,7 +3135,6 @@
         if (filter !== 'ALL') students = students.filter(s => s.class === filter);
         if (students.length === 0) { showToast('❌ No students to print!', 'warning'); return; }
 
-        // Build a clean print container
         const printContainer = document.createElement('div');
         printContainer.className = 'print-container active';
         printContainer.style.cssText =
@@ -3064,16 +3171,13 @@
                 </div>
             `;
 
-        // Remove any existing print container
         const oldContainer = document.querySelector('.print-container');
         if (oldContainer) oldContainer.remove();
 
         document.body.appendChild(printContainer);
 
-        // Trigger print after a small delay to ensure DOM is ready
         setTimeout(() => {
             window.print();
-            // Clean up after print dialog closes
             setTimeout(() => {
                 if (printContainer.parentNode) printContainer.remove();
             }, 500);
@@ -3112,7 +3216,6 @@
                 </div>
             `;
 
-        // Remove any existing print container
         const oldContainer = document.querySelector('.print-container');
         if (oldContainer) oldContainer.remove();
 
@@ -3147,7 +3250,7 @@
         $('resPercentage').textContent = perc + '%';
         const gradeInfo = calculateGrade(parseFloat(perc));
 
-        // Show result with subject-wise marks like before
+        // Show subject-wise marks like the original design
         $('resSubjects').innerHTML = `
                 <tr><td><strong>Total Marks</strong></td><td>${student.total}</td></tr>
                 <tr><td><strong>Obtained Marks</strong></td><td>${student.obtained}</td></tr>
@@ -3503,7 +3606,7 @@
         DB.about = about;
         DB.headmaster = headmaster;
         DB.contact.address = address || 'Bait Mughal, Jalal Pur Pir Wala, Punjab';
-        DB.contact.phone = phone || '+92 300 1234567';
+        DB.contact.phone = phone || '03027319839';
         saveData();
         renderHome();
         showToast('✅ About & Contact updated!', 'success');
@@ -3541,8 +3644,9 @@
 
     console.log('🎓 GES Bait Mughal - Smart School System v23.0 (Secure)');
     console.log('📧 Email: gesbaitmughal@gmail.com');
+    console.log('🌐 Website: gesbaitmughal.github.io');
     console.log('🖨️ All reports use Print function - clean output, no extra pages.');
-    console.log('📊 Results show subject-wise marks like before.');
+    console.log('📊 Results show overall performance with grade.');
     </script>
 </body>
 </html>
