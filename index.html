@@ -13,6 +13,10 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, set, get, update, remove, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
         import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+        import {
+            getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged,
+            EmailAuthProvider, reauthenticateWithCredential, updatePassword
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCUp1jNM0VyMly5m4Zq8h-zbE6Hqnr5Zyg",
@@ -27,8 +31,13 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const storage = getStorage(app);
+        const auth = getAuth(app);
         window.firebaseDB = { db, ref, set, get, update, remove, child, onValue };
         window.firebaseStorage = { storage, storageRef, uploadBytes, getDownloadURL, deleteObject };
+        window.firebaseAuth = {
+            auth, signInWithEmailAndPassword, signOut, onAuthStateChanged,
+            EmailAuthProvider, reauthenticateWithCredential, updatePassword
+        };
         window.dispatchEvent(new Event('firebase-ready'));
     </script>
 
@@ -1499,7 +1508,7 @@
         }
         .report-card .summary {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: clamp(8px, 1vw, 16px);
             margin-top: clamp(12px, 1.5vw, 20px);
             padding-top: clamp(12px, 1.5vw, 20px);
@@ -1507,7 +1516,7 @@
         }
         @media (max-width: 480px) {
             .report-card .summary {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
                 gap: 6px;
             }
         }
@@ -1986,26 +1995,27 @@
                             <option value="Class 7">Class 7</option><option value="Class 8">Class 8</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>Roll Number</label><input type="number" id="resultRoll" placeholder="Enter roll number" required /></div>
+                    <div class="form-group"><label for="resultRoll">Roll Number</label><input type="number" id="resultRoll" min="1" step="1" inputmode="numeric" placeholder="Enter roll number" required /></div>
                     <button type="submit" class="btn btn-primary">View Result</button>
                 </form>
             </div>
             <div id="resultDisplay" style="display:none; margin-top:22px;">
                 <div class="report-card" id="resultCard">
-                    <div class="header"><h2>GES BAIT MUGHAL</h2><p>Student Performance Report</p></div>
+                    <div class="header"><h2>GES BAIT MUGHAL</h2><p>Overall Student Performance Report</p></div>
                     <div class="student-info">
                         <div><strong>Class:</strong> <span id="resClass">-</span></div>
                         <div><strong>Roll No:</strong> <span id="resRoll">-</span></div>
                         <div><strong>Student:</strong> <span id="resName">-</span></div>
                         <div><strong>Incharge:</strong> <span id="resIncharge">-</span></div>
                     </div>
-                    <table class="marks-table"><thead><tr><th>Subject</th><th>Marks</th></tr></thead><tbody id="resSubjects"></tbody></table>
                     <div class="summary">
                         <div class="item"><span class="label">Total Marks</span><span class="value" id="resTotal">0</span></div>
                         <div class="item"><span class="label">Obtained</span><span class="value" id="resObtained">0</span></div>
                         <div class="item"><span class="label">Percentage</span><span class="value" id="resPercentage">0%</span></div>
+                        <div class="item"><span class="label">Grade</span><span class="value" id="resGrade">-</span></div>
                     </div>
-                    <div class="no-print" style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap;">
+                    <div id="resStatus" style="text-align:center; margin-top:14px; font-size:clamp(16px,1.6vw,20px); font-weight:800;"></div>
+                    <div class="no-print" style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; justify-content:center;">
                         <button onclick="window.print()" class="btn btn-primary print-btn"><i class="fas fa-print"></i> Print Result</button>
                     </div>
                 </div>
@@ -2055,7 +2065,7 @@
                             <option value="Class 7">Class 7</option><option value="Class 8">Class 8</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>PIN</label><input type="password" id="teacherPin" placeholder="Enter class PIN" required /></div>
+                    <div class="form-group"><label>PIN (min 6 characters)</label><input type="password" id="teacherPin" autocomplete="current-password" minlength="6" placeholder="Enter class PIN" required /></div>
                     <button type="submit" class="btn btn-primary">Login</button>
                 </form>
             </div>
@@ -2119,7 +2129,7 @@
                     <p style="font-size:clamp(12px,1vw,14px); color:var(--text-light);">Full control over website</p>
                 </div>
                 <form onsubmit="adminLogin(event)" style="display:flex; flex-direction:column; gap:10px;">
-                    <div class="form-group"><label>Admin Password</label><input type="password" id="adminPass" placeholder="Enter admin password" required /></div>
+                    <div class="form-group"><label>Admin Password</label><input type="password" id="adminPass" autocomplete="current-password" minlength="6" placeholder="Enter admin password" required /></div>
                     <button type="submit" class="btn btn-primary">Login</button>
                 </form>
             </div>
@@ -2288,17 +2298,20 @@
                     <div class="card-header"><h3><i class="fas fa-key"></i> Security</h3></div>
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                         <div><h4 style="font-size:clamp(13px,1vw,15px); font-weight:700; margin-bottom:6px;">Change Admin Password</h4>
-                            <form onsubmit="changeAdminPass(event)" style="display:flex; gap:6px; flex-wrap:wrap;">
-                                <input type="password" id="newAdminPass" placeholder="New password" required style="flex:1; min-width:100px; padding:clamp(6px,0.8vw,12px) clamp(8px,1vw,14px); border:2px solid var(--border); border-radius:10px; font-size:clamp(12px,1vw,14px); background:var(--bg); color:var(--text);" />
+                            <form onsubmit="changeAdminPass(event)" style="display:flex; flex-direction:column; gap:6px;">
+                                <input type="password" id="currentAdminPass" autocomplete="current-password" placeholder="Current password" required style="padding:clamp(6px,0.8vw,12px) clamp(8px,1vw,14px); border:2px solid var(--border); border-radius:10px; font-size:clamp(12px,1vw,14px); background:var(--bg); color:var(--text);" />
+                                <input type="password" id="newAdminPass" autocomplete="new-password" minlength="6" placeholder="New password (min 6 chars)" required style="padding:clamp(6px,0.8vw,12px) clamp(8px,1vw,14px); border:2px solid var(--border); border-radius:10px; font-size:clamp(12px,1vw,14px); background:var(--bg); color:var(--text);" />
                                 <button type="submit" class="btn btn-primary btn-sm">Update</button>
                             </form>
                         </div>
-                        <div><h4 style="font-size:clamp(13px,1vw,15px); font-weight:700; margin-bottom:6px;">Set Teacher PIN</h4>
-                            <form onsubmit="setTeacherPin(event)" style="display:flex; gap:6px; flex-wrap:wrap;">
-                                <select id="pinClass" style="padding:clamp(4px,0.6vw,10px); border:2px solid var(--border); border-radius:10px; font-size:clamp(11px,0.8vw,13px); background:var(--bg); color:var(--text);"><option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option><option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option><option value="Class 7">Class 7</option><option value="Class 8">Class 8</option></select>
-                                <input type="text" id="newTeacherPin" placeholder="PIN" required style="width:80px; padding:clamp(4px,0.6vw,10px); border:2px solid var(--border); border-radius:10px; font-size:clamp(11px,0.8vw,13px); background:var(--bg); color:var(--text);" />
-                                <button type="submit" class="btn btn-primary btn-sm">Set</button>
-                            </form>
+                        <div><h4 style="font-size:clamp(13px,1vw,15px); font-weight:700; margin-bottom:6px;">Teacher Accounts</h4>
+                            <p style="font-size:clamp(11px,0.8vw,13px); color:var(--text-light); line-height:1.6;">
+                                Each class has its own sign-in account, secured by Firebase Authentication —
+                                the app can no longer read or change teacher passwords itself. To reset a
+                                teacher's PIN, open
+                                <a href="https://console.firebase.google.com/project/ges-bait-mughal/authentication/users" target="_blank" rel="noopener noreferrer">Firebase Console → Authentication → Users</a>
+                                and reset the password for that class's account (e.g. <code>class3@gesbaitmughal-auth.local</code>).
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -2396,6 +2409,33 @@
 
         // ─── DOM REFS ──────────────────────────────────────────────────────
         const $ = id => document.getElementById(id);
+        // HTML-escape helper — use for any dynamic value inserted via innerHTML.
+        // Admin/teacher-entered text (names, titles, descriptions) is untrusted
+        // and must never be inserted raw, or it becomes a stored XSS attack
+        // that runs in every visitor's browser.
+        function esc(v) {
+            return String(v ?? '').replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
+
+        // File validation helper: checks both size AND actual MIME type
+        // (accept="image/*" on the <input> is only a UI hint — the browser
+        // does not enforce it, so a renamed .exe with an image extension
+        // would otherwise sail straight through).
+        function validateFile(file, { maxMB, mimePrefix, label }) {
+            if (!file) return { ok: false, msg: `❌ Please choose a ${label} file` };
+            if (mimePrefix && !file.type.startsWith(mimePrefix)) {
+                return { ok: false, msg: `❌ That doesn't look like a valid ${label} file` };
+            }
+            if (file.size > maxMB * 1024 * 1024) {
+                return { ok: false, msg: `❌ ${label} too large! Max ${maxMB}MB` };
+            }
+            return { ok: true };
+        }
+        // Simple text-length guard so a single field can't push an oversized
+        // record into Firebase (also mirrored server-side in the Database Rules).
+        function tooLong(str, max) { return (str || '').length > max; }
         const video = $('schoolVideo');
         let noticeShown = false;
         let dataLoadComplete = false;
@@ -2644,7 +2684,7 @@
             div.className = 'announce-item';
             const icons = { urgent: 'fa-exclamation-triangle', important: 'fa-handshake', event: 'fa-flag' };
             div.innerHTML =
-                `<div class="icon"><i class="fas ${icons[a.type]||'fa-bullhorn'}"></i></div><div class="content"><div class="title">${a.title}</div><div class="date"><i class="far fa-calendar-alt"></i> ${a.date||'Today'}</div></div><span class="badge ${a.type||'important'}">${a.type||'Important'}</span>`;
+                `<div class="icon"><i class="fas ${icons[a.type]||'fa-bullhorn'}"></i></div><div class="content"><div class="title">${esc(a.title)}</div><div class="date"><i class="far fa-calendar-alt"></i> ${esc(a.date||'Today')}</div></div><span class="badge ${a.type||'important'}">${esc(a.type||'Important')}</span>`;
             list.appendChild(div);
         });
 
@@ -2659,7 +2699,7 @@
                     const div = document.createElement('div');
                     div.className = 'incharge-item';
                     div.innerHTML =
-                        `<div class="avatar">${cls.replace('Class ','C')}</div><div><div class="incharge-name">${name}</div></div><div class="incharge-class">${cls}</div>`;
+                        `<div class="avatar">${esc(cls.replace('Class ','C'))}</div><div><div class="incharge-name">${esc(name)}</div></div><div class="incharge-class">${esc(cls)}</div>`;
                     inchargeList.appendChild(div);
                 }
             });
@@ -2683,7 +2723,17 @@
             div.className = 'card';
             div.style.cssText = 'padding:clamp(10px,1.2vw,18px);';
             div.innerHTML =
-                `<div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:4px; flex-wrap:wrap; gap:4px;"><span style="font-size:clamp(10px,0.8vw,12px); font-weight:700; background:var(--primary-bg); padding:2px 10px; border-radius:8px;">${h.class}</span><span style="font-size:clamp(10px,0.8vw,12px); font-weight:600; color:var(--primary);">${h.subject}</span></div><h4 style="font-size:clamp(14px,1.2vw,17px); font-weight:700;">${h.title}</h4><p style="font-size:clamp(12px,1vw,14px); color:var(--text-light); margin-top:4px;">${h.desc}</p>${h.file ? `<button onclick="downloadFile('${h.file}','${h.title}')" class="btn btn-primary btn-sm" style="margin-top:6px;"><i class="fas fa-download"></i> Download</button>` : ''}`;
+                `<div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:4px; flex-wrap:wrap; gap:4px;"><span style="font-size:clamp(10px,0.8vw,12px); font-weight:700; background:var(--primary-bg); padding:2px 10px; border-radius:8px;">${esc(h.class)}</span><span style="font-size:clamp(10px,0.8vw,12px); font-weight:600; color:var(--primary);">${esc(h.subject)}</span></div><h4 style="font-size:clamp(14px,1.2vw,17px); font-weight:700;">${esc(h.title)}</h4><p style="font-size:clamp(12px,1vw,14px); color:var(--text-light); margin-top:4px;">${esc(h.desc)}</p>`;
+            if (h.file) {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-primary btn-sm';
+                btn.style.marginTop = '6px';
+                btn.innerHTML = '<i class="fas fa-download"></i> Download';
+                // Bind via closure instead of inline onclick — avoids injecting
+                // large/untrusted file data or titles into an HTML attribute.
+                btn.addEventListener('click', () => downloadFile(h.file, h.title));
+                div.appendChild(btn);
+            }
             grid.appendChild(div);
         });
     }
@@ -2700,7 +2750,7 @@
             div.className = 'card';
             div.style.cssText = 'padding:6px; overflow:hidden;';
             div.innerHTML =
-                `<img src="${img.file}" style="width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:10px;" loading="lazy" /><p style="font-size:clamp(12px,1vw,14px); font-weight:600; text-align:center; padding:8px 0 2px;">${img.caption}</p>`;
+                `<img src="${esc(img.file)}" alt="${esc(img.caption || 'School gallery photo')}" style="width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:10px;" loading="lazy" onerror="this.style.display='none'" /><p style="font-size:clamp(12px,1vw,14px); font-weight:600; text-align:center; padding:8px 0 2px;">${esc(img.caption)}</p>`;
             grid.appendChild(div);
         });
     }
@@ -2723,13 +2773,73 @@
         return { grade: 'F', pass: false };
     }
 
-    // ─── TEACHER ─────────────────────────────────────────────────────
-    function isTeacherLoggedIn() {
-        return sessionStorage.getItem('teacherLoggedIn') === 'true';
+    // ─── AUTH (Firebase Authentication) ───────────────────────────────
+    // Class ↔ synthetic email mapping. Firebase Auth requires an email
+    // address per account; these don't need to receive real mail — they're
+    // just stable, unique identifiers so each class/admin has its own
+    // securely-verified account. The real "PIN"/password is never stored
+    // anywhere in the app data — Firebase's Identity backend verifies it
+    // and only ever returns a signed-in session, never the password itself.
+    const AUTH_DOMAIN = 'gesbaitmughal-auth.local';
+    const ADMIN_EMAIL = `headmaster@${AUTH_DOMAIN}`;
+    function classToEmail(cls) {
+        return cls.toLowerCase().replace(/\s+/g, '') + '@' + AUTH_DOMAIN;
+    }
+    function emailToClass(email) {
+        const m = /^class(\d+)@/.exec(email || '');
+        return m ? `Class ${m[1]}` : null;
     }
 
+    let currentFirebaseUser = null;
+    function isTeacherLoggedIn() {
+        return !!currentFirebaseUser && !!emailToClass(currentFirebaseUser.email);
+    }
     function getTeacherClass() {
-        return sessionStorage.getItem('teacherClass');
+        return currentFirebaseUser ? emailToClass(currentFirebaseUser.email) : null;
+    }
+    function isAdminLoggedIn() {
+        return !!currentFirebaseUser && currentFirebaseUser.email === ADMIN_EMAIL;
+    }
+
+    window.addEventListener('firebase-ready', () => {
+        const { auth, onAuthStateChanged } = window.firebaseAuth;
+        onAuthStateChanged(auth, user => {
+            currentFirebaseUser = user;
+            renderTeacherUI();
+            renderAdminUI();
+        });
+    });
+
+    let teacherLoginInProgress = false;
+    function teacherLogin(e) {
+        e.preventDefault();
+        if (teacherLoginInProgress) return;
+        if (!window.firebaseAuth) { showToast('⏳ Still connecting, please try again in a moment.', 'warning'); return; }
+        teacherLoginInProgress = true;
+        const btn = e.target.querySelector('button[type="submit"]');
+        if (btn) btn.disabled = true;
+
+        const cls = $('teacherClass').value;
+        const pin = $('teacherPin').value;
+        const { auth, signInWithEmailAndPassword } = window.firebaseAuth;
+        signInWithEmailAndPassword(auth, classToEmail(cls), pin)
+            .then(() => {
+                showToast(`✅ Logged in as ${cls} Teacher`, 'success');
+                $('teacherPin').value = '';
+            })
+            .catch(() => {
+                showToast('❌ Invalid PIN!', 'error');
+            })
+            .finally(() => {
+                teacherLoginInProgress = false;
+                if (btn) btn.disabled = false;
+            });
+    }
+
+    function teacherLogout() {
+        const { auth, signOut } = window.firebaseAuth;
+        signOut(auth);
+        showToast('👋 Logged out', 'warning');
     }
 
     function renderTeacherUI() {
@@ -2754,7 +2864,10 @@
         $('tStatStudents').textContent = students.length;
         $('tStatHomework').textContent = homework.length;
         if (students.length > 0) {
-            const avg = students.reduce((sum, s) => sum + (s.obtained / s.total * 100), 0) / students.length;
+            const valid = students.filter(s => (Number(s.total) || 0) > 0);
+            const avg = valid.length > 0
+                ? valid.reduce((sum, s) => sum + (Number(s.obtained) / Number(s.total) * 100), 0) / valid.length
+                : 0;
             $('tStatAvg').textContent = avg.toFixed(1) + '%';
         } else $('tStatAvg').textContent = '0%';
     }
@@ -2766,11 +2879,30 @@
         const tbody = $('teacherStudentList');
         tbody.innerHTML = '';
         $('studentCount').textContent = `${list.length} students`;
+        if (list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-light);">No students yet.</td></tr>';
+            updateTeacherStats();
+            return;
+        }
         list.forEach(s => {
             const tr = document.createElement('tr');
-            const perc = ((s.obtained / s.total) * 100).toFixed(1);
+            const total = Number(s.total) || 0;
+            const obtained = Number(s.obtained) || 0;
+            const perc = total > 0 ? ((obtained / total) * 100).toFixed(1) + '%' : 'N/A';
             tr.innerHTML =
-                `<td>${s.roll}</td><td>${s.name}</td><td style="font-weight:700; color:var(--primary);">${perc}%</td><td><button onclick="editStudent('${s.class}',${s.roll})" class="btn btn-primary btn-sm">Edit</button> <button onclick="deleteStudent('${s.class}',${s.roll})" class="btn btn-danger btn-sm">Del</button></td>`;
+                `<td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td style="font-weight:700; color:var(--primary);">${perc}</td><td></td>`;
+            const actionsTd = tr.lastElementChild;
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn btn-primary btn-sm';
+            editBtn.textContent = 'Edit';
+            editBtn.addEventListener('click', () => editStudent(s.class, s.roll));
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn btn-danger btn-sm';
+            delBtn.textContent = 'Del';
+            delBtn.style.marginLeft = '4px';
+            delBtn.addEventListener('click', () => deleteStudent(s.class, s.roll));
+            actionsTd.appendChild(editBtn);
+            actionsTd.appendChild(delBtn);
             tbody.appendChild(tr);
         });
         updateTeacherStats();
@@ -2790,68 +2922,74 @@
             div.style.cssText =
                 'display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--gray); border-radius:10px; font-size:clamp(12px,1vw,14px); flex-wrap:wrap; gap:6px;';
             div.innerHTML =
-                `<div><strong>${h.subject}:</strong> ${h.title}<p style="font-size:clamp(10px,0.8vw,12px); color:var(--text-light);">${h.desc}</p></div><div><button onclick="editHomework('${h.id}')" class="btn btn-primary btn-sm">Edit</button> <button onclick="deleteHomework('${h.id}')" class="btn btn-danger btn-sm">Del</button></div>`;
+                `<div><strong>${esc(h.subject)}:</strong> ${esc(h.title)}<p style="font-size:clamp(10px,0.8vw,12px); color:var(--text-light);">${esc(h.desc)}</p></div><div></div>`;
+            const actionsDiv = div.lastElementChild;
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn btn-primary btn-sm';
+            editBtn.textContent = 'Edit';
+            editBtn.addEventListener('click', () => editHomework(h.id));
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn btn-danger btn-sm';
+            delBtn.textContent = 'Del';
+            delBtn.style.marginLeft = '4px';
+            delBtn.addEventListener('click', () => deleteHomework(h.id));
+            actionsDiv.appendChild(editBtn);
+            actionsDiv.appendChild(delBtn);
             c.appendChild(div);
         });
         updateTeacherStats();
     }
 
-    function teacherLogin(e) {
-        e.preventDefault();
-        const cls = $('teacherClass').value;
-        const pin = $('teacherPin').value;
-        if (DB.teacherPins && DB.teacherPins[cls] === pin) {
-            sessionStorage.setItem('teacherLoggedIn', 'true');
-            sessionStorage.setItem('teacherClass', cls);
-            showToast(`✅ Logged in as ${cls} Teacher`, 'success');
-            renderTeacherUI();
-        } else showToast('❌ Invalid PIN!', 'error');
-    }
-
-    function teacherLogout() {
-        sessionStorage.removeItem('teacherLoggedIn');
-        sessionStorage.removeItem('teacherClass');
-        showToast('👋 Logged out', 'warning');
-        renderTeacherUI();
-    }
-
     // ─── STUDENT CRUD ──────────────────────────────────────────────────
+    let studentSaveInProgress = false;
     function saveStudent(e) {
         e.preventDefault();
-        const cls = getTeacherClass();
-        if (!cls) { showToast('❌ Session expired', 'error'); return; }
-        const roll = parseInt($('studentRoll').value);
-        const name = $('studentName').value.trim();
-        const total = parseInt($('studentTotal').value);
-        const obtained = parseInt($('studentObtained').value);
-        const editRoll = $('editStudentRoll').value;
+        if (studentSaveInProgress) return;
+        studentSaveInProgress = true;
+        try {
+            const cls = getTeacherClass();
+            if (!cls) { showToast('❌ Session expired', 'error'); return; }
+            const roll = parseInt($('studentRoll').value, 10);
+            const name = $('studentName').value.trim();
+            const total = parseInt($('studentTotal').value, 10);
+            const obtained = parseInt($('studentObtained').value, 10);
+            const editRoll = $('editStudentRoll').value ? parseInt($('editStudentRoll').value, 10) : null;
 
-        if (!name || !roll || isNaN(total) || isNaN(obtained)) { showToast('❌ Please fill all fields correctly',
-                'error'); return; }
-        if (obtained > total) { showToast('❌ Obtained marks cannot exceed total marks', 'error'); return; }
-        if (obtained < 0 || total < 0) { showToast('❌ Marks cannot be negative', 'error'); return; }
-
-        if (editRoll) {
-            DB.students = DB.students.filter(s => !(s.class === cls && s.roll === parseInt(editRoll)));
-            showToast('✅ Student updated!', 'success');
-        } else {
-            if (DB.students.some(s => s.class === cls && s.roll === roll)) {
-                showToast('❌ Roll number already exists!', 'error');
-                return;
+            if (!name || !Number.isInteger(roll) || roll <= 0 || isNaN(total) || isNaN(obtained)) {
+                showToast('❌ Please fill all fields correctly', 'error'); return;
             }
-            showToast('✅ Student added!', 'success');
+            if (total <= 0) { showToast('❌ Total marks must be greater than 0', 'error'); return; }
+            if (obtained > total) { showToast('❌ Obtained marks cannot exceed total marks', 'error'); return; }
+            if (obtained < 0) { showToast('❌ Marks cannot be negative', 'error'); return; }
+
+            // Duplicate-roll check applies to BOTH add and edit (excluding the
+            // record being edited) — previously this only ran on add, so
+            // editing a student into an already-used roll number silently
+            // created two records with the same roll.
+            const duplicate = DB.students.some(s => s.class === cls && s.roll === roll && s.roll !== editRoll);
+            if (duplicate) { showToast('❌ Roll number already exists!', 'error'); return; }
+
+            if (editRoll !== null) {
+                DB.students = DB.students.filter(s => !(s.class === cls && s.roll === editRoll));
+                showToast('✅ Student updated!', 'success');
+            } else {
+                showToast('✅ Student added!', 'success');
+            }
+            DB.students.push({ class: cls, roll, name, total, obtained });
+            resetStudentForm();
+            saveData();
+            renderTeacherStudents();
+            renderHome();
+        } finally {
+            studentSaveInProgress = false;
         }
-        DB.students.push({ class: cls, roll, name, total, obtained });
-        resetStudentForm();
-        saveData();
-        renderTeacherStudents();
-        renderHome();
     }
 
     function resetStudentForm() {
         $('editStudentRoll').value = '';
         $('studentRoll').value = '';
         $('studentName').value = '';
+        $('studentTotal').value = '500';
         $('studentObtained').value = '';
         $('studentSubmitBtn').textContent = 'Save';
         $('studentCancelBtn').style.display = 'none';
@@ -2896,12 +3034,18 @@
         const fileInput = $('hwFile');
 
         if (!subject || !title || !desc) { showToast('❌ Please fill all fields', 'error'); return; }
+        if (tooLong(subject, 60) || tooLong(title, 150) || tooLong(desc, 2000)) {
+            showToast('❌ One of the fields is too long', 'error'); return;
+        }
 
         if (fileInput.files[0]) {
             const file = fileInput.files[0];
+            const blocked = /\.(exe|bat|cmd|sh|msi|scr|js|jar|apk)$/i;
+            if (blocked.test(file.name)) { showToast('❌ That file type is not allowed', 'error'); return; }
             if (file.size > 5 * 1024 * 1024) { showToast('❌ File too large! Max 5MB', 'error'); return; }
             const reader = new FileReader();
             reader.onload = function(e) { saveHomework(id, cls, subject, title, desc, e.target.result); };
+            reader.onerror = function() { showToast('❌ Could not read the attachment. Please try again.', 'error'); };
             reader.readAsDataURL(fileInput.files[0]);
         } else {
             const existing = DB.homework.find(h => h.id === id);
@@ -2960,10 +3104,6 @@
     }
 
     // ─── ADMIN ──────────────────────────────────────────────────────
-    function isAdminLoggedIn() {
-        return sessionStorage.getItem('adminLoggedIn') === 'true';
-    }
-
     function renderAdminUI() {
         if (isAdminLoggedIn()) {
             $('adminLogin').style.display = 'none';
@@ -3006,20 +3146,35 @@
         $('aStatAnnounce').textContent = DB.announcements.length;
     }
 
+    let adminLoginInProgress = false;
     function adminLogin(e) {
         e.preventDefault();
+        if (adminLoginInProgress) return;
+        if (!window.firebaseAuth) { showToast('⏳ Still connecting, please try again in a moment.', 'warning'); return; }
+        adminLoginInProgress = true;
+        const btn = e.target.querySelector('button[type="submit"]');
+        if (btn) btn.disabled = true;
+
         const pass = $('adminPass').value;
-        if (DB.adminPass && pass === DB.adminPass) {
-            sessionStorage.setItem('adminLoggedIn', 'true');
-            showToast('✅ Welcome Headmaster!', 'success');
-            renderAdminUI();
-        } else showToast('❌ Invalid password!', 'error');
+        const { auth, signInWithEmailAndPassword } = window.firebaseAuth;
+        signInWithEmailAndPassword(auth, ADMIN_EMAIL, pass)
+            .then(() => {
+                showToast('✅ Welcome Headmaster!', 'success');
+                $('adminPass').value = '';
+            })
+            .catch(() => {
+                showToast('❌ Invalid password!', 'error');
+            })
+            .finally(() => {
+                adminLoginInProgress = false;
+                if (btn) btn.disabled = false;
+            });
     }
 
     function adminLogout() {
-        sessionStorage.removeItem('adminLoggedIn');
+        const { auth, signOut } = window.firebaseAuth;
+        signOut(auth);
         showToast('👋 Logged out', 'warning');
-        renderAdminUI();
     }
 
     function updateTotalStudents(e) {
@@ -3039,9 +3194,12 @@
         const desc = $('noticeDescInput').value.trim();
         const fileInput = $('noticeImageInput');
         if (!title || !desc) { showToast('❌ Please fill title and description', 'error'); return; }
+        if (tooLong(title, 150)) { showToast('❌ Title is too long (max 150 characters)', 'error'); return; }
+        if (tooLong(desc, 2000)) { showToast('❌ Description is too long (max 2000 characters)', 'error'); return; }
         if (fileInput.files[0]) {
             const file = fileInput.files[0];
-            if (file.size > 2 * 1024 * 1024) { showToast('❌ Image too large! Max 2MB', 'error'); return; }
+            const check = validateFile(file, { maxMB: 2, mimePrefix: 'image/', label: 'image' });
+            if (!check.ok) { showToast(check.msg, 'error'); return; }
             const reader = new FileReader();
             reader.onload = function(e) {
                 DB.notice = { title, desc, img: e.target.result };
@@ -3053,6 +3211,7 @@
                 setTimeout(showNotice, 300);
                 renderHome();
             };
+            reader.onerror = function() { showToast('❌ Could not read the image file. Please try again.', 'error'); };
             reader.readAsDataURL(fileInput.files[0]);
         } else {
             DB.notice = { title, desc, img: DB.notice.img || '' };
@@ -3117,12 +3276,15 @@
         }
         students.sort((a, b) => { if (a.class !== b.class) return a.class.localeCompare(b.class); return a.roll - b.roll; });
         students.forEach((s, index) => {
-            const perc = ((s.obtained / s.total) * 100);
-            const percFixed = perc.toFixed(1);
-            const gradeInfo = calculateGrade(perc);
+            const total = Number(s.total) || 0;
+            const obtained = Number(s.obtained) || 0;
+            const hasValidTotal = total > 0;
+            const perc = hasValidTotal ? (obtained / total) * 100 : 0;
+            const percFixed = hasValidTotal ? perc.toFixed(1) + '%' : 'N/A';
+            const gradeInfo = hasValidTotal ? calculateGrade(perc) : { grade: 'N/A', pass: false };
             const tr = document.createElement('tr');
             tr.innerHTML =
-                `<td>${index+1}</td><td style="font-weight:600;">${s.class}</td><td>${s.roll}</td><td style="font-weight:500;">${s.name}</td><td style="font-weight:700; color:var(--primary);">${s.obtained}</td><td>${s.total}</td><td style="font-weight:700; color:var(--gold);">${percFixed}%</td><td style="font-weight:700; color:${gradeInfo.pass ? 'var(--primary)' : '#dc2626'};">${gradeInfo.grade}</td><td>${DB.incharges[s.class]||'Not Assigned'}</td>`;
+                `<td>${index+1}</td><td style="font-weight:600;">${esc(s.class)}</td><td>${esc(s.roll)}</td><td style="font-weight:500;">${esc(s.name)}</td><td style="font-weight:700; color:var(--primary);">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700; color:var(--gold);">${percFixed}</td><td style="font-weight:700; color:${gradeInfo.pass ? 'var(--primary)' : '#dc2626'};">${esc(gradeInfo.grade)}</td><td>${esc(DB.incharges[s.class]||'Not Assigned')}</td>`;
             tbody.appendChild(tr);
         });
     }
@@ -3141,9 +3303,12 @@
             'padding:20px; background:white; max-width:1100px; margin:0 auto; font-family:Inter,sans-serif;';
 
         let tableRows = students.map((s, i) => {
-            const perc = ((s.obtained / s.total) * 100).toFixed(1);
-            const gradeInfo = calculateGrade(parseFloat(perc));
-            return `<tr><td style="border:1px solid #000; padding:6px;">${i+1}</td><td style="border:1px solid #000; padding:6px;">${s.class}</td><td style="border:1px solid #000; padding:6px;">${s.roll}</td><td style="border:1px solid #000; padding:6px;">${s.name}</td><td style="border:1px solid #000; padding:6px; font-weight:700;">${s.obtained}</td><td style="border:1px solid #000; padding:6px;">${s.total}</td><td style="border:1px solid #000; padding:6px; font-weight:700;">${perc}%</td><td style="border:1px solid #000; padding:6px; font-weight:700;">${gradeInfo.grade}</td><td style="border:1px solid #000; padding:6px;">${DB.incharges[s.class]||'N/A'}</td></tr>`;
+            const total = Number(s.total) || 0;
+            const obtained = Number(s.obtained) || 0;
+            const hasValidTotal = total > 0;
+            const perc = hasValidTotal ? ((obtained / total) * 100).toFixed(1) : 'N/A';
+            const gradeInfo = hasValidTotal ? calculateGrade(parseFloat(perc)) : { grade: 'N/A' };
+            return `<tr><td style="border:1px solid #000; padding:6px;">${i+1}</td><td style="border:1px solid #000; padding:6px;">${esc(s.class)}</td><td style="border:1px solid #000; padding:6px;">${esc(s.roll)}</td><td style="border:1px solid #000; padding:6px;">${esc(s.name)}</td><td style="border:1px solid #000; padding:6px; font-weight:700;">${esc(obtained)}</td><td style="border:1px solid #000; padding:6px;">${hasValidTotal ? esc(total) : 'N/A'}</td><td style="border:1px solid #000; padding:6px; font-weight:700;">${hasValidTotal ? perc+'%' : 'N/A'}</td><td style="border:1px solid #000; padding:6px; font-weight:700;">${esc(gradeInfo.grade)}</td><td style="border:1px solid #000; padding:6px;">${esc(DB.incharges[s.class]||'N/A')}</td></tr>`;
         }).join('');
 
         printContainer.innerHTML = `
@@ -3209,7 +3374,13 @@
                         <th style="border:1px solid #000; padding:6px;">%</th>
                         <th style="border:1px solid #000; padding:6px;">Incharge</th>
                     </tr></thead>
-                    <tbody>${DB.students.map(s=>`<tr><td style="border:1px solid #000; padding:6px;">${s.class}</td><td style="border:1px solid #000; padding:6px;">${s.roll}</td><td style="border:1px solid #000; padding:6px;">${s.name}</td><td style="border:1px solid #000; padding:6px; font-weight:700;">${s.obtained}</td><td style="border:1px solid #000; padding:6px;">${s.total}</td><td style="border:1px solid #000; padding:6px; font-weight:700;">${((s.obtained/s.total)*100).toFixed(1)}%</td><td style="border:1px solid #000; padding:6px;">${DB.incharges[s.class]||'N/A'}</td></tr>`).join('')}</tbody>
+                    <tbody>${DB.students.map(s=>{
+                        const total = Number(s.total) || 0;
+                        const obtained = Number(s.obtained) || 0;
+                        const hasValidTotal = total > 0;
+                        const percText = hasValidTotal ? ((obtained/total)*100).toFixed(1)+'%' : 'N/A';
+                        return `<tr><td style="border:1px solid #000; padding:6px;">${esc(s.class)}</td><td style="border:1px solid #000; padding:6px;">${esc(s.roll)}</td><td style="border:1px solid #000; padding:6px;">${esc(s.name)}</td><td style="border:1px solid #000; padding:6px; font-weight:700;">${esc(obtained)}</td><td style="border:1px solid #000; padding:6px;">${hasValidTotal ? esc(total) : 'N/A'}</td><td style="border:1px solid #000; padding:6px; font-weight:700;">${percText}</td><td style="border:1px solid #000; padding:6px;">${esc(DB.incharges[s.class]||'N/A')}</td></tr>`;
+                    }).join('')}</tbody>
                 </table>
                 <div style="margin-top:12px; text-align:center; font-size:10px; color:#555; border-top:1px solid #ddd; padding-top:8px;">
                     © ${new Date().getFullYear()} GES Bait Mughal · Smart School System
@@ -3232,34 +3403,52 @@
     }
 
     // ─── RESULT SEARCH ──────────────────────────────────────────────
+    let resultSearchInProgress = false;
     function searchResult(e) {
         e.preventDefault();
+        if (resultSearchInProgress) return;
+        resultSearchInProgress = true;
+
         const cls = $('resultClass').value;
-        const roll = parseInt($('resultRoll').value);
+        const rollRaw = $('resultRoll').value.trim();
+
+        if (rollRaw === '') { showToast('⚠️ Please enter a roll number.', 'warning'); resultSearchInProgress = false; return; }
+        const roll = parseInt(rollRaw, 10);
+        if (!Number.isInteger(roll) || roll <= 0) {
+            showToast('⚠️ Roll number must be a positive number.', 'warning');
+            resultSearchInProgress = false;
+            return;
+        }
+
         const student = DB.students.find(s => s.class === cls && s.roll === roll);
-        if (!student) { showToast('❌ No student found!', 'error');
-            $('resultDisplay').style.display = 'none'; return; }
+        if (!student) {
+            showToast('❌ No student found!', 'error');
+            $('resultDisplay').style.display = 'none';
+            resultSearchInProgress = false;
+            return;
+        }
+
+        const total = Number(student.total) || 0;
+        const obtained = Number(student.obtained) || 0;
+        const hasValidTotal = total > 0;
+        const perc = hasValidTotal ? (obtained / total) * 100 : 0;
+        const gradeInfo = hasValidTotal ? calculateGrade(perc) : { grade: 'N/A', pass: false };
 
         $('resClass').textContent = student.class;
         $('resRoll').textContent = student.roll;
         $('resName').textContent = student.name;
         $('resIncharge').textContent = DB.incharges[student.class] || 'Not Assigned';
-        $('resTotal').textContent = student.total;
-        $('resObtained').textContent = student.obtained;
-        const perc = ((student.obtained / student.total) * 100).toFixed(1);
-        $('resPercentage').textContent = perc + '%';
-        const gradeInfo = calculateGrade(parseFloat(perc));
-
-        // Show subject-wise marks like the original design
-        $('resSubjects').innerHTML = `
-                <tr><td><strong>Total Marks</strong></td><td>${student.total}</td></tr>
-                <tr><td><strong>Obtained Marks</strong></td><td>${student.obtained}</td></tr>
-                <tr><td><strong>Percentage</strong></td><td>${perc}%</td></tr>
-                <tr><td><strong>Grade</strong></td><td>${gradeInfo.grade} (${gradeInfo.pass ? '✅ Pass' : '❌ Fail'})</td></tr>
-            `;
+        $('resTotal').textContent = hasValidTotal ? total : 'N/A';
+        $('resObtained').textContent = obtained;
+        $('resPercentage').textContent = hasValidTotal ? perc.toFixed(1) + '%' : 'N/A';
+        $('resGrade').textContent = gradeInfo.grade;
+        const statusEl = $('resStatus');
+        statusEl.textContent = hasValidTotal ? (gradeInfo.pass ? '✅ Pass' : '❌ Fail') : '';
+        statusEl.style.color = gradeInfo.pass ? 'var(--primary)' : '#dc2626';
 
         $('resultDisplay').style.display = 'block';
         showToast('✅ Result found!', 'success');
+        resultSearchInProgress = false;
     }
 
     // ─── ADMIN SLIDER ───────────────────────────────────────────────
@@ -3267,9 +3456,11 @@
         e.preventDefault();
         const title = $('slideTitle').value.trim();
         const fileInput = $('slideImageFile');
-        if (!fileInput.files[0]) { showToast('❌ Please select an image', 'warning'); return; }
+        if (!title) { showToast('❌ Please enter a slide title', 'warning'); return; }
+        if (tooLong(title, 100)) { showToast('❌ Title is too long (max 100 characters)', 'error'); return; }
+        const check = validateFile(fileInput.files[0], { maxMB: 2, mimePrefix: 'image/', label: 'image' });
+        if (!check.ok) { showToast(check.msg, 'warning'); return; }
         const file = fileInput.files[0];
-        if (file.size > 2 * 1024 * 1024) { showToast('❌ Image too large! Use under 2MB.', 'error'); return; }
         const reader = new FileReader();
         reader.onload = function(e) {
             const id = Date.now().toString();
@@ -3281,6 +3472,7 @@
             renderAdminSlider();
             showToast('✅ Slide image uploaded!', 'success');
         };
+        reader.onerror = function() { showToast('❌ Could not read the image file. Please try again.', 'error'); };
         reader.readAsDataURL(file);
     }
 
@@ -3307,7 +3499,12 @@
             const div = document.createElement('div');
             div.style.cssText = 'border-radius:10px; overflow:hidden; background:var(--gray); position:relative;';
             div.innerHTML =
-                `<img src="${s.img}" style="width:100%; height:70px; object-fit:cover;" loading="lazy" /><div style="padding:4px 8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;"><span style="font-size:clamp(10px,0.8vw,12px); font-weight:600;">${s.title}</span><button onclick="deleteSlideImage('${s.id}')" class="btn btn-danger btn-sm">×</button></div>`;
+                `<img src="${esc(s.img)}" style="width:100%; height:70px; object-fit:cover;" loading="lazy" onerror="this.style.display='none'" /><div style="padding:4px 8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;"><span style="font-size:clamp(10px,0.8vw,12px); font-weight:600;">${esc(s.title)}</span></div>`;
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn btn-danger btn-sm';
+            delBtn.textContent = '×';
+            delBtn.addEventListener('click', () => deleteSlideImage(s.id));
+            div.querySelector('div').appendChild(delBtn);
             container.appendChild(div);
         });
     }
@@ -3326,7 +3523,12 @@
             div.style.cssText =
                 'display:flex; justify-content:space-between; align-items:center; padding:6px 12px; background:var(--gray); border-radius:10px; font-size:clamp(12px,1vw,14px); flex-wrap:wrap; gap:6px;';
             div.innerHTML =
-                `<div><strong>${a.title}</strong><p style="font-size:clamp(10px,0.8vw,12px); color:var(--text-light);">${a.desc||''}</p></div><button onclick="deleteAnnouncement('${a.id}')" class="btn btn-danger btn-sm">Del</button>`;
+                `<div><strong>${esc(a.title)}</strong><p style="font-size:clamp(10px,0.8vw,12px); color:var(--text-light);">${esc(a.desc||'')}</p></div>`;
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn btn-danger btn-sm';
+            delBtn.textContent = 'Del';
+            delBtn.addEventListener('click', () => deleteAnnouncement(a.id));
+            div.appendChild(delBtn);
             c.appendChild(div);
         });
         updateAdminStats();
@@ -3344,7 +3546,19 @@
             div.style.cssText =
                 'display:flex; justify-content:space-between; align-items:center; padding:6px 12px; background:var(--gray); border-radius:10px; font-size:clamp(12px,1vw,14px); flex-wrap:wrap; gap:6px;';
             div.innerHTML =
-                `<div><span style="font-size:clamp(9px,0.7vw,11px); font-weight:700; background:var(--primary-bg); padding:2px 8px; border-radius:6px;">${h.class}</span> <strong>${h.subject}:</strong> ${h.title}</div><div><button onclick="editAdminHomework('${h.id}')" class="btn btn-primary btn-sm">Edit</button> <button onclick="deleteAdminHomework('${h.id}')" class="btn btn-danger btn-sm">Del</button></div>`;
+                `<div><span style="font-size:clamp(9px,0.7vw,11px); font-weight:700; background:var(--primary-bg); padding:2px 8px; border-radius:6px;">${esc(h.class)}</span> <strong>${esc(h.subject)}:</strong> ${esc(h.title)}</div><div></div>`;
+            const actionsDiv = div.lastElementChild;
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn btn-primary btn-sm';
+            editBtn.textContent = 'Edit';
+            editBtn.addEventListener('click', () => editAdminHomework(h.id));
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn btn-danger btn-sm';
+            delBtn.textContent = 'Del';
+            delBtn.style.marginLeft = '4px';
+            delBtn.addEventListener('click', () => deleteAdminHomework(h.id));
+            actionsDiv.appendChild(editBtn);
+            actionsDiv.appendChild(delBtn);
             c.appendChild(div);
         });
         updateAdminStats();
@@ -3362,7 +3576,12 @@
             const div = document.createElement('div');
             div.style.cssText = 'border-radius:10px; overflow:hidden; background:var(--gray);';
             div.innerHTML =
-                `<img src="${img.file}" style="width:100%; height:70px; object-fit:cover;" loading="lazy" /><div style="padding:4px 8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;"><span style="font-size:clamp(10px,0.8vw,12px); font-weight:600;">${img.caption}</span><button onclick="deleteGallery('${img.id}')" class="btn btn-danger btn-sm">×</button></div>`;
+                `<img src="${esc(img.file)}" style="width:100%; height:70px; object-fit:cover;" loading="lazy" onerror="this.style.display='none'" /><div style="padding:4px 8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;"><span style="font-size:clamp(10px,0.8vw,12px); font-weight:600;">${esc(img.caption)}</span></div>`;
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn btn-danger btn-sm';
+            delBtn.textContent = '×';
+            delBtn.addEventListener('click', () => deleteGallery(img.id));
+            div.querySelector('div').appendChild(delBtn);
             c.appendChild(div);
         });
     }
@@ -3383,7 +3602,12 @@
                 div.style.cssText =
                     'display:flex; justify-content:space-between; align-items:center; padding:4px 10px; background:var(--gray); border-radius:8px; font-size:clamp(12px,1vw,14px); flex-wrap:wrap; gap:4px;';
                 div.innerHTML =
-                    `<span><strong>${cls}:</strong> ${name}</span><button onclick="removeIncharge('${cls}')" class="btn btn-danger btn-sm">Remove</button>`;
+                    `<span><strong>${esc(cls)}:</strong> ${esc(name)}</span>`;
+                const delBtn = document.createElement('button');
+                delBtn.className = 'btn btn-danger btn-sm';
+                delBtn.textContent = 'Remove';
+                delBtn.addEventListener('click', () => removeIncharge(cls));
+                div.appendChild(delBtn);
                 c.appendChild(div);
             }
         });
@@ -3404,9 +3628,9 @@
     function uploadVideo(e) {
         e.preventDefault();
         const fi = $('videoFile');
-        if (!fi.files[0]) { showToast('❌ Please select a video file', 'warning'); return; }
+        const check = validateFile(fi.files[0], { maxMB: 7, mimePrefix: 'video/', label: 'video' });
+        if (!check.ok) { showToast(check.msg, 'warning'); return; }
         const file = fi.files[0];
-        if (file.size > 7 * 1024 * 1024) { showToast('❌ Video too large! Use under 7MB.', 'error'); return; }
         const reader = new FileReader();
         reader.onload = function(e) {
             DB.video = e.target.result;
@@ -3414,6 +3638,7 @@
             renderHome();
             showToast('✅ Video uploaded!', 'success');
         };
+        reader.onerror = function() { showToast('❌ Could not read the video file. Please try again.', 'error'); };
         reader.readAsDataURL(file);
     }
 
@@ -3425,6 +3650,7 @@
         const type = $('announceType').value;
         const id = Date.now().toString();
         if (!title || !desc) { showToast('❌ Please fill title and details', 'error'); return; }
+        if (tooLong(title, 150) || tooLong(desc, 500)) { showToast('❌ Title/details too long', 'error'); return; }
         DB.announcements.unshift({ id, title, desc, date, type });
         saveData();
         $('announceTitle').value = '';
@@ -3453,11 +3679,17 @@
         const desc = $('adminHwDesc').value.trim();
         const fileInput = $('adminHwFile');
         if (!cls || !subject || !title || !desc) { showToast('❌ Please fill all fields', 'error'); return; }
+        if (tooLong(subject, 60) || tooLong(title, 150) || tooLong(desc, 2000)) {
+            showToast('❌ One of the fields is too long', 'error'); return;
+        }
         if (fileInput.files[0]) {
             const file = fileInput.files[0];
+            const blocked = /\.(exe|bat|cmd|sh|msi|scr|js|jar|apk)$/i;
+            if (blocked.test(file.name)) { showToast('❌ That file type is not allowed', 'error'); return; }
             if (file.size > 5 * 1024 * 1024) { showToast('❌ File too large! Max 5MB', 'error'); return; }
             const reader = new FileReader();
             reader.onload = function(e) { saveAdminHomework(id, cls, subject, title, desc, e.target.result); };
+            reader.onerror = function() { showToast('❌ Could not read the attachment. Please try again.', 'error'); };
             reader.readAsDataURL(fileInput.files[0]);
         } else {
             const existing = DB.homework.find(h => h.id === id);
@@ -3520,9 +3752,11 @@
         e.preventDefault();
         const caption = $('galleryCaption').value.trim();
         const fileInput = $('galleryFile');
-        if (!caption || !fileInput.files[0]) { showToast('❌ Please fill caption and select image', 'error'); return; }
+        if (!caption) { showToast('❌ Please enter a caption', 'error'); return; }
+        if (tooLong(caption, 150)) { showToast('❌ Caption is too long (max 150 characters)', 'error'); return; }
+        const check = validateFile(fileInput.files[0], { maxMB: 2, mimePrefix: 'image/', label: 'image' });
+        if (!check.ok) { showToast(check.msg, 'error'); return; }
         const file = fileInput.files[0];
-        if (file.size > 2 * 1024 * 1024) { showToast('❌ Image too large! Max 2MB', 'error'); return; }
         const reader = new FileReader();
         reader.onload = function(e) {
             const id = Date.now().toString();
@@ -3535,6 +3769,7 @@
             renderHome();
             showToast('✅ Photo uploaded!', 'success');
         };
+        reader.onerror = function() { showToast('❌ Could not read the image file. Please try again.', 'error'); };
         reader.readAsDataURL(file);
     }
 
@@ -3554,6 +3789,7 @@
         const cls = $('inchargeClass').value;
         const name = $('inchargeName').value.trim();
         if (!name) { showToast('❌ Please enter teacher name', 'error'); return; }
+        if (tooLong(name, 80)) { showToast('❌ Name is too long (max 80 characters)', 'error'); return; }
         DB.incharges[cls] = name;
         saveData();
         $('inchargeName').value = '';
@@ -3574,27 +3810,39 @@
         }
     }
 
+    // Real password change: Firebase requires re-authentication with the
+    // CURRENT password before allowing a sensitive change like this, so we
+    // re-verify the admin's identity first rather than trusting the client.
+    let changePassInProgress = false;
     function changeAdminPass(e) {
         e.preventDefault();
-        const newPass = $('newAdminPass').value;
-        if (newPass.length < 4) { showToast('❌ Password must be at least 4 characters', 'error'); return; }
-        DB.adminPass = newPass;
-        saveData();
-        $('newAdminPass').value = '';
-        showToast('✅ Admin password updated!', 'success');
-    }
+        if (changePassInProgress) return;
+        const user = window.firebaseAuth.auth.currentUser;
+        if (!user) { showToast('❌ Session expired, please log in again', 'error'); return; }
 
-    function setTeacherPin(e) {
-        e.preventDefault();
-        const cls = $('pinClass').value;
-        const pin = $('newTeacherPin').value;
-        if (pin.length < 4) { showToast('❌ PIN must be at least 4 characters', 'error'); return; }
-        if (!DB.teacherPins) DB.teacherPins = {};
-        DB.teacherPins[cls] = pin;
-        saveData();
-        $('newTeacherPin').value = '';
-        showToast(`✅ PIN for ${cls} updated!`, 'success');
+        const currentPass = $('currentAdminPass').value;
+        const newPass = $('newAdminPass').value;
+        if (newPass.length < 6) { showToast('❌ New password must be at least 6 characters', 'error'); return; }
+
+        changePassInProgress = true;
+        const { EmailAuthProvider, reauthenticateWithCredential, updatePassword } = window.firebaseAuth;
+        const cred = EmailAuthProvider.credential(user.email, currentPass);
+        reauthenticateWithCredential(user, cred)
+            .then(() => updatePassword(user, newPass))
+            .then(() => {
+                $('currentAdminPass').value = '';
+                $('newAdminPass').value = '';
+                showToast('✅ Admin password updated!', 'success');
+            })
+            .catch(() => {
+                showToast('❌ Current password is incorrect', 'error');
+            })
+            .finally(() => { changePassInProgress = false; });
     }
+    // Teacher PIN changes now happen in Firebase Console → Authentication →
+    // Users (see the note in the Security card) — the client SDK cannot
+    // reset another account's password without a backend (Admin SDK /
+    // Cloud Function), so no client-side function exists for this anymore.
 
     function updateAbout(e) {
         e.preventDefault();
@@ -3603,6 +3851,9 @@
         const address = $('contactAddress').value.trim();
         const phone = $('contactPhone').value.trim();
         if (!about || !headmaster) { showToast('❌ Please fill about and headmaster name', 'error'); return; }
+        if (tooLong(about, 3000) || tooLong(headmaster, 80) || tooLong(address, 200) || tooLong(phone, 40)) {
+            showToast('❌ One of the fields is too long', 'error'); return;
+        }
         DB.about = about;
         DB.headmaster = headmaster;
         DB.contact.address = address || 'Bait Mughal, Jalal Pur Pir Wala, Punjab';
