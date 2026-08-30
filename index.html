@@ -1718,6 +1718,7 @@
                 display: none !important;
             }
             .nav-bar,
+            .banner,
             .hero-slider,
             .hero-slider .controls,
             .hero-slider .dots,
@@ -1985,7 +1986,7 @@
 
         <!-- RESULTS -->
         <section id="tab-results" class="tab-content">
-            <div class="card" style="max-width:540px; margin:0 auto;">
+            <div class="card no-print" style="max-width:540px; margin:0 auto;">
                 <div class="card-header"><h3><i class="fas fa-search"></i> Search Result</h3></div>
                 <form onsubmit="searchResult(event)" style="display:flex; flex-direction:column; gap:12px;">
                     <div class="form-group"><label>Select Class</label>
@@ -2326,6 +2327,7 @@
                             <div class="form-group" style="margin:0;"><label>Address</label><input type="text" id="contactAddress" placeholder="School address" /></div>
                             <div class="form-group" style="margin:0;"><label>Phone</label><input type="text" id="contactPhone" placeholder="Phone number" /></div>
                         </div>
+                        <div class="form-group" style="margin:0;"><label>Email</label><input type="email" id="contactEmail" placeholder="School email" /></div>
                         <div><button type="submit" class="btn btn-primary btn-sm">Save</button></div>
                     </form>
                 </div>
@@ -3120,6 +3122,7 @@
             $('headmasterInput').value = DB.headmaster;
             $('contactAddress').value = DB.contact.address || '';
             $('contactPhone').value = DB.contact.phone || '';
+            $('contactEmail').value = DB.contact.email || '';
             renderResultReport();
             if (DB.notice) {
                 $('noticeTitleInput').value = DB.notice.title || '';
@@ -3850,14 +3853,19 @@
         const headmaster = $('headmasterInput').value.trim();
         const address = $('contactAddress').value.trim();
         const phone = $('contactPhone').value.trim();
+        const email = $('contactEmail').value.trim();
         if (!about || !headmaster) { showToast('❌ Please fill about and headmaster name', 'error'); return; }
-        if (tooLong(about, 3000) || tooLong(headmaster, 80) || tooLong(address, 200) || tooLong(phone, 40)) {
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showToast('❌ Please enter a valid email address', 'error'); return;
+        }
+        if (tooLong(about, 3000) || tooLong(headmaster, 80) || tooLong(address, 200) || tooLong(phone, 40) || tooLong(email, 100)) {
             showToast('❌ One of the fields is too long', 'error'); return;
         }
         DB.about = about;
         DB.headmaster = headmaster;
         DB.contact.address = address || 'Bait Mughal, Jalal Pur Pir Wala, Punjab';
         DB.contact.phone = phone || '03027319839';
+        DB.contact.email = email || 'gesbaitmughal@gmail.com';
         saveData();
         renderHome();
         showToast('✅ About & Contact updated!', 'success');
