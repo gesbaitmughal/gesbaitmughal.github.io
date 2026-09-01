@@ -2017,7 +2017,7 @@
                     </div>
                     <div id="resStatus" style="text-align:center; margin-top:14px; font-size:clamp(16px,1.6vw,20px); font-weight:800;"></div>
                     <div class="no-print" style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; justify-content:center;">
-                        <button onclick="window.print()" class="btn btn-primary print-btn"><i class="fas fa-print"></i> Print Result</button>
+                        <button onclick="printSingleResult()" class="btn btn-primary print-btn"><i class="fas fa-print"></i> Print Result</button>
                     </div>
                 </div>
             </div>
@@ -3344,6 +3344,44 @@
         </head><body>${bodyHtml}</body></html>`);
         win.document.close();
         return win;
+    }
+
+    function printSingleResult() {
+        const statusText = $('resStatus').textContent || '';
+        const statusColor = $('resStatus').style.color || '#000';
+        const bodyHtml = `
+            <div style="text-align:center; margin-bottom:14px; border-bottom:2px solid #000; padding-bottom:12px;">
+                <h2 style="font-size:22px; font-weight:900;">GES BAIT MUGHAL</h2>
+                <p style="font-size:13px; color:#333;">Overall Student Performance Report</p>
+            </div>
+            <table style="margin-bottom:14px;">
+                <tbody>
+                    <tr><td style="font-weight:700; width:30%;">Class</td><td>${esc($('resClass').textContent)}</td></tr>
+                    <tr><td style="font-weight:700;">Roll No</td><td>${esc($('resRoll').textContent)}</td></tr>
+                    <tr><td style="font-weight:700;">Student</td><td>${esc($('resName').textContent)}</td></tr>
+                    <tr><td style="font-weight:700;">Incharge</td><td>${esc($('resIncharge').textContent)}</td></tr>
+                </tbody>
+            </table>
+            <table>
+                <thead><tr><th>Total Marks</th><th>Obtained</th><th>Percentage</th><th>Grade</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>${esc($('resTotal').textContent)}</td>
+                        <td style="font-weight:700;">${esc($('resObtained').textContent)}</td>
+                        <td style="font-weight:700;">${esc($('resPercentage').textContent)}</td>
+                        <td style="font-weight:700;">${esc($('resGrade').textContent)}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="text-align:center; margin-top:16px; font-size:18px; font-weight:800; color:${esc(statusColor)};">${esc(statusText)}</div>
+            <div style="margin-top:20px; text-align:center; font-size:10px; color:#555; border-top:1px solid #ddd; padding-top:8px;">
+                © ${new Date().getFullYear()} GES Bait Mughal · Smart School System
+            </div>`;
+
+        const win = openPrintWindow('Student Result', bodyHtml);
+        if (!win) return;
+        setTimeout(() => { win.print(); }, 300);
+        showToast('🖨️ Printing result...', 'success');
     }
 
     function printResultReport() {
