@@ -1974,8 +1974,12 @@
 
             <div class="card">
                 <div class="card-header"><h3><i class="fas fa-play-circle"></i> School Tour Video</h3><span style="font-size:clamp(10px,0.8vw,13px); color:var(--text-light);" id="videoStatus">▶️ Playing with sound</span></div>
-                <div class="video-wrapper">
+                <div class="video-wrapper" style="position:relative;">
                     <video id="schoolVideo" controls playsinline preload="auto"><source src="" type="video/mp4" /></video>
+                    <div id="videoOverlay" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:#ccc; text-align:center; padding:16px; pointer-events:none;">
+                        <i class="fas fa-photo-film" style="font-size:32px; opacity:0.6;"></i>
+                        <span id="videoOverlayText" style="font-size:clamp(12px,1vw,14px);">No video uploaded</span>
+                    </div>
                     <div class="video-controls">
                         <span><i class="fas fa-volume-up" id="volumeIcon"></i> <span id="volumeText">Sound on</span></span>
                         <button onclick="toggleFullscreen()"><i class="fas fa-expand"></i> Full Screen</button>
@@ -2002,7 +2006,11 @@
             </div>
             <div id="resultDisplay" style="display:none; margin-top:22px;">
                 <div class="report-card" id="resultCard">
-                    <div class="header"><h2>GES BAIT MUGHAL</h2><p>Overall Student Performance Report</p></div>
+                    <div class="header">
+                        <h2>GES BAIT MUGHAL</h2>
+                        <p>Overall Student Performance Report</p>
+                        <p id="resExamType" style="font-weight:700; color:var(--gold); margin-top:4px; display:none;"></p>
+                    </div>
                     <div class="student-info">
                         <div><strong>Class:</strong> <span id="resClass">-</span></div>
                         <div><strong>Roll No:</strong> <span id="resRoll">-</span></div>
@@ -2019,6 +2027,11 @@
                     <div class="no-print" style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; justify-content:center;">
                         <button onclick="printSingleResult()" class="btn btn-primary print-btn"><i class="fas fa-print"></i> Print Result</button>
                     </div>
+                </div>
+                <div class="report-card no-print" id="noResultCard" style="display:none; text-align:center; padding:clamp(24px,3vw,40px) 20px;">
+                    <i class="fas fa-folder-open" style="font-size:36px; color:var(--text-light); margin-bottom:10px;"></i>
+                    <h3 style="font-size:clamp(16px,1.4vw,19px); font-weight:800; margin-bottom:6px;">No Result Uploaded</h3>
+                    <p style="color:var(--text-light); font-size:clamp(13px,1vw,15px);" id="noResultDetail">No result has been uploaded yet for this roll number.</p>
                 </div>
             </div>
         </section>
@@ -2090,6 +2103,7 @@
                         <div class="form-group" style="margin:0;"><label>Name</label><input type="text" id="studentName" placeholder="Student name" required /></div>
                         <div class="form-group" style="margin:0;"><label>Total</label><input type="number" id="studentTotal" value="500" required /></div>
                         <div class="form-group" style="margin:0;"><label>Obtained</label><input type="number" id="studentObtained" placeholder="420" required /></div>
+                        <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Exam Type (optional)</label><input type="text" id="studentExamType" list="examTypeSuggestions" placeholder="e.g. Midterm, Final Term, Annual Exam" maxlength="60" /><datalist id="examTypeSuggestions"><option value="Annual Exam"></option><option value="Mid Term"></option><option value="Final Term"></option><option value="First Term"></option><option value="Second Term"></option><option value="Test"></option></datalist></div>
                         <div style="grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap;">
                             <button type="submit" class="btn btn-primary" id="studentSubmitBtn">Save</button>
                             <button type="button" onclick="cancelEditStudent()" class="btn btn-outline" id="studentCancelBtn" style="display:none;">Cancel</button>
@@ -2099,7 +2113,7 @@
                 <div class="card" style="margin-bottom:12px;">
                     <div class="card-header"><h3><i class="fas fa-users"></i> Students</h3><span style="font-size:clamp(11px,0.8vw,13px); background:var(--gray); padding:2px 12px; border-radius:40px;" id="studentCount">0</span></div>
                     <div class="table-wrap"><table>
-                            <thead style="background:var(--gray);"><tr><th>Roll</th><th>Name</th><th>%</th><th>Actions</th></tr></thead>
+                            <thead style="background:var(--gray);"><tr><th>Roll</th><th>Name</th><th>Exam Type</th><th>%</th><th>Actions</th></tr></thead>
                             <tbody id="teacherStudentList"></tbody>
                         </table></div>
                 </div>
@@ -2197,6 +2211,7 @@
                                 <option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option>
                                 <option value="Class 7">Class 7</option><option value="Class 8">Class 8</option>
                             </select>
+                            <input type="text" id="reportExamTypeFilter" list="examTypeSuggestions" placeholder="Filter by exam type" style="padding:clamp(3px,0.4vw,8px) clamp(8px,0.8vw,14px); border:2px solid var(--border); border-radius:10px; font-size:clamp(11px,0.8vw,13px); background:var(--bg); color:var(--text); width:150px;" />
                             <button onclick="renderResultReport()" class="btn btn-primary btn-sm">View</button>
                             <button onclick="printResultReport()" class="btn btn-gold btn-sm"><i class="fas fa-print"></i> Print</button>
                         </div>
@@ -2204,7 +2219,7 @@
                     <div class="table-wrap" style="max-height:340px; overflow-y:auto;">
                         <table>
                             <thead style="background:var(--gray); position:sticky; top:0; z-index:5;">
-                                <tr><th>#</th><th>Class</th><th>Roll</th><th>Student</th><th>Obtained</th><th>Total</th><th>%</th><th>Grade</th><th>Incharge</th></tr>
+                                <tr><th>#</th><th>Class</th><th>Roll</th><th>Student</th><th>Exam Type</th><th>Obtained</th><th>Total</th><th>%</th><th>Grade</th><th>Incharge</th></tr>
                             </thead>
                             <tbody id="reportTableBody"></tbody>
                         </table>
@@ -2492,8 +2507,30 @@
         // ─── VIDEO ────────────────────────────────────────────────────────
         let videoPlayedOnce = false;
 
+        // Human-readable text for the standard MediaError codes, so a failure
+        // shows a clear reason instead of a silent black rectangle.
+        function videoErrorMessage(err) {
+            if (!err) return 'This video could not be played.';
+            switch (err.code) {
+                case 1: return 'Video loading was interrupted.';
+                case 2: return 'Video failed to load — check your connection.';
+                case 3: return "This device/browser can't decode this video format.";
+                case 4: return "This device/browser doesn't support this video format.";
+                default: return 'This video could not be played on this device.';
+            }
+        }
+
+        function showVideoOverlay(text) {
+            $('videoOverlayText').textContent = text;
+            $('videoOverlay').style.display = 'flex';
+        }
+        function hideVideoOverlay() {
+            $('videoOverlay').style.display = 'none';
+        }
+
         function initVideo() {
             if (DB.video) {
+                showVideoOverlay('Loading video…');
                 video.src = DB.video;
                 video.load();
                 video.loop = false;
@@ -2504,15 +2541,35 @@
                     $('volumeText').textContent = 'Sound on';
                     $('volumeIcon').className = 'fas fa-volume-up';
                 }).catch(() => {
+                    // Autoplay-with-sound blocked (very common on desktop
+                    // browsers) — retry muted, which browsers generally allow.
                     video.muted = true;
-                    video.play();
-                    $('videoStatus').textContent = '🔇 Muted (click to unmute)';
-                    $('volumeText').textContent = 'Click to unmute';
-                    $('volumeIcon').className = 'fas fa-volume-mute';
+                    video.play().then(() => {
+                        $('videoStatus').textContent = '🔇 Muted (click to unmute)';
+                        $('volumeText').textContent = 'Click to unmute';
+                        $('volumeIcon').className = 'fas fa-volume-mute';
+                    }).catch(() => {
+                        // Even muted autoplay failed — likely a codec/format the
+                        // browser can't decode at all. Show the controls so the
+                        // person can try tapping play themselves, and explain
+                        // why nothing is happening instead of a black screen.
+                        $('videoStatus').textContent = '⏸️ Tap play to watch';
+                        showVideoOverlay('Tap ▶ to play this video');
+                    });
                 });
-            } else { video.src = '';
-                $('videoStatus').textContent = '📹 No video uploaded'; }
+            } else {
+                video.removeAttribute('src');
+                video.load();
+                $('videoStatus').textContent = '📹 No video uploaded';
+                showVideoOverlay('No video uploaded');
+            }
         }
+        video.addEventListener('playing', hideVideoOverlay);
+        video.addEventListener('error', () => {
+            showVideoOverlay(videoErrorMessage(video.error));
+            $('videoStatus').textContent = '⚠️ Video error';
+            console.error('Video playback error:', video.error);
+        });
         video.addEventListener('ended', () => {
             if (!videoPlayedOnce) { videoPlayedOnce = true;
                 video.muted = true;
@@ -2907,7 +2964,7 @@
         tbody.innerHTML = '';
         $('studentCount').textContent = `${list.length} students`;
         if (list.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-light);">No students yet.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-light);">No students yet.</td></tr>';
             updateTeacherStats();
             return;
         }
@@ -2917,7 +2974,7 @@
             const obtained = Number(s.obtained) || 0;
             const perc = total > 0 ? ((obtained / total) * 100).toFixed(1) + '%' : 'N/A';
             tr.innerHTML =
-                `<td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td style="font-weight:700; color:var(--primary);">${perc}</td><td></td>`;
+                `<td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td>${esc(s.examType || '-')}</td><td style="font-weight:700; color:var(--primary);">${perc}</td><td></td>`;
             const actionsTd = tr.lastElementChild;
             const editBtn = document.createElement('button');
             editBtn.className = 'btn btn-primary btn-sm';
@@ -2980,6 +3037,7 @@
             const name = $('studentName').value.trim();
             const total = parseInt($('studentTotal').value, 10);
             const obtained = parseInt($('studentObtained').value, 10);
+            const examType = $('studentExamType').value.trim();
             const editRoll = $('editStudentRoll').value ? parseInt($('editStudentRoll').value, 10) : null;
 
             if (!name || !Number.isInteger(roll) || roll <= 0 || isNaN(total) || isNaN(obtained)) {
@@ -2988,6 +3046,7 @@
             if (total <= 0) { showToast('❌ Total marks must be greater than 0', 'error'); return; }
             if (obtained > total) { showToast('❌ Obtained marks cannot exceed total marks', 'error'); return; }
             if (obtained < 0) { showToast('❌ Marks cannot be negative', 'error'); return; }
+            if (tooLong(examType, 60)) { showToast('❌ Exam Type is too long (max 60 characters)', 'error'); return; }
 
             // Duplicate-roll check applies to BOTH add and edit (excluding the
             // record being edited) — previously this only ran on add, so
@@ -3002,7 +3061,7 @@
             } else {
                 showToast('✅ Student added!', 'success');
             }
-            DB.students.push({ class: cls, roll, name, total, obtained });
+            DB.students.push({ class: cls, roll, name, total, obtained, examType });
             resetStudentForm();
             saveData();
             renderTeacherStudents();
@@ -3018,6 +3077,7 @@
         $('studentName').value = '';
         $('studentTotal').value = '500';
         $('studentObtained').value = '';
+        $('studentExamType').value = '';
         $('studentSubmitBtn').textContent = 'Save';
         $('studentCancelBtn').style.display = 'none';
         $('studentFormTitle').textContent = 'Add Student';
@@ -3030,6 +3090,7 @@
             $('studentName').value = s.name;
             $('studentTotal').value = s.total;
             $('studentObtained').value = s.obtained;
+            $('studentExamType').value = s.examType || '';
             $('editStudentRoll').value = s.roll;
             $('studentSubmitBtn').textContent = 'Update';
             $('studentCancelBtn').style.display = 'inline-block';
@@ -3293,13 +3354,15 @@
     // ─── RESULT REPORT ──────────────────────────────────────────────
     function renderResultReport() {
         const filter = $('reportClassFilter').value;
+        const examFilter = $('reportExamTypeFilter').value.trim().toLowerCase();
         let students = DB.students;
         if (filter !== 'ALL') students = students.filter(s => s.class === filter);
+        if (examFilter) students = students.filter(s => (s.examType || '').toLowerCase().includes(examFilter));
         const tbody = $('reportTableBody');
         tbody.innerHTML = '';
         if (students.length === 0) {
             tbody.innerHTML =
-                '<tr><td colspan="9" style="text-align:center; padding:20px; color:var(--text-light);">No student records found.</td></tr>';
+                '<tr><td colspan="10" style="text-align:center; padding:20px; color:var(--text-light);">No student records found.</td></tr>';
             return;
         }
         students.sort((a, b) => { if (a.class !== b.class) return a.class.localeCompare(b.class); return a.roll - b.roll; });
@@ -3312,7 +3375,7 @@
             const gradeInfo = hasValidTotal ? calculateGrade(perc) : { grade: 'N/A', pass: false };
             const tr = document.createElement('tr');
             tr.innerHTML =
-                `<td>${index+1}</td><td style="font-weight:600;">${esc(s.class)}</td><td>${esc(s.roll)}</td><td style="font-weight:500;">${esc(s.name)}</td><td style="font-weight:700; color:var(--primary);">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700; color:var(--gold);">${percFixed}</td><td style="font-weight:700; color:${gradeInfo.pass ? 'var(--primary)' : '#dc2626'};">${esc(gradeInfo.grade)}</td><td>${esc(DB.incharges[s.class]||'Not Assigned')}</td>`;
+                `<td>${index+1}</td><td style="font-weight:600;">${esc(s.class)}</td><td>${esc(s.roll)}</td><td style="font-weight:500;">${esc(s.name)}</td><td>${esc(s.examType || '-')}</td><td style="font-weight:700; color:var(--primary);">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700; color:var(--gold);">${percFixed}</td><td style="font-weight:700; color:${gradeInfo.pass ? 'var(--primary)' : '#dc2626'};">${esc(gradeInfo.grade)}</td><td>${esc(DB.incharges[s.class]||'Not Assigned')}</td>`;
             tbody.appendChild(tr);
         });
     }
@@ -3349,10 +3412,12 @@
     function printSingleResult() {
         const statusText = $('resStatus').textContent || '';
         const statusColor = $('resStatus').style.color || '#000';
+        const examType = $('resExamType').textContent || '';
         const bodyHtml = `
             <div style="text-align:center; margin-bottom:14px; border-bottom:2px solid #000; padding-bottom:12px;">
                 <h2 style="font-size:22px; font-weight:900;">GES BAIT MUGHAL</h2>
                 <p style="font-size:13px; color:#333;">Overall Student Performance Report</p>
+                ${examType ? `<p style="font-size:13px; font-weight:700; margin-top:4px;">${esc(examType)}</p>` : ''}
             </div>
             <table style="margin-bottom:14px;">
                 <tbody>
@@ -3386,8 +3451,10 @@
 
     function printResultReport() {
         const filter = $('reportClassFilter').value;
+        const examFilter = $('reportExamTypeFilter').value.trim().toLowerCase();
         let students = DB.students;
         if (filter !== 'ALL') students = students.filter(s => s.class === filter);
+        if (examFilter) students = students.filter(s => (s.examType || '').toLowerCase().includes(examFilter));
         if (students.length === 0) { showToast('❌ No students to print!', 'warning'); return; }
 
         let tableRows = students.map((s, i) => {
@@ -3396,17 +3463,17 @@
             const hasValidTotal = total > 0;
             const perc = hasValidTotal ? ((obtained / total) * 100).toFixed(1) : 'N/A';
             const gradeInfo = hasValidTotal ? calculateGrade(parseFloat(perc)) : { grade: 'N/A' };
-            return `<tr><td>${i+1}</td><td>${esc(s.class)}</td><td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td style="font-weight:700;">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${hasValidTotal ? perc+'%' : 'N/A'}</td><td style="font-weight:700;">${esc(gradeInfo.grade)}</td><td>${esc(DB.incharges[s.class]||'N/A')}</td></tr>`;
+            return `<tr><td>${i+1}</td><td>${esc(s.class)}</td><td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td>${esc(s.examType || '-')}</td><td style="font-weight:700;">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${hasValidTotal ? perc+'%' : 'N/A'}</td><td style="font-weight:700;">${esc(gradeInfo.grade)}</td><td>${esc(DB.incharges[s.class]||'N/A')}</td></tr>`;
         }).join('');
 
         const bodyHtml = `
             <div style="text-align:center; margin-bottom:14px; border-bottom:2px solid #000; padding-bottom:12px;">
                 <h2 style="font-size:22px; font-weight:900;">GES BAIT MUGHAL</h2>
                 <p style="font-size:13px; color:#333;">Complete Student Results Report</p>
-                <p style="font-size:11px; color:#555;">${esc(filter==='ALL'?'All Classes':filter)} | Generated: ${new Date().toLocaleDateString()}</p>
+                <p style="font-size:11px; color:#555;">${esc(filter==='ALL'?'All Classes':filter)}${examFilter ? ' | Exam: ' + esc($('reportExamTypeFilter').value.trim()) : ''} | Generated: ${new Date().toLocaleDateString()}</p>
             </div>
             <table>
-                <thead><tr><th>#</th><th>Class</th><th>Roll</th><th>Name</th><th>Obtained</th><th>Total</th><th>Percentage</th><th>Grade</th><th>Incharge</th></tr></thead>
+                <thead><tr><th>#</th><th>Class</th><th>Roll</th><th>Name</th><th>Exam Type</th><th>Obtained</th><th>Total</th><th>Percentage</th><th>Grade</th><th>Incharge</th></tr></thead>
                 <tbody>${tableRows}</tbody>
             </table>
             <div style="margin-top:12px; text-align:center; font-size:10px; color:#555; border-top:1px solid #ddd; padding-top:8px;">
@@ -3429,13 +3496,13 @@
                 <p style="font-size:11px; color:#555;">${new Date().toLocaleDateString()}</p>
             </div>
             <table>
-                <thead><tr><th>Class</th><th>Roll</th><th>Name</th><th>Obtained</th><th>Total</th><th>%</th><th>Incharge</th></tr></thead>
+                <thead><tr><th>Class</th><th>Roll</th><th>Name</th><th>Exam Type</th><th>Obtained</th><th>Total</th><th>%</th><th>Incharge</th></tr></thead>
                 <tbody>${DB.students.map(s=>{
                     const total = Number(s.total) || 0;
                     const obtained = Number(s.obtained) || 0;
                     const hasValidTotal = total > 0;
                     const percText = hasValidTotal ? ((obtained/total)*100).toFixed(1)+'%' : 'N/A';
-                    return `<tr><td>${esc(s.class)}</td><td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td style="font-weight:700;">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${percText}</td><td>${esc(DB.incharges[s.class]||'N/A')}</td></tr>`;
+                    return `<tr><td>${esc(s.class)}</td><td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td>${esc(s.examType || '-')}</td><td style="font-weight:700;">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${percText}</td><td>${esc(DB.incharges[s.class]||'N/A')}</td></tr>`;
                 }).join('')}</tbody>
             </table>
             <div style="margin-top:12px; text-align:center; font-size:10px; color:#555; border-top:1px solid #ddd; padding-top:8px;">
@@ -3468,8 +3535,11 @@
 
         const student = DB.students.find(s => s.class === cls && s.roll === roll);
         if (!student) {
-            showToast('❌ No student found!', 'error');
-            $('resultDisplay').style.display = 'none';
+            $('noResultDetail').textContent = `No result has been uploaded yet for Roll No ${roll}, ${cls}.`;
+            $('resultCard').style.display = 'none';
+            $('noResultCard').style.display = 'block';
+            $('resultDisplay').style.display = 'block';
+            showToast('❌ No result uploaded for this roll number', 'error');
             resultSearchInProgress = false;
             return;
         }
@@ -3479,6 +3549,15 @@
         const hasValidTotal = total > 0;
         const perc = hasValidTotal ? (obtained / total) * 100 : 0;
         const gradeInfo = hasValidTotal ? calculateGrade(perc) : { grade: 'N/A', pass: false };
+
+        const examTypeEl = $('resExamType');
+        if (student.examType) {
+            examTypeEl.textContent = student.examType;
+            examTypeEl.style.display = 'block';
+        } else {
+            examTypeEl.textContent = '';
+            examTypeEl.style.display = 'none';
+        }
 
         $('resClass').textContent = student.class;
         $('resRoll').textContent = student.roll;
@@ -3492,6 +3571,8 @@
         statusEl.textContent = hasValidTotal ? (gradeInfo.pass ? '✅ Pass' : '❌ Fail') : '';
         statusEl.style.color = gradeInfo.pass ? 'var(--primary)' : '#dc2626';
 
+        $('noResultCard').style.display = 'none';
+        $('resultCard').style.display = 'block';
         $('resultDisplay').style.display = 'block';
         showToast('✅ Result found!', 'success');
         resultSearchInProgress = false;
