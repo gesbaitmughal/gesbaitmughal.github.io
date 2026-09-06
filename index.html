@@ -1994,14 +1994,17 @@
                 <div class="card-header"><h3><i class="fas fa-search"></i> Search Result</h3></div>
                 <form onsubmit="searchResult(event)" style="display:flex; flex-direction:column; gap:12px;">
                     <div class="form-group"><label>Select Class</label>
-                        <select id="resultClass">
+                        <select id="resultClass" onchange="onResultClassChange()">
                             <option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option>
                             <option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option>
                             <option value="Class 7">Class 7</option><option value="Class 8">Class 8</option>
                         </select>
                     </div>
-                    <div class="form-group"><label for="resultRoll">Roll Number</label><input type="number" id="resultRoll" min="1" step="1" inputmode="numeric" placeholder="Enter roll number" required /></div>
-                    <button type="submit" class="btn btn-primary">View Result</button>
+                    <div class="form-group" id="resultRollGroup"><label for="resultRoll">Roll Number</label><input type="number" id="resultRoll" min="1" step="1" inputmode="numeric" placeholder="Enter roll number" required /></div>
+                    <div id="resultNoDataMsg" style="display:none; text-align:center; color:var(--text-light); font-size:clamp(13px,1vw,15px); padding:8px 0;">
+                        <i class="fas fa-folder-open" style="margin-right:6px;"></i>No Result Uploaded for this class yet
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="resultSearchBtn">View Result</button>
                 </form>
             </div>
             <div id="resultDisplay" style="display:none; margin-top:22px;">
@@ -2497,6 +2500,7 @@
             Object.keys(tabs).forEach(k => tabs[k].classList.toggle('active', k === tab));
             navBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
             if (tab === 'home') renderHome();
+            if (tab === 'results') checkClassHasResults();
             if (tab === 'homework') renderHomework();
             if (tab === 'gallery') renderGallery();
             if (tab === 'teacher') renderTeacherUI();
@@ -2743,7 +2747,8 @@
         renderHomework();
         renderGallery();
         renderTeacherUI();
-        renderAdminUI(); }
+        renderAdminUI();
+        checkClassHasResults(); }
 
     // ─── RENDER HOME ─────────────────────────────────────────────────
     function renderHome() {
@@ -3516,6 +3521,36 @@
     }
 
     // ─── RESULT SEARCH ──────────────────────────────────────────────
+    // ─── RESULT SEARCH ──────────────────────────────────────────────
+    // Checks whether the currently-selected class has any results uploaded
+    // at all, and swaps the Roll Number field for a clear "No Result
+    // Uploaded" message when it doesn't — so a visitor never has to search
+    // just to find out a class has nothing recorded yet. Safe to call at
+    // any time (e.g. after a background data refresh) since it never
+    // touches whatever result may currently be on screen.
+    function checkClassHasResults() {
+        const rollGroup = $('resultRollGroup');
+        const noDataMsg = $('resultNoDataMsg');
+        const searchBtn = $('resultSearchBtn');
+        if (!rollGroup || !noDataMsg || !searchBtn) return; // not on this tab yet
+
+        const cls = $('resultClass').value;
+        const hasAny = DB.students.some(s => s.class === cls);
+
+        rollGroup.style.display = hasAny ? 'block' : 'none';
+        searchBtn.style.display = hasAny ? 'block' : 'none';
+        noDataMsg.style.display = hasAny ? 'none' : 'block';
+    }
+
+    // Runs only when the PERSON changes the class dropdown themselves —
+    // clears whatever result was previously shown (it belonged to the old
+    // class) in addition to the check above.
+    function onResultClassChange() {
+        checkClassHasResults();
+        $('resultDisplay').style.display = 'none';
+        $('resultRoll').value = '';
+    }
+
     let resultSearchInProgress = false;
     function searchResult(e) {
         e.preventDefault();
