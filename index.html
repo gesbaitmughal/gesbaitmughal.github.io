@@ -1221,6 +1221,12 @@
             font-weight: 600;
             font-size: clamp(12px, 1.2vw, 16px);
         }
+        .announce-item .content .desc {
+            font-size: clamp(11px, 1vw, 14px);
+            color: var(--text-light);
+            margin: 2px 0 4px;
+            line-height: 1.5;
+        }
         .announce-item .content .date {
             font-size: clamp(10px, 1vw, 13px);
             color: var(--text-light);
@@ -1244,6 +1250,60 @@
         .announce-item .badge.important {
             background: #fdebd0;
             color: #d35400;
+        }
+
+        /* Books folder grid */
+        .books-folder-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: clamp(10px, 1.5vw, 16px);
+        }
+        @media (max-width: 640px) {
+            .books-folder-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .book-folder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: clamp(16px, 2vw, 24px) 8px;
+            background: var(--gray);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            text-align: center;
+        }
+        .book-folder:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        .book-folder i {
+            font-size: clamp(26px, 2.5vw, 34px);
+            color: var(--gold);
+        }
+        .book-folder .folder-label {
+            font-weight: 700;
+            font-size: clamp(13px, 1vw, 15px);
+        }
+        .book-folder .folder-count {
+            font-size: clamp(10px, 0.8vw, 12px);
+            color: var(--text-light);
+        }
+        .book-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding: clamp(10px, 1vw, 14px);
+            background: var(--gray);
+            border-radius: 12px;
+            flex-wrap: wrap;
+        }
+        .book-row .book-title {
+            font-weight: 600;
+            font-size: clamp(13px, 1vw, 15px);
         }
 
         /* timings */
@@ -1909,6 +1969,8 @@
                 <button class="nav-btn active" data-tab="home"><i class="fas fa-home"></i> Home</button>
                 <button class="nav-btn" data-tab="results"><i class="fas fa-chart-bar"></i> Results</button>
                 <button class="nav-btn" data-tab="homework"><i class="fas fa-book-open"></i> Homework</button>
+                <button class="nav-btn" data-tab="books"><i class="fas fa-book"></i> Books</button>
+                <button class="nav-btn" data-tab="downloads"><i class="fas fa-cloud-download-alt"></i> Downloads</button>
                 <button class="nav-btn" data-tab="gallery"><i class="fas fa-images"></i> Gallery</button>
                 <button class="nav-btn" data-tab="teacher"><i class="fas fa-user-tie"></i> Teacher</button>
                 <button class="nav-btn" data-tab="admin"><i class="fas fa-user-gear"></i> Admin</button>
@@ -2058,6 +2120,29 @@
             </div>
         </section>
 
+        <!-- BOOKS -->
+        <section id="tab-books" class="tab-content">
+            <div class="card">
+                <div class="card-header"><h3><i class="fas fa-book"></i> Class Books</h3></div>
+                <div id="booksFolderGrid" class="books-folder-grid"></div>
+                <div id="booksClassView" style="display:none; margin-top:16px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+                        <button onclick="showBooksFolders()" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Back to Classes</button>
+                        <h4 id="booksClassTitle" style="font-size:clamp(14px,1.2vw,18px); font-weight:700;"></h4>
+                    </div>
+                    <div id="booksList" style="display:flex; flex-direction:column; gap:10px;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DOWNLOADS -->
+        <section id="tab-downloads" class="tab-content">
+            <div class="card">
+                <div class="card-header"><h3><i class="fas fa-cloud-download-alt"></i> Downloads</h3></div>
+                <div id="downloadsList" style="display:flex; flex-direction:column; gap:10px;"></div>
+            </div>
+        </section>
+
         <!-- GALLERY -->
         <section id="tab-gallery" class="tab-content">
             <div class="card">
@@ -2104,8 +2189,8 @@
                         <input type="hidden" id="editStudentRoll" />
                         <div class="form-group" style="margin:0;"><label>Roll No</label><input type="number" id="studentRoll" placeholder="101" required /></div>
                         <div class="form-group" style="margin:0;"><label>Name</label><input type="text" id="studentName" placeholder="Student name" required /></div>
-                        <div class="form-group" style="margin:0;"><label>Total</label><input type="number" id="studentTotal" value="500" required /></div>
-                        <div class="form-group" style="margin:0;"><label>Obtained</label><input type="number" id="studentObtained" placeholder="420" required /></div>
+                        <div class="form-group" style="margin:0;"><label>Total (optional)</label><input type="number" id="studentTotal" placeholder="Leave blank if not ready" /></div>
+                        <div class="form-group" style="margin:0;"><label>Obtained (optional)</label><input type="number" id="studentObtained" placeholder="Leave blank if not ready" /></div>
                         <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Exam Type (optional)</label><input type="text" id="studentExamType" list="examTypeSuggestions" placeholder="e.g. Midterm, Final Term, Annual Exam" maxlength="60" /><datalist id="examTypeSuggestions"><option value="Annual Exam"></option><option value="Mid Term"></option><option value="Final Term"></option><option value="First Term"></option><option value="Second Term"></option><option value="Test"></option></datalist></div>
                         <div style="grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap;">
                             <button type="submit" class="btn btn-primary" id="studentSubmitBtn">Save</button>
@@ -2115,25 +2200,21 @@
                 </div>
                 <div class="card" style="margin-bottom:12px;">
                     <div class="card-header"><h3><i class="fas fa-users"></i> Students</h3><span style="font-size:clamp(11px,0.8vw,13px); background:var(--gray); padding:2px 12px; border-radius:40px;" id="studentCount">0</span></div>
+                    <div class="form-group" style="margin-bottom:10px;"><input type="text" id="teacherStudentSearch" oninput="renderTeacherStudents()" placeholder="Search by name or roll number…" /></div>
                     <div class="table-wrap"><table>
                             <thead style="background:var(--gray);"><tr><th>Roll</th><th>Name</th><th>Exam Type</th><th>%</th><th>Actions</th></tr></thead>
                             <tbody id="teacherStudentList"></tbody>
                         </table></div>
                 </div>
-                <div class="card">
-                    <div class="card-header"><h3><i class="fas fa-book-open"></i> Add Homework</h3></div>
-                    <form onsubmit="teacherAddHomework(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                        <input type="hidden" id="editHomeworkId" />
-                        <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Subject</label><input type="text" id="hwSubject" placeholder="e.g. Math" required /></div>
-                        <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Title</label><input type="text" id="hwTitle" placeholder="Assignment title" required /></div>
-                        <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Description</label><textarea id="hwDesc" rows="2" placeholder="Instructions" required></textarea></div>
-                        <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Attachment</label><input type="file" id="hwFile" /></div>
-                        <div style="grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap;">
-                            <button type="submit" class="btn btn-primary" id="hwSubmitBtn">Upload</button>
-                            <button type="button" onclick="cancelEditHomework()" class="btn btn-outline" id="hwCancelBtn" style="display:none;">Cancel</button>
-                        </div>
-                    </form>
-                    <div id="teacherHomeworkList" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;"></div>
+                <div class="card" style="margin-bottom:12px;">
+                    <div class="card-header"><h3><i class="fas fa-upload"></i> Upload All Results</h3></div>
+                    <p style="font-size:clamp(11px,0.9vw,13px); color:var(--text-light); margin-bottom:8px;">Enter Total/Obtained for as many students as you like, then upload them all in one go. Rows left blank are skipped.</p>
+                    <div class="form-group"><label>Exam Type for this upload (optional — applies to every row you fill in)</label><input type="text" id="bulkExamType" list="examTypeSuggestions" placeholder="e.g. Final Term" /></div>
+                    <div class="table-wrap"><table>
+                            <thead style="background:var(--gray);"><tr><th>Roll</th><th>Name</th><th>Total</th><th>Obtained</th></tr></thead>
+                            <tbody id="bulkResultTableBody"></tbody>
+                        </table></div>
+                    <button onclick="uploadAllResults()" class="btn btn-primary" style="margin-top:10px;"><i class="fas fa-upload"></i> Upload All Results</button>
                 </div>
             </div>
         </section>
@@ -2222,10 +2303,27 @@
                     <div class="table-wrap" style="max-height:340px; overflow-y:auto;">
                         <table>
                             <thead style="background:var(--gray); position:sticky; top:0; z-index:5;">
-                                <tr><th>#</th><th>Class</th><th>Roll</th><th>Student</th><th>Exam Type</th><th>Obtained</th><th>Total</th><th>%</th><th>Grade</th><th>Incharge</th></tr>
+                                <tr><th>#</th><th>Class</th><th>Roll</th><th>Student</th><th>Exam Type</th><th>Obtained</th><th>Total</th><th>%</th><th>Grade</th><th>Incharge</th><th>Actions</th></tr>
                             </thead>
                             <tbody id="reportTableBody"></tbody>
                         </table>
+                    </div>
+                    <div class="card" id="adminStudentEditCard" style="display:none; margin-top:12px; background:var(--gray);">
+                        <div class="card-header"><h4 id="adminStudentEditTitle">Edit Student</h4></div>
+                        <form onsubmit="adminSaveStudentEdit(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                            <input type="hidden" id="adminEditOrigClass" />
+                            <input type="hidden" id="adminEditOrigRoll" />
+                            <div class="form-group" style="margin:0;"><label>Class</label><select id="adminEditStudentClass"><option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option><option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option><option value="Class 7">Class 7</option><option value="Class 8">Class 8</option></select></div>
+                            <div class="form-group" style="margin:0;"><label>Roll No</label><input type="number" id="adminEditStudentRoll" required /></div>
+                            <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Name</label><input type="text" id="adminEditStudentName" required /></div>
+                            <div class="form-group" style="margin:0;"><label>Total (optional)</label><input type="number" id="adminEditStudentTotal" placeholder="Leave blank if not ready" /></div>
+                            <div class="form-group" style="margin:0;"><label>Obtained (optional)</label><input type="number" id="adminEditStudentObtained" placeholder="Leave blank if not ready" /></div>
+                            <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Exam Type (optional)</label><input type="text" id="adminEditStudentExamType" list="examTypeSuggestions" maxlength="60" /></div>
+                            <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
+                                <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                                <button type="button" onclick="adminCancelEditStudent()" class="btn btn-outline btn-sm">Cancel</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -2233,9 +2331,13 @@
                 <div class="card" style="margin-bottom:12px;" id="adminSlider">
                     <div class="card-header"><h3><i class="fas fa-images"></i> Slider Control</h3></div>
                     <form onsubmit="addSlideImage(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                        <input type="hidden" id="editSlideId" />
                         <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Slide Title</label><input type="text" id="slideTitle" placeholder="Slide caption" required /></div>
-                        <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Upload Image</label><input type="file" id="slideImageFile" accept="image/*" required /></div>
-                        <div style="grid-column:1/-1;"><button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-upload"></i> Upload</button></div>
+                        <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Upload Image <span id="slideImageOptionalNote" style="display:none; font-weight:400; color:var(--text-light);">(leave blank to keep current image)</span></label><input type="file" id="slideImageFile" accept="image/*" /></div>
+                        <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
+                            <button type="submit" class="btn btn-primary btn-sm" id="slideSubmitBtn"><i class="fas fa-upload"></i> Upload</button>
+                            <button type="button" onclick="cancelEditSlide()" class="btn btn-outline btn-sm" id="slideCancelBtn" style="display:none;">Cancel</button>
+                        </div>
                     </form>
                     <div id="adminSliderList" style="margin-top:12px; display:grid; grid-template-columns:repeat(auto-fill, minmax(clamp(100px, 15vw, 180px), 1fr)); gap:8px;"></div>
                 </div>
@@ -2261,13 +2363,17 @@
 
                 <!-- Announcements -->
                 <div class="card" style="margin-bottom:12px;" id="adminAnnouncements">
-                    <div class="card-header"><h3><i class="fas fa-bullhorn"></i> Add Announcement</h3></div>
+                    <div class="card-header"><h3><i class="fas fa-bullhorn"></i> <span id="announceFormTitle">Add Announcement</span></h3></div>
                     <form onsubmit="addAnnouncement(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                        <input type="hidden" id="editAnnounceId" />
                         <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Title</label><input type="text" id="announceTitle" placeholder="Announcement title" required /></div>
                         <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Details</label><textarea id="announceDesc" rows="2" placeholder="Announcement details" required></textarea></div>
                         <div class="form-group" style="margin:0;"><label>Date</label><input type="date" id="announceDate" required /></div>
                         <div class="form-group" style="margin:0;"><label>Type</label><select id="announceType"><option value="urgent">Urgent</option><option value="important">Important</option><option value="event">Event</option></select></div>
-                        <div style="grid-column:1/-1;"><button type="submit" class="btn btn-primary btn-sm">Publish</button></div>
+                        <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
+                            <button type="submit" class="btn btn-primary btn-sm" id="announceSubmitBtn">Publish</button>
+                            <button type="button" onclick="cancelEditAnnouncement()" class="btn btn-outline btn-sm" id="announceCancelBtn" style="display:none;">Cancel</button>
+                        </div>
                     </form>
                     <div id="adminAnnouncementList" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;"></div>
                 </div>
@@ -2277,11 +2383,11 @@
                     <div class="card-header"><h3><i class="fas fa-book-open"></i> Manage Homework</h3></div>
                     <form onsubmit="adminAddHomework(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                         <input type="hidden" id="adminEditHwId" />
-                        <div class="form-group" style="margin:0;"><label>Class</label><select id="adminHwClass"><option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option><option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option><option value="Class 7">Class 7</option><option value="Class 8">Class 8</option></select></div>
+                        <div class="form-group" style="margin:0;"><label>Class</label><select id="adminHwClass"><option value="ALL">All Classes</option><option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option><option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option><option value="Class 7">Class 7</option><option value="Class 8">Class 8</option></select></div>
                         <div class="form-group" style="margin:0;"><label>Subject</label><input type="text" id="adminHwSubject" placeholder="Subject" required /></div>
                         <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Title</label><input type="text" id="adminHwTitle" placeholder="Assignment title" required /></div>
                         <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Description</label><textarea id="adminHwDesc" rows="2" placeholder="Instructions" required></textarea></div>
-                        <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Attachment</label><input type="file" id="adminHwFile" /></div>
+                        <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Attachment (PDF)</label><input type="file" id="adminHwFile" accept="application/pdf" /></div>
                         <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
                             <button type="submit" class="btn btn-primary btn-sm" id="adminHwSubmitBtn">Upload</button>
                             <button type="button" onclick="cancelAdminEditHomework()" class="btn btn-outline btn-sm" id="adminHwCancelBtn" style="display:none;">Cancel</button>
@@ -2290,13 +2396,57 @@
                     <div id="adminHomeworkList" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;"></div>
                 </div>
 
+                <!-- Books Admin -->
+                <div class="card" style="margin-bottom:12px;" id="adminBooks">
+                    <div class="card-header"><h3><i class="fas fa-book"></i> Manage Books</h3></div>
+                    <form onsubmit="adminAddBook(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                        <input type="hidden" id="adminEditBookId" />
+                        <div class="form-group" style="margin:0;"><label>Class</label><select id="adminBookClass"><option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option><option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option><option value="Class 7">Class 7</option><option value="Class 8">Class 8</option></select></div>
+                        <div class="form-group" style="margin:0;"><label>Book Title</label><input type="text" id="adminBookTitle" placeholder="e.g. Mathematics" required /></div>
+                        <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Book File (PDF)</label><input type="file" id="adminBookFile" accept="application/pdf" /></div>
+                        <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
+                            <button type="submit" class="btn btn-primary btn-sm" id="adminBookSubmitBtn">Upload</button>
+                            <button type="button" onclick="cancelAdminEditBook()" class="btn btn-outline btn-sm" id="adminBookCancelBtn" style="display:none;">Cancel</button>
+                        </div>
+                    </form>
+                    <div style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                        <label style="font-size:clamp(12px,1vw,14px); font-weight:600;">Filter:</label>
+                        <select id="adminBookFilter" onchange="renderAdminBooks()" style="padding:clamp(4px,0.6vw,10px) clamp(8px,1vw,16px); border:2px solid var(--border); border-radius:10px; font-size:clamp(12px,1vw,14px); background:var(--bg); color:var(--text);">
+                            <option value="ALL">All Classes</option>
+                            <option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option>
+                            <option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option>
+                            <option value="Class 7">Class 7</option><option value="Class 8">Class 8</option>
+                        </select>
+                    </div>
+                    <div id="adminBooksList" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;"></div>
+                </div>
+
+                <!-- Downloads Admin -->
+                <div class="card" style="margin-bottom:12px;" id="adminDownloads">
+                    <div class="card-header"><h3><i class="fas fa-cloud-download-alt"></i> Manage Downloads</h3></div>
+                    <form onsubmit="adminAddDownload(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                        <input type="hidden" id="adminEditDownloadId" />
+                        <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Title</label><input type="text" id="adminDownloadTitle" placeholder="e.g. Datesheet, Admission Form" required /></div>
+                        <div class="form-group" style="margin:0; grid-column:1/-1;"><label>File (any type)</label><input type="file" id="adminDownloadFile" /></div>
+                        <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
+                            <button type="submit" class="btn btn-primary btn-sm" id="adminDownloadSubmitBtn">Upload</button>
+                            <button type="button" onclick="cancelAdminEditDownload()" class="btn btn-outline btn-sm" id="adminDownloadCancelBtn" style="display:none;">Cancel</button>
+                        </div>
+                    </form>
+                    <div id="adminDownloadsList" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;"></div>
+                </div>
+
                 <!-- Gallery -->
                 <div class="card" style="margin-bottom:12px;" id="adminGallery">
                     <div class="card-header"><h3><i class="fas fa-images"></i> Manage Gallery</h3></div>
                     <form onsubmit="adminAddGallery(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                        <input type="hidden" id="editGalleryId" />
                         <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Caption</label><input type="text" id="galleryCaption" placeholder="Photo caption" required /></div>
-                        <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Image</label><input type="file" id="galleryFile" accept="image/*" required /></div>
-                        <div style="grid-column:1/-1;"><button type="submit" class="btn btn-primary btn-sm">Upload</button></div>
+                        <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Image <span id="galleryImageOptionalNote" style="display:none; font-weight:400; color:var(--text-light);">(leave blank to keep current image)</span></label><input type="file" id="galleryFile" accept="image/*" /></div>
+                        <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
+                            <button type="submit" class="btn btn-primary btn-sm" id="gallerySubmitBtn">Upload</button>
+                            <button type="button" onclick="cancelEditGallery()" class="btn btn-outline btn-sm" id="galleryCancelBtn" style="display:none;">Cancel</button>
+                        </div>
                     </form>
                     <div id="adminGalleryList" style="margin-top:12px; display:grid; grid-template-columns:repeat(auto-fill, minmax(clamp(100px, 15vw, 180px), 1fr)); gap:8px;"></div>
                 </div>
@@ -2404,6 +2554,8 @@
             homework: [],
             announcements: [],
             gallery: [],
+            books: [],
+            downloads: [],
             incharges: {},
             slides: [],
             notice: { title: '', desc: '', img: '' },
@@ -2456,6 +2608,28 @@
         // Simple text-length guard so a single field can't push an oversized
         // record into Firebase (also mirrored server-side in the Database Rules).
         function tooLong(str, max) { return (str || '').length > max; }
+
+        // Human-readable file size, e.g. 2.3 MB. Used wherever an uploaded
+        // file's size is shown to admins/visitors.
+        function formatFileSize(bytes) {
+            if (!bytes || bytes <= 0) return '';
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        // Picks a Font Awesome icon class based on a file's MIME type/name —
+        // used in the Downloads list, which accepts any file type.
+        function fileIconFor(mimeType, fileName) {
+            const name = (fileName || '').toLowerCase();
+            if ((mimeType || '').startsWith('image/')) return 'fa-file-image';
+            if (mimeType === 'application/pdf' || name.endsWith('.pdf')) return 'fa-file-pdf';
+            if (/\.(doc|docx)$/.test(name)) return 'fa-file-word';
+            if (/\.(xls|xlsx|csv)$/.test(name)) return 'fa-file-excel';
+            if (/\.(ppt|pptx)$/.test(name)) return 'fa-file-powerpoint';
+            if (/\.(zip|rar|7z)$/.test(name)) return 'fa-file-archive';
+            return 'fa-file';
+        }
         const video = $('schoolVideo');
         let noticeShown = false;
         let dataLoadComplete = false;
@@ -2502,6 +2676,8 @@
             if (tab === 'home') renderHome();
             if (tab === 'results') checkClassHasResults();
             if (tab === 'homework') renderHomework();
+            if (tab === 'books') showBooksFolders();
+            if (tab === 'downloads') renderDownloads();
             if (tab === 'gallery') renderGallery();
             if (tab === 'teacher') renderTeacherUI();
             if (tab === 'admin') renderAdminUI();
@@ -2746,9 +2922,11 @@
     function renderAll() { renderHome();
         renderHomework();
         renderGallery();
+        renderDownloads();
         renderTeacherUI();
         renderAdminUI();
-        checkClassHasResults(); }
+        checkClassHasResults();
+        refreshBooksView(); }
 
     // ─── RENDER HOME ─────────────────────────────────────────────────
     function renderHome() {
@@ -2773,7 +2951,7 @@
             div.className = 'announce-item';
             const icons = { urgent: 'fa-exclamation-triangle', important: 'fa-handshake', event: 'fa-flag' };
             div.innerHTML =
-                `<div class="icon"><i class="fas ${icons[a.type]||'fa-bullhorn'}"></i></div><div class="content"><div class="title">${esc(a.title)}</div><div class="date"><i class="far fa-calendar-alt"></i> ${esc(a.date||'Today')}</div></div><span class="badge ${a.type||'important'}">${esc(a.type||'Important')}</span>`;
+                `<div class="icon"><i class="fas ${icons[a.type]||'fa-bullhorn'}"></i></div><div class="content"><div class="title">${esc(a.title)}</div>${a.desc ? `<div class="desc">${esc(a.desc)}</div>` : ''}<div class="date"><i class="far fa-calendar-alt"></i> ${esc(a.date||'Today')}</div></div><span class="badge ${a.type||'important'}">${esc(a.type||'Important')}</span>`;
             list.appendChild(div);
         });
 
@@ -2803,7 +2981,9 @@
         const grid = $('homeworkGrid');
         grid.innerHTML = '';
         let list = DB.homework || [];
-        if (filter !== 'ALL') list = list.filter(h => h.class === filter);
+        // A homework record with class "ALL" applies to every class, so it
+        // stays visible even when a specific class filter is selected.
+        if (filter !== 'ALL') list = list.filter(h => h.class === filter || h.class === 'ALL');
         if (list.length === 0) { grid.innerHTML =
                 '<p style="grid-column:1/-1; text-align:center; color:var(--text-light); font-size:16px; padding:20px;">No homework uploaded.</p>';
             return; }
@@ -2812,18 +2992,129 @@
             div.className = 'card';
             div.style.cssText = 'padding:clamp(10px,1.2vw,18px);';
             div.innerHTML =
-                `<div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:4px; flex-wrap:wrap; gap:4px;"><span style="font-size:clamp(10px,0.8vw,12px); font-weight:700; background:var(--primary-bg); padding:2px 10px; border-radius:8px;">${esc(h.class)}</span><span style="font-size:clamp(10px,0.8vw,12px); font-weight:600; color:var(--primary);">${esc(h.subject)}</span></div><h4 style="font-size:clamp(14px,1.2vw,17px); font-weight:700;">${esc(h.title)}</h4><p style="font-size:clamp(12px,1vw,14px); color:var(--text-light); margin-top:4px;">${esc(h.desc)}</p>`;
+                `<div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:4px; flex-wrap:wrap; gap:4px;"><span style="font-size:clamp(10px,0.8vw,12px); font-weight:700; background:var(--primary-bg); padding:2px 10px; border-radius:8px;">${esc(h.class === 'ALL' ? 'All Classes' : h.class)}</span><span style="font-size:clamp(10px,0.8vw,12px); font-weight:600; color:var(--primary);">${esc(h.subject)}</span></div><h4 style="font-size:clamp(14px,1.2vw,17px); font-weight:700;">${esc(h.title)}</h4><p style="font-size:clamp(12px,1vw,14px); color:var(--text-light); margin-top:4px;">${esc(h.desc)}</p>`;
             if (h.file) {
+                const actions = document.createElement('div');
+                actions.style.cssText = 'display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;';
+                const previewBtn = document.createElement('button');
+                previewBtn.className = 'btn btn-outline btn-sm';
+                previewBtn.innerHTML = '<i class="fas fa-eye"></i> Preview';
+                previewBtn.addEventListener('click', () => previewFile(h.file));
                 const btn = document.createElement('button');
                 btn.className = 'btn btn-primary btn-sm';
-                btn.style.marginTop = '6px';
                 btn.innerHTML = '<i class="fas fa-download"></i> Download';
                 // Bind via closure instead of inline onclick — avoids injecting
                 // large/untrusted file data or titles into an HTML attribute.
                 btn.addEventListener('click', () => downloadFile(h.file, h.title));
-                div.appendChild(btn);
+                actions.appendChild(previewBtn);
+                actions.appendChild(btn);
+                div.appendChild(actions);
             }
             grid.appendChild(div);
+        });
+    }
+
+    // ─── RENDER BOOKS (public) ────────────────────────────────────────
+    const CLASS_LIST = ['Class 1','Class 2','Class 3','Class 4','Class 5','Class 6','Class 7','Class 8'];
+    let currentBooksClass = null;
+
+    function renderBooksFolders() {
+        const grid = $('booksFolderGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        CLASS_LIST.forEach(cls => {
+            const count = DB.books.filter(b => b.class === cls).length;
+            const div = document.createElement('div');
+            div.className = 'book-folder';
+            div.innerHTML =
+                `<i class="fas fa-folder"></i><span class="folder-label">${esc(cls)}</span><span class="folder-count">${count} book${count===1?'':'s'}</span>`;
+            div.addEventListener('click', () => showBooksClass(cls));
+            grid.appendChild(div);
+        });
+    }
+
+    function showBooksClass(cls) {
+        currentBooksClass = cls;
+        $('booksFolderGrid').style.display = 'none';
+        $('booksClassView').style.display = 'block';
+        $('booksClassTitle').textContent = cls + ' Books';
+        const list = $('booksList');
+        list.innerHTML = '';
+        const books = DB.books.filter(b => b.class === cls);
+        if (books.length === 0) {
+            list.innerHTML =
+                '<p style="text-align:center; color:var(--text-light); padding:16px; font-size:14px;">No books uploaded yet for this class.</p>';
+            return;
+        }
+        books.forEach(b => {
+            const row = document.createElement('div');
+            row.className = 'book-row';
+            const sizeLabel = formatFileSize(b.sizeBytes);
+            row.innerHTML =
+                `<span class="book-title"><i class="fas fa-file-pdf" style="color:var(--gold); margin-right:6px;"></i>${esc(b.title)}${sizeLabel ? ` <span style="font-size:11px; color:var(--text-light); font-weight:400;">(${sizeLabel})</span>` : ''}</span>`;
+            const actions = document.createElement('div');
+            actions.style.cssText = 'display:flex; gap:6px; flex-wrap:wrap;';
+            const previewBtn = document.createElement('button');
+            previewBtn.className = 'btn btn-outline btn-sm';
+            previewBtn.innerHTML = '<i class="fas fa-eye"></i> Preview';
+            previewBtn.addEventListener('click', () => previewFile(b.file));
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-primary btn-sm';
+            btn.innerHTML = '<i class="fas fa-download"></i> Download';
+            btn.addEventListener('click', () => downloadFile(b.file, b.title));
+            actions.appendChild(previewBtn);
+            actions.appendChild(btn);
+            row.appendChild(actions);
+            list.appendChild(row);
+        });
+    }
+
+    function showBooksFolders() {
+        currentBooksClass = null;
+        $('booksClassView').style.display = 'none';
+        $('booksFolderGrid').style.display = 'grid';
+        renderBooksFolders(); // refresh counts
+    }
+
+    // Safe to call from background data refreshes — updates whichever books
+    // view is currently on screen without resetting the person back to the
+    // folder grid if they're in the middle of browsing a class's books.
+    function refreshBooksView() {
+        if (!$('booksFolderGrid')) return; // not loaded yet
+        if (currentBooksClass) showBooksClass(currentBooksClass);
+        else renderBooksFolders();
+    }
+
+    // ─── RENDER DOWNLOADS (public) ──────────────────────────────────────
+    function renderDownloads() {
+        const list = $('downloadsList');
+        if (!list) return;
+        list.innerHTML = '';
+        if (!DB.downloads || DB.downloads.length === 0) {
+            list.innerHTML =
+                '<p style="text-align:center; color:var(--text-light); padding:16px; font-size:14px;">No downloads available.</p>';
+            return;
+        }
+        DB.downloads.forEach(d => {
+            const row = document.createElement('div');
+            row.className = 'book-row';
+            const sizeLabel = formatFileSize(d.sizeBytes);
+            row.innerHTML =
+                `<span class="book-title"><i class="fas ${fileIconFor(d.fileType, d.fileName)}" style="color:var(--gold); margin-right:6px;"></i>${esc(d.title)}${sizeLabel ? ` <span style="font-size:11px; color:var(--text-light); font-weight:400;">(${sizeLabel})</span>` : ''}</span>`;
+            const actions = document.createElement('div');
+            actions.style.cssText = 'display:flex; gap:6px; flex-wrap:wrap;';
+            const previewBtn = document.createElement('button');
+            previewBtn.className = 'btn btn-outline btn-sm';
+            previewBtn.innerHTML = '<i class="fas fa-eye"></i> Preview';
+            previewBtn.addEventListener('click', () => previewFile(d.file));
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-primary btn-sm';
+            btn.innerHTML = '<i class="fas fa-download"></i> Download';
+            btn.addEventListener('click', () => downloadFile(d.file, d.fileName || d.title));
+            actions.appendChild(previewBtn);
+            actions.appendChild(btn);
+            row.appendChild(actions);
+            list.appendChild(row);
         });
     }
 
@@ -2937,7 +3228,6 @@
             $('teacherDashboard').style.display = 'block';
             $('teacherClassName').textContent = getTeacherClass();
             renderTeacherStudents();
-            renderTeacherHomework();
             updateTeacherStats();
         } else {
             $('teacherLogin').style.display = 'block';
@@ -2964,12 +3254,20 @@
     function renderTeacherStudents() {
         const cls = getTeacherClass();
         if (!cls) return;
-        const list = DB.students.filter(s => s.class === cls);
+        renderBulkResultTable();
+        let list = DB.students.filter(s => s.class === cls);
+        const searchBox = $('teacherStudentSearch');
+        const query = searchBox ? searchBox.value.trim().toLowerCase() : '';
+        if (query) {
+            list = list.filter(s => s.name.toLowerCase().includes(query) || String(s.roll).includes(query));
+        }
         const tbody = $('teacherStudentList');
         tbody.innerHTML = '';
-        $('studentCount').textContent = `${list.length} students`;
+        const allForClass = DB.students.filter(s => s.class === cls);
+        const uploadedCount = allForClass.filter(s => (Number(s.total) || 0) > 0).length;
+        $('studentCount').textContent = `${allForClass.length} students · ${uploadedCount}/${allForClass.length} results uploaded`;
         if (list.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-light);">No students yet.</td></tr>';
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-light);">${query ? 'No students match your search.' : 'No students yet.'}</td></tr>`;
             updateTeacherStats();
             return;
         }
@@ -2977,13 +3275,18 @@
             const tr = document.createElement('tr');
             const total = Number(s.total) || 0;
             const obtained = Number(s.obtained) || 0;
-            const perc = total > 0 ? ((obtained / total) * 100).toFixed(1) + '%' : 'N/A';
+            const hasResult = total > 0;
+            const perc = hasResult ? ((obtained / total) * 100).toFixed(1) + '%' : 'Not Uploaded';
             tr.innerHTML =
-                `<td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td>${esc(s.examType || '-')}</td><td style="font-weight:700; color:var(--primary);">${perc}</td><td></td>`;
+                `<td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td>${esc(s.examType || '-')}</td><td style="font-weight:700; color:${hasResult ? 'var(--primary)' : 'var(--gold)'};">${perc}</td><td></td>`;
             const actionsTd = tr.lastElementChild;
             const editBtn = document.createElement('button');
-            editBtn.className = 'btn btn-primary btn-sm';
-            editBtn.textContent = 'Edit';
+            // A student with no marks yet gets a more inviting "Upload
+            // Result" action instead of a plain "Edit" — same underlying
+            // form (editStudent already pre-fills it), just clearer about
+            // what still needs doing for that student.
+            editBtn.className = hasResult ? 'btn btn-primary btn-sm' : 'btn btn-gold btn-sm';
+            editBtn.innerHTML = hasResult ? 'Edit' : '<i class="fas fa-upload"></i> Upload Result';
             editBtn.addEventListener('click', () => editStudent(s.class, s.roll));
             const delBtn = document.createElement('button');
             delBtn.className = 'btn btn-danger btn-sm';
@@ -2997,39 +3300,97 @@
         updateTeacherStats();
     }
 
-    function renderTeacherHomework() {
+    // ─── BULK RESULT UPLOAD ──────────────────────────────────────────────
+    // Lets a teacher type marks for the whole class at once and publish them
+    // all with a single click, instead of opening each student individually.
+    function renderBulkResultTable() {
         const cls = getTeacherClass();
-        if (!cls) return;
-        const list = DB.homework.filter(h => h.class === cls);
-        const c = $('teacherHomeworkList');
-        c.innerHTML = '';
-        if (list.length === 0) { c.innerHTML =
-                '<p style="font-size:clamp(12px,1vw,14px); color:var(--text-light);">No homework added.</p>';
-            return; }
-        list.forEach(h => {
-            const div = document.createElement('div');
-            div.style.cssText =
-                'display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--gray); border-radius:10px; font-size:clamp(12px,1vw,14px); flex-wrap:wrap; gap:6px;';
-            div.innerHTML =
-                `<div><strong>${esc(h.subject)}:</strong> ${esc(h.title)}<p style="font-size:clamp(10px,0.8vw,12px); color:var(--text-light);">${esc(h.desc)}</p></div><div></div>`;
-            const actionsDiv = div.lastElementChild;
-            const editBtn = document.createElement('button');
-            editBtn.className = 'btn btn-primary btn-sm';
-            editBtn.textContent = 'Edit';
-            editBtn.addEventListener('click', () => editHomework(h.id));
-            const delBtn = document.createElement('button');
-            delBtn.className = 'btn btn-danger btn-sm';
-            delBtn.textContent = 'Del';
-            delBtn.style.marginLeft = '4px';
-            delBtn.addEventListener('click', () => deleteHomework(h.id));
-            actionsDiv.appendChild(editBtn);
-            actionsDiv.appendChild(delBtn);
-            c.appendChild(div);
+        const tbody = $('bulkResultTableBody');
+        if (!cls || !tbody) return;
+        const list = DB.students.filter(s => s.class === cls).sort((a, b) => a.roll - b.roll);
+        tbody.innerHTML = '';
+        if (list.length === 0) {
+            tbody.innerHTML =
+                '<tr><td colspan="4" style="text-align:center; color:var(--text-light);">Add students above first, then enter their marks here.</td></tr>';
+            return;
+        }
+        list.forEach(s => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td></td><td></td>`;
+            const inputStyle = 'width:100%; min-width:70px; padding:4px 8px; border:2px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text);';
+            const totalInput = document.createElement('input');
+            totalInput.type = 'number'; totalInput.min = '1';
+            totalInput.style.cssText = inputStyle;
+            totalInput.value = (s.total === null || s.total === undefined) ? '' : s.total;
+            totalInput.dataset.roll = s.roll;
+            totalInput.className = 'bulk-total-input';
+            const obtainedInput = document.createElement('input');
+            obtainedInput.type = 'number'; obtainedInput.min = '0';
+            obtainedInput.style.cssText = inputStyle;
+            obtainedInput.value = (s.obtained === null || s.obtained === undefined) ? '' : s.obtained;
+            obtainedInput.dataset.roll = s.roll;
+            obtainedInput.className = 'bulk-obtained-input';
+            tr.children[2].appendChild(totalInput);
+            tr.children[3].appendChild(obtainedInput);
+            tbody.appendChild(tr);
         });
-        updateTeacherStats();
     }
 
-    // ─── STUDENT CRUD ──────────────────────────────────────────────────
+    let bulkUploadInProgress = false;
+    function uploadAllResults() {
+        if (bulkUploadInProgress) return;
+        bulkUploadInProgress = true;
+        try {
+            const cls = getTeacherClass();
+            if (!cls) { showToast('❌ Session expired', 'error'); return; }
+            const examType = $('bulkExamType').value.trim();
+            if (tooLong(examType, 60)) { showToast('❌ Exam Type is too long (max 60 characters)', 'error'); return; }
+
+            const totalInputs = Array.from(document.querySelectorAll('#bulkResultTableBody .bulk-total-input'));
+            const obtainedInputs = Array.from(document.querySelectorAll('#bulkResultTableBody .bulk-obtained-input'));
+            const updates = {};
+            const errorRolls = [];
+
+            totalInputs.forEach((input, i) => {
+                const roll = parseInt(input.dataset.roll, 10);
+                const totalRaw = input.value.trim();
+                const obtainedRaw = obtainedInputs[i].value.trim();
+                if (totalRaw === '' && obtainedRaw === '') return; // row left blank — skip
+                const total = parseInt(totalRaw, 10);
+                const obtained = parseInt(obtainedRaw, 10);
+                if (isNaN(total) || isNaN(obtained) || total <= 0 || obtained < 0 || obtained > total) {
+                    errorRolls.push(roll);
+                    return;
+                }
+                updates[roll] = { total, obtained };
+            });
+
+            if (errorRolls.length > 0) {
+                showToast(`❌ Invalid marks for roll number(s): ${errorRolls.join(', ')} — please fix and try again`, 'error');
+                return;
+            }
+            const updateCount = Object.keys(updates).length;
+            if (updateCount === 0) {
+                showToast('⚠️ No marks entered — fill in at least one row first', 'warning');
+                return;
+            }
+
+            DB.students = DB.students.map(s => {
+                if (s.class === cls && updates[s.roll]) {
+                    return { ...s, total: updates[s.roll].total, obtained: updates[s.roll].obtained, examType: examType || s.examType };
+                }
+                return s;
+            });
+            saveData();
+            renderTeacherStudents();
+            renderBulkResultTable();
+            renderHome();
+            showToast(`✅ ${updateCount} result${updateCount === 1 ? '' : 's'} uploaded!`, 'success');
+        } finally {
+            bulkUploadInProgress = false;
+        }
+    }
+
     let studentSaveInProgress = false;
     function saveStudent(e) {
         e.preventDefault();
@@ -3040,18 +3401,31 @@
             if (!cls) { showToast('❌ Session expired', 'error'); return; }
             const roll = parseInt($('studentRoll').value, 10);
             const name = $('studentName').value.trim();
-            const total = parseInt($('studentTotal').value, 10);
-            const obtained = parseInt($('studentObtained').value, 10);
+            const totalRaw = $('studentTotal').value.trim();
+            const obtainedRaw = $('studentObtained').value.trim();
             const examType = $('studentExamType').value.trim();
             const editRoll = $('editStudentRoll').value ? parseInt($('editStudentRoll').value, 10) : null;
 
-            if (!name || !Number.isInteger(roll) || roll <= 0 || isNaN(total) || isNaN(obtained)) {
-                showToast('❌ Please fill all fields correctly', 'error'); return;
+            if (!name || !Number.isInteger(roll) || roll <= 0) {
+                showToast('❌ Please enter a valid name and roll number', 'error'); return;
             }
-            if (total <= 0) { showToast('❌ Total marks must be greater than 0', 'error'); return; }
-            if (obtained > total) { showToast('❌ Obtained marks cannot exceed total marks', 'error'); return; }
-            if (obtained < 0) { showToast('❌ Marks cannot be negative', 'error'); return; }
             if (tooLong(examType, 60)) { showToast('❌ Exam Type is too long (max 60 characters)', 'error'); return; }
+
+            // Marks are OPTIONAL — a teacher can register a student first and
+            // come back to enter the result later. Leaving either field blank
+            // stores no marks at all (shown as "No Result Uploaded"), rather
+            // than forcing a fake 0 into the record.
+            let total = null, obtained = null;
+            if (totalRaw !== '' || obtainedRaw !== '') {
+                total = parseInt(totalRaw, 10);
+                obtained = parseInt(obtainedRaw, 10);
+                if (isNaN(total) || isNaN(obtained)) {
+                    showToast('❌ Total and Obtained must both be filled in together, or both left blank', 'error'); return;
+                }
+                if (total <= 0) { showToast('❌ Total marks must be greater than 0', 'error'); return; }
+                if (obtained > total) { showToast('❌ Obtained marks cannot exceed total marks', 'error'); return; }
+                if (obtained < 0) { showToast('❌ Marks cannot be negative', 'error'); return; }
+            }
 
             // Duplicate-roll check applies to BOTH add and edit (excluding the
             // record being edited) — previously this only ran on add, so
@@ -3060,12 +3434,16 @@
             const duplicate = DB.students.some(s => s.class === cls && s.roll === roll && s.roll !== editRoll);
             if (duplicate) { showToast('❌ Roll number already exists!', 'error'); return; }
 
+            let successMsg;
             if (editRoll !== null) {
+                const previous = DB.students.find(s => s.class === cls && s.roll === editRoll);
+                const hadNoResultBefore = !previous || !((Number(previous.total) || 0) > 0);
+                successMsg = (hadNoResultBefore && total !== null) ? '✅ Result uploaded!' : '✅ Student updated!';
                 DB.students = DB.students.filter(s => !(s.class === cls && s.roll === editRoll));
-                showToast('✅ Student updated!', 'success');
             } else {
-                showToast('✅ Student added!', 'success');
+                successMsg = total === null ? '✅ Student saved — add the result later when ready' : '✅ Student added!';
             }
+            showToast(successMsg, 'success');
             DB.students.push({ class: cls, roll, name, total, obtained, examType });
             resetStudentForm();
             saveData();
@@ -3080,7 +3458,7 @@
         $('editStudentRoll').value = '';
         $('studentRoll').value = '';
         $('studentName').value = '';
-        $('studentTotal').value = '500';
+        $('studentTotal').value = '';
         $('studentObtained').value = '';
         $('studentExamType').value = '';
         $('studentSubmitBtn').textContent = 'Save';
@@ -3091,15 +3469,17 @@
     function editStudent(cls, roll) {
         const s = DB.students.find(s => s.class === cls && s.roll === roll);
         if (s) {
+            const hasResult = (Number(s.total) || 0) > 0;
             $('studentRoll').value = s.roll;
             $('studentName').value = s.name;
-            $('studentTotal').value = s.total;
-            $('studentObtained').value = s.obtained;
+            $('studentTotal').value = (s.total === null || s.total === undefined) ? '' : s.total;
+            $('studentObtained').value = (s.obtained === null || s.obtained === undefined) ? '' : s.obtained;
             $('studentExamType').value = s.examType || '';
             $('editStudentRoll').value = s.roll;
-            $('studentSubmitBtn').textContent = 'Update';
+            $('studentSubmitBtn').textContent = hasResult ? 'Update' : 'Upload Result';
             $('studentCancelBtn').style.display = 'inline-block';
-            $('studentFormTitle').textContent = 'Edit Student';
+            $('studentFormTitle').textContent = hasResult ? 'Edit Student' : `Upload Result — ${s.name}`;
+            $('studentTotal').focus();
         }
     }
 
@@ -3110,89 +3490,83 @@
             DB.students = DB.students.filter(s => !(s.class === cls && s.roll === roll));
             saveData();
             renderTeacherStudents();
+            renderResultReport();
+            updateAdminStats();
             renderHome();
             showToast('🗑️ Student deleted', 'warning');
         }
     }
 
-    // ─── TEACHER HOMEWORK ─────────────────────────────────────────────
-    function teacherAddHomework(e) {
+    // ─── ADMIN STUDENT EDIT (from Result Report) ────────────────────────
+    // Gives the headmaster the same edit/delete control over any student,
+    // in any class, directly from the report table — not just the class
+    // teacher.
+    function adminEditStudent(cls, roll) {
+        const s = DB.students.find(s => s.class === cls && s.roll === roll);
+        if (!s) return;
+        $('adminEditOrigClass').value = cls;
+        $('adminEditOrigRoll').value = roll;
+        $('adminEditStudentClass').value = s.class;
+        $('adminEditStudentRoll').value = s.roll;
+        $('adminEditStudentName').value = s.name;
+        $('adminEditStudentTotal').value = (s.total === null || s.total === undefined) ? '' : s.total;
+        $('adminEditStudentObtained').value = (s.obtained === null || s.obtained === undefined) ? '' : s.obtained;
+        $('adminEditStudentExamType').value = s.examType || '';
+        $('adminStudentEditTitle').textContent = `Edit Student — ${s.name}`;
+        $('adminStudentEditCard').style.display = 'block';
+        $('adminStudentEditCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function adminCancelEditStudent() {
+        $('adminStudentEditCard').style.display = 'none';
+    }
+
+    let adminStudentSaveInProgress = false;
+    function adminSaveStudentEdit(e) {
         e.preventDefault();
-        const cls = getTeacherClass();
-        if (!cls) { showToast('❌ Session expired', 'error'); return; }
-        const id = $('editHomeworkId').value || Date.now().toString();
-        const subject = $('hwSubject').value.trim();
-        const title = $('hwTitle').value.trim();
-        const desc = $('hwDesc').value.trim();
-        const fileInput = $('hwFile');
+        if (adminStudentSaveInProgress) return;
+        adminStudentSaveInProgress = true;
+        try {
+            const origClass = $('adminEditOrigClass').value;
+            const origRoll = parseInt($('adminEditOrigRoll').value, 10);
+            const cls = $('adminEditStudentClass').value;
+            const roll = parseInt($('adminEditStudentRoll').value, 10);
+            const name = $('adminEditStudentName').value.trim();
+            const totalRaw = $('adminEditStudentTotal').value.trim();
+            const obtainedRaw = $('adminEditStudentObtained').value.trim();
+            const examType = $('adminEditStudentExamType').value.trim();
 
-        if (!subject || !title || !desc) { showToast('❌ Please fill all fields', 'error'); return; }
-        if (tooLong(subject, 60) || tooLong(title, 150) || tooLong(desc, 2000)) {
-            showToast('❌ One of the fields is too long', 'error'); return;
-        }
+            if (!name || !Number.isInteger(roll) || roll <= 0) {
+                showToast('❌ Please enter a valid name and roll number', 'error'); return;
+            }
+            if (tooLong(examType, 60)) { showToast('❌ Exam Type is too long (max 60 characters)', 'error'); return; }
 
-        if (fileInput.files[0]) {
-            const file = fileInput.files[0];
-            const blocked = /\.(exe|bat|cmd|sh|msi|scr|js|jar|apk)$/i;
-            if (blocked.test(file.name)) { showToast('❌ That file type is not allowed', 'error'); return; }
-            if (file.size > 5 * 1024 * 1024) { showToast('❌ File too large! Max 5MB', 'error'); return; }
-            const reader = new FileReader();
-            reader.onload = function(e) { saveHomework(id, cls, subject, title, desc, e.target.result); };
-            reader.onerror = function() { showToast('❌ Could not read the attachment. Please try again.', 'error'); };
-            reader.readAsDataURL(fileInput.files[0]);
-        } else {
-            const existing = DB.homework.find(h => h.id === id);
-            saveHomework(id, cls, subject, title, desc, existing ? existing.file : '');
-        }
-    }
+            let total = null, obtained = null;
+            if (totalRaw !== '' || obtainedRaw !== '') {
+                total = parseInt(totalRaw, 10);
+                obtained = parseInt(obtainedRaw, 10);
+                if (isNaN(total) || isNaN(obtained)) {
+                    showToast('❌ Total and Obtained must both be filled in together, or both left blank', 'error'); return;
+                }
+                if (total <= 0) { showToast('❌ Total marks must be greater than 0', 'error'); return; }
+                if (obtained > total) { showToast('❌ Obtained marks cannot exceed total marks', 'error'); return; }
+                if (obtained < 0) { showToast('❌ Marks cannot be negative', 'error'); return; }
+            }
 
-    function saveHomework(id, cls, subject, title, desc, file) {
-        DB.homework = DB.homework.filter(h => h.id !== id);
-        DB.homework.push({ id, class: cls, subject, title, desc, file });
-        saveData();
-        $('hwSubject').value = '';
-        $('hwTitle').value = '';
-        $('hwDesc').value = '';
-        $('hwFile').value = '';
-        $('editHomeworkId').value = '';
-        $('hwSubmitBtn').textContent = 'Upload';
-        $('hwCancelBtn').style.display = 'none';
-        renderTeacherHomework();
-        renderHomework();
-        renderHome();
-        showToast('✅ Homework saved!', 'success');
-    }
+            const duplicate = DB.students.some(s => s.class === cls && s.roll === roll && !(s.class === origClass && s.roll === origRoll));
+            if (duplicate) { showToast('❌ That roll number already exists in this class!', 'error'); return; }
 
-    function editHomework(id) {
-        const hw = DB.homework.find(h => h.id === id);
-        if (hw) {
-            $('editHomeworkId').value = hw.id;
-            $('hwSubject').value = hw.subject;
-            $('hwTitle').value = hw.title;
-            $('hwDesc').value = hw.desc;
-            $('hwSubmitBtn').textContent = 'Update';
-            $('hwCancelBtn').style.display = 'inline-block';
-        }
-    }
-
-    function cancelEditHomework() {
-        $('editHomeworkId').value = '';
-        $('hwSubject').value = '';
-        $('hwTitle').value = '';
-        $('hwDesc').value = '';
-        $('hwFile').value = '';
-        $('hwSubmitBtn').textContent = 'Upload';
-        $('hwCancelBtn').style.display = 'none';
-    }
-
-    function deleteHomework(id) {
-        if (confirm('Delete this homework?')) {
-            DB.homework = DB.homework.filter(h => h.id !== id);
+            DB.students = DB.students.filter(s => !(s.class === origClass && s.roll === origRoll));
+            DB.students.push({ class: cls, roll, name, total, obtained, examType });
             saveData();
-            renderTeacherHomework();
-            renderHomework();
+            adminCancelEditStudent();
+            renderResultReport();
+            renderTeacherStudents();
+            updateAdminStats();
             renderHome();
-            showToast('🗑️ Homework deleted', 'warning');
+            showToast('✅ Student updated!', 'success');
+        } finally {
+            adminStudentSaveInProgress = false;
         }
     }
 
@@ -3203,6 +3577,8 @@
             $('adminDashboard').style.display = 'block';
             renderAdminAnnouncements();
             renderAdminHomework();
+            renderAdminBooks();
+            renderAdminDownloads();
             renderAdminGallery();
             renderAdminIncharges();
             renderAdminSlider();
@@ -3367,7 +3743,7 @@
         tbody.innerHTML = '';
         if (students.length === 0) {
             tbody.innerHTML =
-                '<tr><td colspan="10" style="text-align:center; padding:20px; color:var(--text-light);">No student records found.</td></tr>';
+                '<tr><td colspan="11" style="text-align:center; padding:20px; color:var(--text-light);">No student records found.</td></tr>';
             return;
         }
         students.sort((a, b) => { if (a.class !== b.class) return a.class.localeCompare(b.class); return a.roll - b.roll; });
@@ -3380,7 +3756,19 @@
             const gradeInfo = hasValidTotal ? calculateGrade(perc) : { grade: 'N/A', pass: false };
             const tr = document.createElement('tr');
             tr.innerHTML =
-                `<td>${index+1}</td><td style="font-weight:600;">${esc(s.class)}</td><td>${esc(s.roll)}</td><td style="font-weight:500;">${esc(s.name)}</td><td>${esc(s.examType || '-')}</td><td style="font-weight:700; color:var(--primary);">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700; color:var(--gold);">${percFixed}</td><td style="font-weight:700; color:${gradeInfo.pass ? 'var(--primary)' : '#dc2626'};">${esc(gradeInfo.grade)}</td><td>${esc(DB.incharges[s.class]||'Not Assigned')}</td>`;
+                `<td>${index+1}</td><td style="font-weight:600;">${esc(s.class)}</td><td>${esc(s.roll)}</td><td style="font-weight:500;">${esc(s.name)}</td><td>${esc(s.examType || '-')}</td><td style="font-weight:700; color:var(--primary);">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700; color:var(--gold);">${percFixed}</td><td style="font-weight:700; color:${gradeInfo.pass ? 'var(--primary)' : '#dc2626'};">${esc(gradeInfo.grade)}</td><td>${esc(DB.incharges[s.class]||'Not Assigned')}</td><td></td>`;
+            const actionsTd = tr.lastElementChild;
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn btn-primary btn-sm';
+            editBtn.textContent = 'Edit';
+            editBtn.addEventListener('click', () => adminEditStudent(s.class, s.roll));
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn btn-danger btn-sm';
+            delBtn.textContent = 'Del';
+            delBtn.style.marginLeft = '4px';
+            delBtn.addEventListener('click', () => deleteStudent(s.class, s.roll));
+            actionsTd.appendChild(editBtn);
+            actionsTd.appendChild(delBtn);
             tbody.appendChild(tr);
         });
     }
@@ -3535,7 +3923,11 @@
         if (!rollGroup || !noDataMsg || !searchBtn) return; // not on this tab yet
 
         const cls = $('resultClass').value;
-        const hasAny = DB.students.some(s => s.class === cls);
+        // "Has results" means at least one student in this class has actual
+        // marks entered — a class full of pre-registered students with no
+        // marks yet should still show "No Result Uploaded", matching what a
+        // roll-number search would tell them anyway.
+        const hasAny = DB.students.some(s => s.class === cls && (Number(s.total) || 0) > 0);
 
         rollGroup.style.display = hasAny ? 'block' : 'none';
         searchBtn.style.display = hasAny ? 'block' : 'none';
@@ -3570,7 +3962,24 @@
 
         const student = DB.students.find(s => s.class === cls && s.roll === roll);
         if (!student) {
-            $('noResultDetail').textContent = `No result has been uploaded yet for Roll No ${roll}, ${cls}.`;
+            $('noResultDetail').textContent = `No student found for Roll No ${roll}, ${cls}.`;
+            $('resultCard').style.display = 'none';
+            $('noResultCard').style.display = 'block';
+            $('resultDisplay').style.display = 'block';
+            showToast('❌ No student found for this roll number', 'error');
+            resultSearchInProgress = false;
+            return;
+        }
+
+        const total = Number(student.total) || 0;
+        const obtained = Number(student.obtained) || 0;
+        const hasValidTotal = total > 0;
+
+        // Student exists but no marks have been entered yet — show the same
+        // clear "No Result Uploaded" message rather than a confusing card
+        // full of N/A values.
+        if (!hasValidTotal) {
+            $('noResultDetail').textContent = `No result has been uploaded yet for ${student.name} (Roll No ${roll}, ${cls}).`;
             $('resultCard').style.display = 'none';
             $('noResultCard').style.display = 'block';
             $('resultDisplay').style.display = 'block';
@@ -3579,11 +3988,8 @@
             return;
         }
 
-        const total = Number(student.total) || 0;
-        const obtained = Number(student.obtained) || 0;
-        const hasValidTotal = total > 0;
-        const perc = hasValidTotal ? (obtained / total) * 100 : 0;
-        const gradeInfo = hasValidTotal ? calculateGrade(perc) : { grade: 'N/A', pass: false };
+        const perc = (obtained / total) * 100;
+        const gradeInfo = calculateGrade(perc);
 
         const examTypeEl = $('resExamType');
         if (student.examType) {
@@ -3598,12 +4004,12 @@
         $('resRoll').textContent = student.roll;
         $('resName').textContent = student.name;
         $('resIncharge').textContent = DB.incharges[student.class] || 'Not Assigned';
-        $('resTotal').textContent = hasValidTotal ? total : 'N/A';
+        $('resTotal').textContent = total;
         $('resObtained').textContent = obtained;
-        $('resPercentage').textContent = hasValidTotal ? perc.toFixed(1) + '%' : 'N/A';
+        $('resPercentage').textContent = perc.toFixed(1) + '%';
         $('resGrade').textContent = gradeInfo.grade;
         const statusEl = $('resStatus');
-        statusEl.textContent = hasValidTotal ? (gradeInfo.pass ? '✅ Pass' : '❌ Fail') : '';
+        statusEl.textContent = gradeInfo.pass ? '✅ Pass' : '❌ Fail';
         statusEl.style.color = gradeInfo.pass ? 'var(--primary)' : '#dc2626';
 
         $('noResultCard').style.display = 'none';
@@ -3616,26 +4022,56 @@
     // ─── ADMIN SLIDER ───────────────────────────────────────────────
     function addSlideImage(e) {
         e.preventDefault();
+        const editId = $('editSlideId').value;
+        const id = editId || Date.now().toString();
         const title = $('slideTitle').value.trim();
         const fileInput = $('slideImageFile');
         if (!title) { showToast('❌ Please enter a slide title', 'warning'); return; }
         if (tooLong(title, 100)) { showToast('❌ Title is too long (max 100 characters)', 'error'); return; }
-        const check = validateFile(fileInput.files[0], { maxMB: 2, mimePrefix: 'image/', label: 'image' });
-        if (!check.ok) { showToast(check.msg, 'warning'); return; }
-        const file = fileInput.files[0];
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const id = Date.now().toString();
-            DB.slides.push({ id, title, img: e.target.result });
-            saveData();
-            $('slideTitle').value = '';
+        if (!editId && !fileInput.files[0]) { showToast('❌ Please choose an image', 'warning'); return; }
+        if (fileInput.files[0]) {
+            const check = validateFile(fileInput.files[0], { maxMB: 2, mimePrefix: 'image/', label: 'image' });
+            if (!check.ok) { showToast(check.msg, 'warning'); return; }
+            const reader = new FileReader();
+            reader.onload = function(e) { saveSlideImage(id, title, e.target.result); };
+            reader.onerror = function() { showToast('❌ Could not read the image file. Please try again.', 'error'); };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            const existing = DB.slides.find(s => s.id === id);
+            saveSlideImage(id, title, existing ? existing.img : '');
+        }
+    }
+
+    function saveSlideImage(id, title, img) {
+        const isEdit = DB.slides.some(s => s.id === id);
+        DB.slides = DB.slides.filter(s => s.id !== id);
+        DB.slides.push({ id, title, img });
+        saveData();
+        cancelEditSlide();
+        renderHome();
+        renderAdminSlider();
+        showToast(isEdit ? '✅ Slide updated!' : '✅ Slide image uploaded!', 'success');
+    }
+
+    function editSlideImage(id) {
+        const s = DB.slides.find(s => s.id === id);
+        if (s) {
+            $('editSlideId').value = s.id;
+            $('slideTitle').value = s.title;
             $('slideImageFile').value = '';
-            renderHome();
-            renderAdminSlider();
-            showToast('✅ Slide image uploaded!', 'success');
-        };
-        reader.onerror = function() { showToast('❌ Could not read the image file. Please try again.', 'error'); };
-        reader.readAsDataURL(file);
+            $('slideImageOptionalNote').style.display = 'inline';
+            $('slideSubmitBtn').textContent = 'Update';
+            $('slideCancelBtn').style.display = 'inline-block';
+        }
+    }
+
+    function cancelEditSlide() {
+        $('editSlideId').value = '';
+        $('slideTitle').value = '';
+        $('slideImageFile').value = '';
+        $('slideImageOptionalNote').style.display = 'none';
+        $('slideSubmitBtn').innerHTML = '<i class="fas fa-upload"></i> Upload';
+        $('slideCancelBtn').style.display = 'none';
     }
 
     function deleteSlideImage(id) {
@@ -3662,11 +4098,18 @@
             div.style.cssText = 'border-radius:10px; overflow:hidden; background:var(--gray); position:relative;';
             div.innerHTML =
                 `<img src="${esc(s.img)}" style="width:100%; height:70px; object-fit:cover;" loading="lazy" onerror="this.style.display='none'" /><div style="padding:4px 8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;"><span style="font-size:clamp(10px,0.8vw,12px); font-weight:600;">${esc(s.title)}</span></div>`;
+            const actionsDiv = div.querySelector('div');
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn btn-primary btn-sm';
+            editBtn.textContent = '✎';
+            editBtn.addEventListener('click', () => editSlideImage(s.id));
             const delBtn = document.createElement('button');
             delBtn.className = 'btn btn-danger btn-sm';
             delBtn.textContent = '×';
+            delBtn.style.marginLeft = '4px';
             delBtn.addEventListener('click', () => deleteSlideImage(s.id));
-            div.querySelector('div').appendChild(delBtn);
+            actionsDiv.appendChild(editBtn);
+            actionsDiv.appendChild(delBtn);
             container.appendChild(div);
         });
     }
@@ -3685,12 +4128,19 @@
             div.style.cssText =
                 'display:flex; justify-content:space-between; align-items:center; padding:6px 12px; background:var(--gray); border-radius:10px; font-size:clamp(12px,1vw,14px); flex-wrap:wrap; gap:6px;';
             div.innerHTML =
-                `<div><strong>${esc(a.title)}</strong><p style="font-size:clamp(10px,0.8vw,12px); color:var(--text-light);">${esc(a.desc||'')}</p></div>`;
+                `<div><strong>${esc(a.title)}</strong><p style="font-size:clamp(10px,0.8vw,12px); color:var(--text-light);">${esc(a.desc||'')}</p></div><div></div>`;
+            const actionsDiv = div.lastElementChild;
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn btn-primary btn-sm';
+            editBtn.textContent = 'Edit';
+            editBtn.addEventListener('click', () => editAnnouncement(a.id));
             const delBtn = document.createElement('button');
             delBtn.className = 'btn btn-danger btn-sm';
             delBtn.textContent = 'Del';
+            delBtn.style.marginLeft = '4px';
             delBtn.addEventListener('click', () => deleteAnnouncement(a.id));
-            div.appendChild(delBtn);
+            actionsDiv.appendChild(editBtn);
+            actionsDiv.appendChild(delBtn);
             c.appendChild(div);
         });
         updateAdminStats();
@@ -3739,11 +4189,18 @@
             div.style.cssText = 'border-radius:10px; overflow:hidden; background:var(--gray);';
             div.innerHTML =
                 `<img src="${esc(img.file)}" style="width:100%; height:70px; object-fit:cover;" loading="lazy" onerror="this.style.display='none'" /><div style="padding:4px 8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;"><span style="font-size:clamp(10px,0.8vw,12px); font-weight:600;">${esc(img.caption)}</span></div>`;
+            const actionsDiv = div.querySelector('div');
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn btn-primary btn-sm';
+            editBtn.textContent = '✎';
+            editBtn.addEventListener('click', () => editGalleryImage(img.id));
             const delBtn = document.createElement('button');
             delBtn.className = 'btn btn-danger btn-sm';
             delBtn.textContent = '×';
+            delBtn.style.marginLeft = '4px';
             delBtn.addEventListener('click', () => deleteGallery(img.id));
-            div.querySelector('div').appendChild(delBtn);
+            actionsDiv.appendChild(editBtn);
+            actionsDiv.appendChild(delBtn);
             c.appendChild(div);
         });
     }
@@ -3810,16 +4267,42 @@
         const desc = $('announceDesc').value.trim();
         const date = $('announceDate').value;
         const type = $('announceType').value;
-        const id = Date.now().toString();
+        const editId = $('editAnnounceId').value;
+        const id = editId || Date.now().toString();
         if (!title || !desc) { showToast('❌ Please fill title and details', 'error'); return; }
         if (tooLong(title, 150) || tooLong(desc, 500)) { showToast('❌ Title/details too long', 'error'); return; }
+        DB.announcements = DB.announcements.filter(a => a.id !== id);
         DB.announcements.unshift({ id, title, desc, date, type });
         saveData();
-        $('announceTitle').value = '';
-        $('announceDesc').value = '';
+        cancelEditAnnouncement();
         renderHome();
         renderAdminAnnouncements();
-        showToast('✅ Announcement published!', 'success');
+        showToast(editId ? '✅ Announcement updated!' : '✅ Announcement published!', 'success');
+    }
+
+    function editAnnouncement(id) {
+        const a = DB.announcements.find(a => a.id === id);
+        if (a) {
+            $('editAnnounceId').value = a.id;
+            $('announceTitle').value = a.title;
+            $('announceDesc').value = a.desc;
+            $('announceDate').value = a.date;
+            $('announceType').value = a.type || 'important';
+            $('announceSubmitBtn').textContent = 'Update';
+            $('announceCancelBtn').style.display = 'inline-block';
+            $('announceFormTitle').textContent = 'Edit Announcement';
+        }
+    }
+
+    function cancelEditAnnouncement() {
+        $('editAnnounceId').value = '';
+        $('announceTitle').value = '';
+        $('announceDesc').value = '';
+        $('announceDate').value = new Date().toISOString().split('T')[0];
+        $('announceType').value = 'important';
+        $('announceSubmitBtn').textContent = 'Publish';
+        $('announceCancelBtn').style.display = 'none';
+        $('announceFormTitle').textContent = 'Add Announcement';
     }
 
     function deleteAnnouncement(id) {
@@ -3845,10 +4328,8 @@
             showToast('❌ One of the fields is too long', 'error'); return;
         }
         if (fileInput.files[0]) {
-            const file = fileInput.files[0];
-            const blocked = /\.(exe|bat|cmd|sh|msi|scr|js|jar|apk)$/i;
-            if (blocked.test(file.name)) { showToast('❌ That file type is not allowed', 'error'); return; }
-            if (file.size > 5 * 1024 * 1024) { showToast('❌ File too large! Max 5MB', 'error'); return; }
+            const check = validateFile(fileInput.files[0], { maxMB: 8, mimePrefix: 'application/pdf', label: 'PDF' });
+            if (!check.ok) { showToast(check.msg, 'error'); return; }
             const reader = new FileReader();
             reader.onload = function(e) { saveAdminHomework(id, cls, subject, title, desc, e.target.result); };
             reader.onerror = function() { showToast('❌ Could not read the attachment. Please try again.', 'error'); };
@@ -3910,29 +4391,260 @@
         }
     }
 
+    // ─── BOOKS ADMIN (CRUD) ─────────────────────────────────────────────
+    function renderAdminBooks() {
+        const c = $('adminBooksList');
+        const filter = $('adminBookFilter').value;
+        c.innerHTML = '';
+        let list = DB.books;
+        if (filter !== 'ALL') list = list.filter(b => b.class === filter);
+        if (list.length === 0) {
+            c.innerHTML = '<p style="text-align:center; color:var(--text-light); font-size:14px; padding:10px;">No books uploaded.</p>';
+            return;
+        }
+        list.forEach(b => {
+            const div = document.createElement('div');
+            div.style.cssText =
+                'display:flex; justify-content:space-between; align-items:center; padding:6px 12px; background:var(--gray); border-radius:10px; font-size:clamp(12px,1vw,14px); flex-wrap:wrap; gap:6px;';
+            div.innerHTML =
+                `<div><span style="font-size:clamp(9px,0.7vw,11px); font-weight:700; background:var(--primary-bg); padding:2px 8px; border-radius:6px;">${esc(b.class)}</span> <strong>${esc(b.title)}</strong></div><div></div>`;
+            const actionsDiv = div.lastElementChild;
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn btn-primary btn-sm';
+            editBtn.textContent = 'Edit';
+            editBtn.addEventListener('click', () => editAdminBook(b.id));
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn btn-danger btn-sm';
+            delBtn.textContent = 'Del';
+            delBtn.style.marginLeft = '4px';
+            delBtn.addEventListener('click', () => deleteAdminBook(b.id));
+            actionsDiv.appendChild(editBtn);
+            actionsDiv.appendChild(delBtn);
+            c.appendChild(div);
+        });
+        updateAdminStats();
+    }
+
+    function adminAddBook(e) {
+        e.preventDefault();
+        const id = $('adminEditBookId').value || Date.now().toString();
+        const cls = $('adminBookClass').value;
+        const title = $('adminBookTitle').value.trim();
+        const fileInput = $('adminBookFile');
+        const isEdit = !!$('adminEditBookId').value;
+        if (!cls || !title) { showToast('❌ Please fill class and title', 'error'); return; }
+        if (tooLong(title, 100)) { showToast('❌ Title is too long (max 100 characters)', 'error'); return; }
+        if (!isEdit && !fileInput.files[0]) { showToast('❌ Please choose a PDF file', 'warning'); return; }
+        if (fileInput.files[0]) {
+            const check = validateFile(fileInput.files[0], { maxMB: 8, mimePrefix: 'application/pdf', label: 'PDF' });
+            if (!check.ok) { showToast(check.msg, 'error'); return; }
+            const sizeBytes = fileInput.files[0].size;
+            const reader = new FileReader();
+            reader.onload = function(e) { saveAdminBook(id, cls, title, e.target.result, sizeBytes); };
+            reader.onerror = function() { showToast('❌ Could not read the PDF file. Please try again.', 'error'); };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            const existing = DB.books.find(b => b.id === id);
+            saveAdminBook(id, cls, title, existing ? existing.file : '', existing ? existing.sizeBytes : 0);
+        }
+    }
+
+    function saveAdminBook(id, cls, title, file, sizeBytes) {
+        DB.books = DB.books.filter(b => b.id !== id);
+        DB.books.push({ id, class: cls, title, file, sizeBytes: sizeBytes || 0 });
+        saveData();
+        $('adminBookTitle').value = '';
+        $('adminBookFile').value = '';
+        $('adminEditBookId').value = '';
+        $('adminBookSubmitBtn').textContent = 'Upload';
+        $('adminBookCancelBtn').style.display = 'none';
+        renderAdminBooks();
+        refreshBooksView();
+        showToast('✅ Book saved!', 'success');
+    }
+
+    function editAdminBook(id) {
+        const b = DB.books.find(b => b.id === id);
+        if (b) {
+            $('adminEditBookId').value = b.id;
+            $('adminBookClass').value = b.class;
+            $('adminBookTitle').value = b.title;
+            $('adminBookSubmitBtn').textContent = 'Update';
+            $('adminBookCancelBtn').style.display = 'inline-block';
+        }
+    }
+
+    function cancelAdminEditBook() {
+        $('adminEditBookId').value = '';
+        $('adminBookTitle').value = '';
+        $('adminBookFile').value = '';
+        $('adminBookSubmitBtn').textContent = 'Upload';
+        $('adminBookCancelBtn').style.display = 'none';
+    }
+
+    function deleteAdminBook(id) {
+        if (confirm('Delete this book?')) {
+            DB.books = DB.books.filter(b => b.id !== id);
+            saveData();
+            renderAdminBooks();
+            refreshBooksView();
+            showToast('🗑️ Book deleted', 'warning');
+        }
+    }
+
+    // ─── DOWNLOADS ADMIN (CRUD) ─────────────────────────────────────────
+    // Accepts any file type (images, datesheets, forms, etc.) — only a
+    // blocklist of clearly dangerous executable types is rejected, since
+    // "every file type supported" is the whole point of this section.
+    function renderAdminDownloads() {
+        const c = $('adminDownloadsList');
+        c.innerHTML = '';
+        if (!DB.downloads || DB.downloads.length === 0) {
+            c.innerHTML = '<p style="text-align:center; color:var(--text-light); font-size:14px; padding:10px;">No downloads uploaded.</p>';
+            return;
+        }
+        DB.downloads.forEach(d => {
+            const div = document.createElement('div');
+            div.style.cssText =
+                'display:flex; justify-content:space-between; align-items:center; padding:6px 12px; background:var(--gray); border-radius:10px; font-size:clamp(12px,1vw,14px); flex-wrap:wrap; gap:6px;';
+            const sizeLabel = formatFileSize(d.sizeBytes);
+            div.innerHTML =
+                `<div><i class="fas ${fileIconFor(d.fileType, d.fileName)}" style="color:var(--gold); margin-right:6px;"></i><strong>${esc(d.title)}</strong>${sizeLabel ? ` <span style="font-size:11px; color:var(--text-light);">(${sizeLabel})</span>` : ''}</div><div></div>`;
+            const actionsDiv = div.lastElementChild;
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn btn-primary btn-sm';
+            editBtn.textContent = 'Edit';
+            editBtn.addEventListener('click', () => editAdminDownload(d.id));
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn btn-danger btn-sm';
+            delBtn.textContent = 'Del';
+            delBtn.style.marginLeft = '4px';
+            delBtn.addEventListener('click', () => deleteAdminDownload(d.id));
+            actionsDiv.appendChild(editBtn);
+            actionsDiv.appendChild(delBtn);
+            c.appendChild(div);
+        });
+    }
+
+    function adminAddDownload(e) {
+        e.preventDefault();
+        const id = $('adminEditDownloadId').value || Date.now().toString();
+        const title = $('adminDownloadTitle').value.trim();
+        const fileInput = $('adminDownloadFile');
+        const isEdit = !!$('adminEditDownloadId').value;
+        if (!title) { showToast('❌ Please enter a title', 'error'); return; }
+        if (tooLong(title, 100)) { showToast('❌ Title is too long (max 100 characters)', 'error'); return; }
+        if (!isEdit && !fileInput.files[0]) { showToast('❌ Please choose a file', 'warning'); return; }
+        if (fileInput.files[0]) {
+            const file = fileInput.files[0];
+            const blocked = /\.(exe|bat|cmd|sh|msi|scr|js|jar|apk|com|vbs|ps1)$/i;
+            if (blocked.test(file.name)) { showToast('❌ That file type is not allowed for security reasons', 'error'); return; }
+            if (file.size > 10 * 1024 * 1024) { showToast('❌ File too large! Max 10MB', 'error'); return; }
+            const reader = new FileReader();
+            reader.onload = function(e) { saveAdminDownload(id, title, e.target.result, file.type, file.name, file.size); };
+            reader.onerror = function() { showToast('❌ Could not read the file. Please try again.', 'error'); };
+            reader.readAsDataURL(file);
+        } else {
+            const existing = DB.downloads.find(d => d.id === id);
+            saveAdminDownload(id, title, existing ? existing.file : '', existing ? existing.fileType : '', existing ? existing.fileName : '', existing ? existing.sizeBytes : 0);
+        }
+    }
+
+    function saveAdminDownload(id, title, file, fileType, fileName, sizeBytes) {
+        DB.downloads = DB.downloads.filter(d => d.id !== id);
+        DB.downloads.push({ id, title, file, fileType: fileType || '', fileName: fileName || '', sizeBytes: sizeBytes || 0 });
+        saveData();
+        $('adminDownloadTitle').value = '';
+        $('adminDownloadFile').value = '';
+        $('adminEditDownloadId').value = '';
+        $('adminDownloadSubmitBtn').textContent = 'Upload';
+        $('adminDownloadCancelBtn').style.display = 'none';
+        renderAdminDownloads();
+        renderDownloads();
+        showToast('✅ Download saved!', 'success');
+    }
+
+    function editAdminDownload(id) {
+        const d = DB.downloads.find(d => d.id === id);
+        if (d) {
+            $('adminEditDownloadId').value = d.id;
+            $('adminDownloadTitle').value = d.title;
+            $('adminDownloadSubmitBtn').textContent = 'Update';
+            $('adminDownloadCancelBtn').style.display = 'inline-block';
+        }
+    }
+
+    function cancelAdminEditDownload() {
+        $('adminEditDownloadId').value = '';
+        $('adminDownloadTitle').value = '';
+        $('adminDownloadFile').value = '';
+        $('adminDownloadSubmitBtn').textContent = 'Upload';
+        $('adminDownloadCancelBtn').style.display = 'none';
+    }
+
+    function deleteAdminDownload(id) {
+        if (confirm('Delete this download?')) {
+            DB.downloads = DB.downloads.filter(d => d.id !== id);
+            saveData();
+            renderAdminDownloads();
+            renderDownloads();
+            showToast('🗑️ Download deleted', 'warning');
+        }
+    }
+
     function adminAddGallery(e) {
         e.preventDefault();
+        const editId = $('editGalleryId').value;
+        const id = editId || Date.now().toString();
         const caption = $('galleryCaption').value.trim();
         const fileInput = $('galleryFile');
         if (!caption) { showToast('❌ Please enter a caption', 'error'); return; }
         if (tooLong(caption, 150)) { showToast('❌ Caption is too long (max 150 characters)', 'error'); return; }
-        const check = validateFile(fileInput.files[0], { maxMB: 2, mimePrefix: 'image/', label: 'image' });
-        if (!check.ok) { showToast(check.msg, 'error'); return; }
-        const file = fileInput.files[0];
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const id = Date.now().toString();
-            DB.gallery.push({ id, caption, file: e.target.result });
-            saveData();
-            $('galleryCaption').value = '';
+        if (!editId && !fileInput.files[0]) { showToast('❌ Please choose an image', 'warning'); return; }
+        if (fileInput.files[0]) {
+            const check = validateFile(fileInput.files[0], { maxMB: 2, mimePrefix: 'image/', label: 'image' });
+            if (!check.ok) { showToast(check.msg, 'error'); return; }
+            const reader = new FileReader();
+            reader.onload = function(e) { saveGalleryImage(id, caption, e.target.result); };
+            reader.onerror = function() { showToast('❌ Could not read the image file. Please try again.', 'error'); };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            const existing = DB.gallery.find(g => g.id === id);
+            saveGalleryImage(id, caption, existing ? existing.file : '');
+        }
+    }
+
+    function saveGalleryImage(id, caption, file) {
+        const isEdit = DB.gallery.some(g => g.id === id);
+        DB.gallery = DB.gallery.filter(g => g.id !== id);
+        DB.gallery.push({ id, caption, file });
+        saveData();
+        cancelEditGallery();
+        renderGallery();
+        renderAdminGallery();
+        renderHome();
+        showToast(isEdit ? '✅ Photo updated!' : '✅ Photo uploaded!', 'success');
+    }
+
+    function editGalleryImage(id) {
+        const g = DB.gallery.find(g => g.id === id);
+        if (g) {
+            $('editGalleryId').value = g.id;
+            $('galleryCaption').value = g.caption;
             $('galleryFile').value = '';
-            renderGallery();
-            renderAdminGallery();
-            renderHome();
-            showToast('✅ Photo uploaded!', 'success');
-        };
-        reader.onerror = function() { showToast('❌ Could not read the image file. Please try again.', 'error'); };
-        reader.readAsDataURL(file);
+            $('galleryImageOptionalNote').style.display = 'inline';
+            $('gallerySubmitBtn').textContent = 'Update';
+            $('galleryCancelBtn').style.display = 'inline-block';
+        }
+    }
+
+    function cancelEditGallery() {
+        $('editGalleryId').value = '';
+        $('galleryCaption').value = '';
+        $('galleryFile').value = '';
+        $('galleryImageOptionalNote').style.display = 'none';
+        $('gallerySubmitBtn').textContent = 'Upload';
+        $('galleryCancelBtn').style.display = 'none';
     }
 
     function deleteGallery(id) {
@@ -4041,6 +4753,15 @@
         link.download = name || 'download';
         link.click();
         showToast('📥 Download started', 'success');
+    }
+
+    // Opens a file's data URL in a new tab. Browsers natively render PDFs and
+    // images inline in a new tab; other file types typically trigger their
+    // own download/open prompt instead, which is still reasonable behaviour.
+    function previewFile(data) {
+        if (!data) { showToast('❌ No file to preview', 'error'); return; }
+        const win = window.open(data, '_blank');
+        if (!win) showToast('❌ Popup blocked — please allow popups for this site to preview files', 'error');
     }
 
     // ─── INIT ────────────────────────────────────────────────────────
