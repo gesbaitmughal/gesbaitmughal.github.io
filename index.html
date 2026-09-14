@@ -1568,7 +1568,7 @@
         }
         .report-card .summary {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
             gap: clamp(8px, 1vw, 16px);
             margin-top: clamp(12px, 1.5vw, 20px);
             padding-top: clamp(12px, 1.5vw, 20px);
@@ -2070,29 +2070,7 @@
                 </form>
             </div>
             <div id="resultDisplay" style="display:none; margin-top:22px;">
-                <div class="report-card" id="resultCard">
-                    <div class="header">
-                        <h2>GES BAIT MUGHAL</h2>
-                        <p>Overall Student Performance Report</p>
-                        <p id="resExamType" style="font-weight:700; color:var(--gold); margin-top:4px; display:none;"></p>
-                    </div>
-                    <div class="student-info">
-                        <div><strong>Class:</strong> <span id="resClass">-</span></div>
-                        <div><strong>Roll No:</strong> <span id="resRoll">-</span></div>
-                        <div><strong>Student:</strong> <span id="resName">-</span></div>
-                        <div><strong>Incharge:</strong> <span id="resIncharge">-</span></div>
-                    </div>
-                    <div class="summary">
-                        <div class="item"><span class="label">Total Marks</span><span class="value" id="resTotal">0</span></div>
-                        <div class="item"><span class="label">Obtained</span><span class="value" id="resObtained">0</span></div>
-                        <div class="item"><span class="label">Percentage</span><span class="value" id="resPercentage">0%</span></div>
-                        <div class="item"><span class="label">Grade</span><span class="value" id="resGrade">-</span></div>
-                    </div>
-                    <div id="resStatus" style="text-align:center; margin-top:14px; font-size:clamp(16px,1.6vw,20px); font-weight:800;"></div>
-                    <div class="no-print" style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; justify-content:center;">
-                        <button onclick="printSingleResult()" class="btn btn-primary print-btn"><i class="fas fa-print"></i> Print Result</button>
-                    </div>
-                </div>
+                <div id="resultCardsList" style="display:flex; flex-direction:column; gap:16px;"></div>
                 <div class="report-card no-print" id="noResultCard" style="display:none; text-align:center; padding:clamp(24px,3vw,40px) 20px;">
                     <i class="fas fa-folder-open" style="font-size:36px; color:var(--text-light); margin-bottom:10px;"></i>
                     <h3 style="font-size:clamp(16px,1.4vw,19px); font-weight:800; margin-bottom:6px;">No Result Uploaded</h3>
@@ -2189,9 +2167,6 @@
                         <input type="hidden" id="editStudentRoll" />
                         <div class="form-group" style="margin:0;"><label>Roll No</label><input type="number" id="studentRoll" placeholder="101" required /></div>
                         <div class="form-group" style="margin:0;"><label>Name</label><input type="text" id="studentName" placeholder="Student name" required /></div>
-                        <div class="form-group" style="margin:0;"><label>Total (optional)</label><input type="number" id="studentTotal" placeholder="Leave blank if not ready" /></div>
-                        <div class="form-group" style="margin:0;"><label>Obtained (optional)</label><input type="number" id="studentObtained" placeholder="Leave blank if not ready" /></div>
-                        <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Exam Type (optional)</label><input type="text" id="studentExamType" list="examTypeSuggestions" placeholder="e.g. Midterm, Final Term, Annual Exam" maxlength="60" /><datalist id="examTypeSuggestions"><option value="Annual Exam"></option><option value="Mid Term"></option><option value="Final Term"></option><option value="First Term"></option><option value="Second Term"></option><option value="Test"></option></datalist></div>
                         <div style="grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap;">
                             <button type="submit" class="btn btn-primary" id="studentSubmitBtn">Save</button>
                             <button type="button" onclick="cancelEditStudent()" class="btn btn-outline" id="studentCancelBtn" style="display:none;">Cancel</button>
@@ -2202,19 +2177,25 @@
                     <div class="card-header"><h3><i class="fas fa-users"></i> Students</h3><span style="font-size:clamp(11px,0.8vw,13px); background:var(--gray); padding:2px 12px; border-radius:40px;" id="studentCount">0</span></div>
                     <div class="form-group" style="margin-bottom:10px;"><input type="text" id="teacherStudentSearch" oninput="renderTeacherStudents()" placeholder="Search by name or roll number…" /></div>
                     <div class="table-wrap"><table>
-                            <thead style="background:var(--gray);"><tr><th>Roll</th><th>Name</th><th>Exam Type</th><th>%</th><th>Actions</th></tr></thead>
+                            <thead style="background:var(--gray);"><tr><th>Roll</th><th>Name</th><th>Results</th><th>Actions</th></tr></thead>
                             <tbody id="teacherStudentList"></tbody>
                         </table></div>
                 </div>
                 <div class="card" style="margin-bottom:12px;">
-                    <div class="card-header"><h3><i class="fas fa-upload"></i> Upload All Results</h3></div>
-                    <p style="font-size:clamp(11px,0.9vw,13px); color:var(--text-light); margin-bottom:8px;">Enter Total/Obtained for as many students as you like, then upload them all in one go. Rows left blank are skipped.</p>
-                    <div class="form-group"><label>Exam Type for this upload (optional — applies to every row you fill in)</label><input type="text" id="bulkExamType" list="examTypeSuggestions" placeholder="e.g. Final Term" /></div>
+                    <div class="card-header"><h3><i class="fas fa-upload"></i> Upload Results</h3></div>
+                    <p style="font-size:clamp(11px,0.9vw,13px); color:var(--text-light); margin-bottom:8px;">Choose which exam these marks belong to, then enter Total/Obtained for as many students as you like and upload them all together. Each exam's marks are kept separately — uploading a new exam never overwrites an earlier one.</p>
+                    <div class="form-group"><label>Exam Type <span style="color:#dc2626;">*</span></label><input type="text" id="bulkExamType" list="examTypeSuggestions" placeholder="e.g. Final Term" oninput="renderBulkResultTable()" required /><datalist id="examTypeSuggestions"><option value="Annual Exam"></option><option value="Mid Term"></option><option value="Final Term"></option><option value="First Term"></option><option value="Second Term"></option><option value="Test"></option></datalist></div>
                     <div class="table-wrap"><table>
                             <thead style="background:var(--gray);"><tr><th>Roll</th><th>Name</th><th>Total</th><th>Obtained</th></tr></thead>
                             <tbody id="bulkResultTableBody"></tbody>
                         </table></div>
                     <button onclick="uploadAllResults()" class="btn btn-primary" style="margin-top:10px;"><i class="fas fa-upload"></i> Upload All Results</button>
+                </div>
+                <div class="card" id="teacherResultHistoryCard" style="display:none; margin-bottom:12px;">
+                    <div class="card-header"><h3><i class="fas fa-history"></i> <span id="teacherResultHistoryTitle">Result History</span></h3>
+                        <button onclick="closeTeacherResultHistory()" class="btn btn-outline btn-sm">Close</button>
+                    </div>
+                    <div id="teacherResultHistoryList" style="display:flex; flex-direction:column; gap:8px;"></div>
                 </div>
             </div>
         </section>
@@ -2303,25 +2284,51 @@
                     <div class="table-wrap" style="max-height:340px; overflow-y:auto;">
                         <table>
                             <thead style="background:var(--gray); position:sticky; top:0; z-index:5;">
-                                <tr><th>#</th><th>Class</th><th>Roll</th><th>Student</th><th>Exam Type</th><th>Obtained</th><th>Total</th><th>%</th><th>Grade</th><th>Incharge</th><th>Actions</th></tr>
+                                <tr><th>#</th><th>Class</th><th>Roll</th><th>Student</th><th>Exam Type</th><th>Obtained</th><th>Total</th><th>%</th><th>Grade</th><th>Position</th><th>Incharge</th><th>Actions</th></tr>
                             </thead>
                             <tbody id="reportTableBody"></tbody>
                         </table>
                     </div>
-                    <div class="card" id="adminStudentEditCard" style="display:none; margin-top:12px; background:var(--gray);">
-                        <div class="card-header"><h4 id="adminStudentEditTitle">Edit Student</h4></div>
-                        <form onsubmit="adminSaveStudentEdit(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                            <input type="hidden" id="adminEditOrigClass" />
-                            <input type="hidden" id="adminEditOrigRoll" />
-                            <div class="form-group" style="margin:0;"><label>Class</label><select id="adminEditStudentClass"><option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option><option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option><option value="Class 7">Class 7</option><option value="Class 8">Class 8</option></select></div>
-                            <div class="form-group" style="margin:0;"><label>Roll No</label><input type="number" id="adminEditStudentRoll" required /></div>
-                            <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Name</label><input type="text" id="adminEditStudentName" required /></div>
-                            <div class="form-group" style="margin:0;"><label>Total (optional)</label><input type="number" id="adminEditStudentTotal" placeholder="Leave blank if not ready" /></div>
-                            <div class="form-group" style="margin:0;"><label>Obtained (optional)</label><input type="number" id="adminEditStudentObtained" placeholder="Leave blank if not ready" /></div>
-                            <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Exam Type (optional)</label><input type="text" id="adminEditStudentExamType" list="examTypeSuggestions" maxlength="60" /></div>
+                    <div class="card" id="adminResultEditCard" style="display:none; margin-top:12px; background:var(--gray);">
+                        <div class="card-header"><h4 id="adminResultEditTitle">Edit Result</h4></div>
+                        <form onsubmit="adminSaveResultEdit(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                            <input type="hidden" id="adminEditResultId" />
+                            <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Exam Type</label><input type="text" id="adminEditResultExamType" list="examTypeSuggestions" maxlength="60" required /></div>
+                            <div class="form-group" style="margin:0;"><label>Total</label><input type="number" id="adminEditResultTotal" required /></div>
+                            <div class="form-group" style="margin:0;"><label>Obtained</label><input type="number" id="adminEditResultObtained" required /></div>
                             <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
                                 <button type="submit" class="btn btn-primary btn-sm">Save</button>
-                                <button type="button" onclick="adminCancelEditStudent()" class="btn btn-outline btn-sm">Cancel</button>
+                                <button type="button" onclick="adminCancelEditResult()" class="btn btn-outline btn-sm">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- All Students (Roster) — every class, admin-editable -->
+                <div class="card" style="margin-bottom:12px;" id="adminRosterCard">
+                    <div class="card-header"><h3><i class="fas fa-users"></i> All Students</h3>
+                        <select id="rosterClassFilter" onchange="renderAdminRoster()" style="padding:clamp(3px,0.4vw,8px) clamp(8px,0.8vw,14px); border:2px solid var(--border); border-radius:10px; font-size:clamp(11px,0.8vw,13px); background:var(--bg); color:var(--text);">
+                            <option value="ALL">All Classes</option>
+                            <option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option>
+                            <option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option>
+                            <option value="Class 7">Class 7</option><option value="Class 8">Class 8</option>
+                        </select>
+                    </div>
+                    <div class="table-wrap" style="max-height:300px; overflow-y:auto;"><table>
+                            <thead style="background:var(--gray); position:sticky; top:0;"><tr><th>Class</th><th>Roll</th><th>Name</th><th>Results</th><th>Actions</th></tr></thead>
+                            <tbody id="adminRosterList"></tbody>
+                        </table></div>
+                    <div class="card" id="adminRosterEditCard" style="display:none; margin-top:12px; background:var(--gray);">
+                        <div class="card-header"><h4 id="adminRosterEditTitle">Edit Student</h4></div>
+                        <form onsubmit="adminSaveRosterEdit(event)" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                            <input type="hidden" id="adminRosterOrigClass" />
+                            <input type="hidden" id="adminRosterOrigRoll" />
+                            <div class="form-group" style="margin:0;"><label>Class</label><select id="adminRosterClass"><option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option><option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option><option value="Class 7">Class 7</option><option value="Class 8">Class 8</option></select></div>
+                            <div class="form-group" style="margin:0;"><label>Roll No</label><input type="number" id="adminRosterRoll" required /></div>
+                            <div class="form-group" style="margin:0; grid-column:1/-1;"><label>Name</label><input type="text" id="adminRosterName" required /></div>
+                            <div style="grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap;">
+                                <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                                <button type="button" onclick="adminCancelEditRoster()" class="btn btn-outline btn-sm">Cancel</button>
                             </div>
                         </form>
                     </div>
@@ -2551,6 +2558,7 @@
         // ─── DATA ──────────────────────────────────────────────────────────
         let DB = {
             students: [],
+            results: [],
             homework: [],
             announcements: [],
             gallery: [],
@@ -2630,6 +2638,71 @@
             if (/\.(zip|rar|7z)$/.test(name)) return 'fa-file-archive';
             return 'fa-file';
         }
+
+        // ─── DATA MODEL: multiple exam results per student ─────────────────
+        // DB.students holds the roster only: { class, roll, name }.
+        // DB.results holds one entry per exam a student sat:
+        //   { id, class, roll, examType, total, obtained }
+        // Older data (from before this) stored total/obtained/examType
+        // directly on the student record — one result only, overwritten
+        // every time a new exam's marks were entered. This migrates that
+        // single old result into a DB.results entry (labelled "General" if
+        // no exam type was ever set) and strips those fields off the roster
+        // record, so history stops getting silently overwritten going
+        // forward. It's safe to run every load — once migrated, a record
+        // has no total/obtained left on it, so this becomes a no-op.
+        function migrateStudentResults() {
+            if (!Array.isArray(DB.students)) return;
+            if (!Array.isArray(DB.results)) DB.results = [];
+            DB.students = DB.students.map(s => {
+                if (s && (s.total !== undefined && s.total !== null)) {
+                    const already = DB.results.some(r => r.class === s.class && r.roll === s.roll && r.examType === (s.examType || 'General') && r.total === s.total && r.obtained === s.obtained);
+                    if (!already) {
+                        DB.results.push({
+                            id: `legacy-${s.class}-${s.roll}-${Date.now()}-${Math.floor(Math.random()*10000)}`,
+                            class: s.class, roll: s.roll,
+                            examType: s.examType || 'General',
+                            total: s.total, obtained: s.obtained
+                        });
+                    }
+                    const { total, obtained, examType, ...roster } = s;
+                    return roster;
+                }
+                return s;
+            });
+        }
+
+        // ─── RESULTS HELPERS ─────────────────────────────────────────────
+        function getResultsForStudent(cls, roll) {
+            return DB.results.filter(r => r.class === cls && r.roll === roll);
+        }
+        function getResult(cls, roll, examType) {
+            return DB.results.find(r => r.class === cls && r.roll === roll && r.examType === examType);
+        }
+        function getExamTypesForClass(cls) {
+            const set = new Set(DB.results.filter(r => r.class === cls).map(r => r.examType));
+            return Array.from(set).sort();
+        }
+        // Competition ranking (ties share a rank; next rank skips accordingly)
+        // among every student in `cls` who sat `examType`.
+        function getClassPositions(cls, examType) {
+            const entries = DB.results
+                .filter(r => r.class === cls && r.examType === examType && (Number(r.total) || 0) > 0)
+                .map(r => ({ roll: r.roll, perc: (Number(r.obtained) / Number(r.total)) * 100 }))
+                .sort((a, b) => b.perc - a.perc);
+            const positions = {};
+            let rank = 0, lastPerc = null;
+            entries.forEach((e, i) => {
+                if (e.perc !== lastPerc) { rank = i + 1; lastPerc = e.perc; }
+                positions[e.roll] = { rank, totalRanked: entries.length };
+            });
+            return positions;
+        }
+        function ordinal(n) {
+            const s = ['th', 'st', 'nd', 'rd'], v = n % 100;
+            return n + (s[(v - 20) % 10] || s[v] || s[0]);
+        }
+
         const video = $('schoolVideo');
         let noticeShown = false;
         let dataLoadComplete = false;
@@ -2877,6 +2950,7 @@
                     // anything, since DB no longer has them in memory by then.
                     if ('adminPass' in DB) delete DB.adminPass;
                     if ('teacherPins' in DB) delete DB.teacherPins;
+                    migrateStudentResults(); // one-time-per-load: split old inline marks into DB.results
                     DB._loaded = true;
                     dataLoadComplete = true;
                     renderAll();
@@ -2905,6 +2979,7 @@
                     try { const saved = localStorage.getItem('gesData'); if (saved) { const p = JSON.parse(saved);
                             for (const k in p)
                                 if (p.hasOwnProperty(k) && k !== '_loaded') DB[k] = p[k];
+                            migrateStudentResults();
                             DB._loaded = true; } } catch (e) {}
                 dataLoadComplete = true;
                 renderAll();
@@ -3239,14 +3314,12 @@
         const cls = getTeacherClass();
         if (!cls) return;
         const students = DB.students.filter(s => s.class === cls);
-        const homework = DB.homework.filter(h => h.class === cls);
+        const homework = DB.homework.filter(h => h.class === cls || h.class === 'ALL');
         $('tStatStudents').textContent = students.length;
         $('tStatHomework').textContent = homework.length;
-        if (students.length > 0) {
-            const valid = students.filter(s => (Number(s.total) || 0) > 0);
-            const avg = valid.length > 0
-                ? valid.reduce((sum, s) => sum + (Number(s.obtained) / Number(s.total) * 100), 0) / valid.length
-                : 0;
+        const validResults = DB.results.filter(r => r.class === cls && (Number(r.total) || 0) > 0);
+        if (validResults.length > 0) {
+            const avg = validResults.reduce((sum, r) => sum + (Number(r.obtained) / Number(r.total) * 100), 0) / validResults.length;
             $('tStatAvg').textContent = avg.toFixed(1) + '%';
         } else $('tStatAvg').textContent = '0%';
     }
@@ -3264,29 +3337,28 @@
         const tbody = $('teacherStudentList');
         tbody.innerHTML = '';
         const allForClass = DB.students.filter(s => s.class === cls);
-        const uploadedCount = allForClass.filter(s => (Number(s.total) || 0) > 0).length;
-        $('studentCount').textContent = `${allForClass.length} students · ${uploadedCount}/${allForClass.length} results uploaded`;
+        const uploadedCount = allForClass.filter(s => getResultsForStudent(cls, s.roll).length > 0).length;
+        $('studentCount').textContent = `${allForClass.length} students · ${uploadedCount}/${allForClass.length} have at least one result`;
         if (list.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-light);">${query ? 'No students match your search.' : 'No students yet.'}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-light);">${query ? 'No students match your search.' : 'No students yet.'}</td></tr>`;
             updateTeacherStats();
             return;
         }
-        list.forEach(s => {
+        list.sort((a, b) => a.roll - b.roll).forEach(s => {
             const tr = document.createElement('tr');
-            const total = Number(s.total) || 0;
-            const obtained = Number(s.obtained) || 0;
-            const hasResult = total > 0;
-            const perc = hasResult ? ((obtained / total) * 100).toFixed(1) + '%' : 'Not Uploaded';
+            const resultCount = getResultsForStudent(cls, s.roll).length;
             tr.innerHTML =
-                `<td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td>${esc(s.examType || '-')}</td><td style="font-weight:700; color:${hasResult ? 'var(--primary)' : 'var(--gold)'};">${perc}</td><td></td>`;
+                `<td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td></td><td></td>`;
+            const resultsTd = tr.children[2];
+            const resultsBtn = document.createElement('button');
+            resultsBtn.className = resultCount > 0 ? 'btn btn-primary btn-sm' : 'btn btn-gold btn-sm';
+            resultsBtn.innerHTML = resultCount > 0 ? `${resultCount} exam${resultCount === 1 ? '' : 's'}` : 'No results';
+            resultsBtn.addEventListener('click', () => showTeacherResultHistory(cls, s.roll));
+            resultsTd.appendChild(resultsBtn);
             const actionsTd = tr.lastElementChild;
             const editBtn = document.createElement('button');
-            // A student with no marks yet gets a more inviting "Upload
-            // Result" action instead of a plain "Edit" — same underlying
-            // form (editStudent already pre-fills it), just clearer about
-            // what still needs doing for that student.
-            editBtn.className = hasResult ? 'btn btn-primary btn-sm' : 'btn btn-gold btn-sm';
-            editBtn.innerHTML = hasResult ? 'Edit' : '<i class="fas fa-upload"></i> Upload Result';
+            editBtn.className = 'btn btn-primary btn-sm';
+            editBtn.textContent = 'Edit';
             editBtn.addEventListener('click', () => editStudent(s.class, s.roll));
             const delBtn = document.createElement('button');
             delBtn.className = 'btn btn-danger btn-sm';
@@ -3300,13 +3372,66 @@
         updateTeacherStats();
     }
 
+    // ─── PER-STUDENT RESULT HISTORY (teacher view) ───────────────────────
+    function showTeacherResultHistory(cls, roll) {
+        const s = DB.students.find(s => s.class === cls && s.roll === roll);
+        if (!s) return;
+        $('teacherResultHistoryTitle').textContent = `Result History — ${s.name}`;
+        $('teacherResultHistoryCard').style.display = 'block';
+        $('teacherResultHistoryCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        const list = $('teacherResultHistoryList');
+        const results = getResultsForStudent(cls, roll);
+        if (results.length === 0) {
+            list.innerHTML = '<p style="text-align:center; color:var(--text-light); padding:12px;">No results uploaded yet for this student. Use the "Upload Results" section above.</p>';
+            return;
+        }
+        list.innerHTML = '';
+        results.forEach(r => {
+            const total = Number(r.total) || 0;
+            const obtained = Number(r.obtained) || 0;
+            const hasValidTotal = total > 0;
+            const perc = hasValidTotal ? ((obtained / total) * 100).toFixed(1) + '%' : 'N/A';
+            const pos = hasValidTotal ? getClassPositions(cls, r.examType)[roll] : null;
+            const row = document.createElement('div');
+            row.className = 'book-row';
+            row.innerHTML =
+                `<span class="book-title">${esc(r.examType)}: <strong>${esc(obtained)}/${hasValidTotal ? esc(total) : 'N/A'}</strong> (${perc})${pos ? ` — Position ${ordinal(pos.rank)} of ${pos.totalRanked}` : ''}</span>`;
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn btn-danger btn-sm';
+            delBtn.textContent = 'Delete';
+            delBtn.addEventListener('click', () => deleteStudentResult(r.id, cls, roll));
+            row.appendChild(delBtn);
+            list.appendChild(row);
+        });
+    }
+
+    function closeTeacherResultHistory() {
+        $('teacherResultHistoryCard').style.display = 'none';
+    }
+
+    function deleteStudentResult(id, cls, roll) {
+        if (confirm('Delete this exam result?')) {
+            DB.results = DB.results.filter(r => r.id !== id);
+            saveData();
+            renderTeacherStudents();
+            if (cls && roll !== undefined) showTeacherResultHistory(cls, roll);
+            renderResultReport();
+            updateAdminStats();
+            renderHome();
+            showToast('🗑️ Result deleted', 'warning');
+        }
+    }
+
     // ─── BULK RESULT UPLOAD ──────────────────────────────────────────────
-    // Lets a teacher type marks for the whole class at once and publish them
-    // all with a single click, instead of opening each student individually.
+    // Lets a teacher type marks for the whole class at once, for ONE named
+    // exam, and publish them all with a single click. Because each exam is
+    // stored as its own DB.results entry, uploading "Final Term" never
+    // touches an earlier "Mid Term" entry for the same student.
     function renderBulkResultTable() {
         const cls = getTeacherClass();
         const tbody = $('bulkResultTableBody');
         if (!cls || !tbody) return;
+        const examType = $('bulkExamType') ? $('bulkExamType').value.trim() : '';
         const list = DB.students.filter(s => s.class === cls).sort((a, b) => a.roll - b.roll);
         tbody.innerHTML = '';
         if (list.length === 0) {
@@ -3315,19 +3440,20 @@
             return;
         }
         list.forEach(s => {
+            const existing = examType ? getResult(cls, s.roll, examType) : null;
             const tr = document.createElement('tr');
             tr.innerHTML = `<td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td></td><td></td>`;
             const inputStyle = 'width:100%; min-width:70px; padding:4px 8px; border:2px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text);';
             const totalInput = document.createElement('input');
             totalInput.type = 'number'; totalInput.min = '1';
             totalInput.style.cssText = inputStyle;
-            totalInput.value = (s.total === null || s.total === undefined) ? '' : s.total;
+            totalInput.value = existing ? existing.total : '';
             totalInput.dataset.roll = s.roll;
             totalInput.className = 'bulk-total-input';
             const obtainedInput = document.createElement('input');
             obtainedInput.type = 'number'; obtainedInput.min = '0';
             obtainedInput.style.cssText = inputStyle;
-            obtainedInput.value = (s.obtained === null || s.obtained === undefined) ? '' : s.obtained;
+            obtainedInput.value = existing ? existing.obtained : '';
             obtainedInput.dataset.roll = s.roll;
             obtainedInput.className = 'bulk-obtained-input';
             tr.children[2].appendChild(totalInput);
@@ -3344,6 +3470,7 @@
             const cls = getTeacherClass();
             if (!cls) { showToast('❌ Session expired', 'error'); return; }
             const examType = $('bulkExamType').value.trim();
+            if (!examType) { showToast('❌ Please enter which exam this is (e.g. Final Term)', 'error'); return; }
             if (tooLong(examType, 60)) { showToast('❌ Exam Type is too long (max 60 characters)', 'error'); return; }
 
             const totalInputs = Array.from(document.querySelectorAll('#bulkResultTableBody .bulk-total-input'));
@@ -3375,17 +3502,21 @@
                 return;
             }
 
-            DB.students = DB.students.map(s => {
-                if (s.class === cls && updates[s.roll]) {
-                    return { ...s, total: updates[s.roll].total, obtained: updates[s.roll].obtained, examType: examType || s.examType };
-                }
-                return s;
+            Object.keys(updates).forEach(rollStr => {
+                const roll = parseInt(rollStr, 10);
+                DB.results = DB.results.filter(r => !(r.class === cls && r.roll === roll && r.examType === examType));
+                DB.results.push({
+                    id: `${cls}-${roll}-${examType}-${Date.now()}`,
+                    class: cls, roll, examType,
+                    total: updates[roll].total, obtained: updates[roll].obtained
+                });
             });
             saveData();
             renderTeacherStudents();
-            renderBulkResultTable();
+            renderResultReport();
+            updateAdminStats();
             renderHome();
-            showToast(`✅ ${updateCount} result${updateCount === 1 ? '' : 's'} uploaded!`, 'success');
+            showToast(`✅ ${updateCount} result${updateCount === 1 ? '' : 's'} uploaded for ${examType}!`, 'success');
         } finally {
             bulkUploadInProgress = false;
         }
@@ -3401,31 +3532,12 @@
             if (!cls) { showToast('❌ Session expired', 'error'); return; }
             const roll = parseInt($('studentRoll').value, 10);
             const name = $('studentName').value.trim();
-            const totalRaw = $('studentTotal').value.trim();
-            const obtainedRaw = $('studentObtained').value.trim();
-            const examType = $('studentExamType').value.trim();
             const editRoll = $('editStudentRoll').value ? parseInt($('editStudentRoll').value, 10) : null;
 
             if (!name || !Number.isInteger(roll) || roll <= 0) {
                 showToast('❌ Please enter a valid name and roll number', 'error'); return;
             }
-            if (tooLong(examType, 60)) { showToast('❌ Exam Type is too long (max 60 characters)', 'error'); return; }
-
-            // Marks are OPTIONAL — a teacher can register a student first and
-            // come back to enter the result later. Leaving either field blank
-            // stores no marks at all (shown as "No Result Uploaded"), rather
-            // than forcing a fake 0 into the record.
-            let total = null, obtained = null;
-            if (totalRaw !== '' || obtainedRaw !== '') {
-                total = parseInt(totalRaw, 10);
-                obtained = parseInt(obtainedRaw, 10);
-                if (isNaN(total) || isNaN(obtained)) {
-                    showToast('❌ Total and Obtained must both be filled in together, or both left blank', 'error'); return;
-                }
-                if (total <= 0) { showToast('❌ Total marks must be greater than 0', 'error'); return; }
-                if (obtained > total) { showToast('❌ Obtained marks cannot exceed total marks', 'error'); return; }
-                if (obtained < 0) { showToast('❌ Marks cannot be negative', 'error'); return; }
-            }
+            if (tooLong(name, 80)) { showToast('❌ Name is too long (max 80 characters)', 'error'); return; }
 
             // Duplicate-roll check applies to BOTH add and edit (excluding the
             // record being edited) — previously this only ran on add, so
@@ -3434,17 +3546,18 @@
             const duplicate = DB.students.some(s => s.class === cls && s.roll === roll && s.roll !== editRoll);
             if (duplicate) { showToast('❌ Roll number already exists!', 'error'); return; }
 
-            let successMsg;
             if (editRoll !== null) {
-                const previous = DB.students.find(s => s.class === cls && s.roll === editRoll);
-                const hadNoResultBefore = !previous || !((Number(previous.total) || 0) > 0);
-                successMsg = (hadNoResultBefore && total !== null) ? '✅ Result uploaded!' : '✅ Student updated!';
+                // Roll number can change on edit — move any existing results
+                // over to the new roll number so exam history isn't orphaned.
                 DB.students = DB.students.filter(s => !(s.class === cls && s.roll === editRoll));
+                if (editRoll !== roll) {
+                    DB.results = DB.results.map(r => (r.class === cls && r.roll === editRoll) ? { ...r, roll } : r);
+                }
+                showToast('✅ Student updated!', 'success');
             } else {
-                successMsg = total === null ? '✅ Student saved — add the result later when ready' : '✅ Student added!';
+                showToast('✅ Student added!', 'success');
             }
-            showToast(successMsg, 'success');
-            DB.students.push({ class: cls, roll, name, total, obtained, examType });
+            DB.students.push({ class: cls, roll, name });
             resetStudentForm();
             saveData();
             renderTeacherStudents();
@@ -3458,9 +3571,6 @@
         $('editStudentRoll').value = '';
         $('studentRoll').value = '';
         $('studentName').value = '';
-        $('studentTotal').value = '';
-        $('studentObtained').value = '';
-        $('studentExamType').value = '';
         $('studentSubmitBtn').textContent = 'Save';
         $('studentCancelBtn').style.display = 'none';
         $('studentFormTitle').textContent = 'Add Student';
@@ -3469,25 +3579,21 @@
     function editStudent(cls, roll) {
         const s = DB.students.find(s => s.class === cls && s.roll === roll);
         if (s) {
-            const hasResult = (Number(s.total) || 0) > 0;
             $('studentRoll').value = s.roll;
             $('studentName').value = s.name;
-            $('studentTotal').value = (s.total === null || s.total === undefined) ? '' : s.total;
-            $('studentObtained').value = (s.obtained === null || s.obtained === undefined) ? '' : s.obtained;
-            $('studentExamType').value = s.examType || '';
             $('editStudentRoll').value = s.roll;
-            $('studentSubmitBtn').textContent = hasResult ? 'Update' : 'Upload Result';
+            $('studentSubmitBtn').textContent = 'Update';
             $('studentCancelBtn').style.display = 'inline-block';
-            $('studentFormTitle').textContent = hasResult ? 'Edit Student' : `Upload Result — ${s.name}`;
-            $('studentTotal').focus();
+            $('studentFormTitle').textContent = 'Edit Student';
         }
     }
 
     function cancelEditStudent() { resetStudentForm(); }
 
     function deleteStudent(cls, roll) {
-        if (confirm('Delete this student record?')) {
+        if (confirm('Delete this student record? This also deletes all of their exam results.')) {
             DB.students = DB.students.filter(s => !(s.class === cls && s.roll === roll));
+            DB.results = DB.results.filter(r => !(r.class === cls && r.roll === roll));
             saveData();
             renderTeacherStudents();
             renderResultReport();
@@ -3497,76 +3603,143 @@
         }
     }
 
-    // ─── ADMIN STUDENT EDIT (from Result Report) ────────────────────────
-    // Gives the headmaster the same edit/delete control over any student,
-    // in any class, directly from the report table — not just the class
-    // teacher.
-    function adminEditStudent(cls, roll) {
+    // ─── ADMIN: EDIT A SPECIFIC RESULT (from Result Report rows) ────────
+    function adminEditResult(id) {
+        const r = DB.results.find(r => r.id === id);
+        if (!r) return;
+        const s = DB.students.find(s => s.class === r.class && s.roll === r.roll);
+        $('adminEditResultId').value = r.id;
+        $('adminEditResultExamType').value = r.examType;
+        $('adminEditResultTotal').value = r.total;
+        $('adminEditResultObtained').value = r.obtained;
+        $('adminResultEditTitle').textContent = `Edit Result — ${s ? s.name : 'Roll ' + r.roll} (${r.class})`;
+        $('adminResultEditCard').style.display = 'block';
+        $('adminResultEditCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function adminCancelEditResult() {
+        $('adminResultEditCard').style.display = 'none';
+    }
+
+    let adminResultSaveInProgress = false;
+    function adminSaveResultEdit(e) {
+        e.preventDefault();
+        if (adminResultSaveInProgress) return;
+        adminResultSaveInProgress = true;
+        try {
+            const id = $('adminEditResultId').value;
+            const examType = $('adminEditResultExamType').value.trim();
+            const total = parseInt($('adminEditResultTotal').value, 10);
+            const obtained = parseInt($('adminEditResultObtained').value, 10);
+
+            if (!examType) { showToast('❌ Please enter the exam type', 'error'); return; }
+            if (tooLong(examType, 60)) { showToast('❌ Exam Type is too long (max 60 characters)', 'error'); return; }
+            if (isNaN(total) || isNaN(obtained) || total <= 0) { showToast('❌ Please enter valid marks', 'error'); return; }
+            if (obtained > total) { showToast('❌ Obtained marks cannot exceed total marks', 'error'); return; }
+            if (obtained < 0) { showToast('❌ Marks cannot be negative', 'error'); return; }
+
+            const r = DB.results.find(r => r.id === id);
+            if (!r) { showToast('❌ Result not found — it may have been deleted', 'error'); return; }
+            const duplicate = DB.results.some(x => x.id !== id && x.class === r.class && x.roll === r.roll && x.examType === examType);
+            if (duplicate) { showToast(`❌ A "${examType}" result already exists for this student!`, 'error'); return; }
+
+            DB.results = DB.results.map(x => x.id === id ? { ...x, examType, total, obtained } : x);
+            saveData();
+            adminCancelEditResult();
+            renderResultReport();
+            renderTeacherStudents();
+            updateAdminStats();
+            renderHome();
+            showToast('✅ Result updated!', 'success');
+        } finally {
+            adminResultSaveInProgress = false;
+        }
+    }
+
+    // ─── ADMIN: ROSTER MANAGEMENT (every class) ──────────────────────────
+    function renderAdminRoster() {
+        const filter = $('rosterClassFilter').value;
+        const tbody = $('adminRosterList');
+        let list = DB.students;
+        if (filter !== 'ALL') list = list.filter(s => s.class === filter);
+        list = [...list].sort((a, b) => { if (a.class !== b.class) return a.class.localeCompare(b.class); return a.roll - b.roll; });
+        tbody.innerHTML = '';
+        if (list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-light); padding:12px;">No students found.</td></tr>';
+            return;
+        }
+        list.forEach(s => {
+            const resultCount = getResultsForStudent(s.class, s.roll).length;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${esc(s.class)}</td><td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td>${resultCount}</td><td></td>`;
+            const actionsTd = tr.lastElementChild;
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn btn-primary btn-sm';
+            editBtn.textContent = 'Edit';
+            editBtn.addEventListener('click', () => adminEditRoster(s.class, s.roll));
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn btn-danger btn-sm';
+            delBtn.textContent = 'Del';
+            delBtn.style.marginLeft = '4px';
+            delBtn.addEventListener('click', () => deleteStudent(s.class, s.roll));
+            actionsTd.appendChild(editBtn);
+            actionsTd.appendChild(delBtn);
+            tbody.appendChild(tr);
+        });
+    }
+
+    function adminEditRoster(cls, roll) {
         const s = DB.students.find(s => s.class === cls && s.roll === roll);
         if (!s) return;
-        $('adminEditOrigClass').value = cls;
-        $('adminEditOrigRoll').value = roll;
-        $('adminEditStudentClass').value = s.class;
-        $('adminEditStudentRoll').value = s.roll;
-        $('adminEditStudentName').value = s.name;
-        $('adminEditStudentTotal').value = (s.total === null || s.total === undefined) ? '' : s.total;
-        $('adminEditStudentObtained').value = (s.obtained === null || s.obtained === undefined) ? '' : s.obtained;
-        $('adminEditStudentExamType').value = s.examType || '';
-        $('adminStudentEditTitle').textContent = `Edit Student — ${s.name}`;
-        $('adminStudentEditCard').style.display = 'block';
-        $('adminStudentEditCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        $('adminRosterOrigClass').value = cls;
+        $('adminRosterOrigRoll').value = roll;
+        $('adminRosterClass').value = s.class;
+        $('adminRosterRoll').value = s.roll;
+        $('adminRosterName').value = s.name;
+        $('adminRosterEditTitle').textContent = `Edit Student — ${s.name}`;
+        $('adminRosterEditCard').style.display = 'block';
+        $('adminRosterEditCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    function adminCancelEditStudent() {
-        $('adminStudentEditCard').style.display = 'none';
+    function adminCancelEditRoster() {
+        $('adminRosterEditCard').style.display = 'none';
     }
 
-    let adminStudentSaveInProgress = false;
-    function adminSaveStudentEdit(e) {
+    let adminRosterSaveInProgress = false;
+    function adminSaveRosterEdit(e) {
         e.preventDefault();
-        if (adminStudentSaveInProgress) return;
-        adminStudentSaveInProgress = true;
+        if (adminRosterSaveInProgress) return;
+        adminRosterSaveInProgress = true;
         try {
-            const origClass = $('adminEditOrigClass').value;
-            const origRoll = parseInt($('adminEditOrigRoll').value, 10);
-            const cls = $('adminEditStudentClass').value;
-            const roll = parseInt($('adminEditStudentRoll').value, 10);
-            const name = $('adminEditStudentName').value.trim();
-            const totalRaw = $('adminEditStudentTotal').value.trim();
-            const obtainedRaw = $('adminEditStudentObtained').value.trim();
-            const examType = $('adminEditStudentExamType').value.trim();
+            const origClass = $('adminRosterOrigClass').value;
+            const origRoll = parseInt($('adminRosterOrigRoll').value, 10);
+            const cls = $('adminRosterClass').value;
+            const roll = parseInt($('adminRosterRoll').value, 10);
+            const name = $('adminRosterName').value.trim();
 
             if (!name || !Number.isInteger(roll) || roll <= 0) {
                 showToast('❌ Please enter a valid name and roll number', 'error'); return;
             }
-            if (tooLong(examType, 60)) { showToast('❌ Exam Type is too long (max 60 characters)', 'error'); return; }
-
-            let total = null, obtained = null;
-            if (totalRaw !== '' || obtainedRaw !== '') {
-                total = parseInt(totalRaw, 10);
-                obtained = parseInt(obtainedRaw, 10);
-                if (isNaN(total) || isNaN(obtained)) {
-                    showToast('❌ Total and Obtained must both be filled in together, or both left blank', 'error'); return;
-                }
-                if (total <= 0) { showToast('❌ Total marks must be greater than 0', 'error'); return; }
-                if (obtained > total) { showToast('❌ Obtained marks cannot exceed total marks', 'error'); return; }
-                if (obtained < 0) { showToast('❌ Marks cannot be negative', 'error'); return; }
-            }
+            if (tooLong(name, 80)) { showToast('❌ Name is too long (max 80 characters)', 'error'); return; }
 
             const duplicate = DB.students.some(s => s.class === cls && s.roll === roll && !(s.class === origClass && s.roll === origRoll));
             if (duplicate) { showToast('❌ That roll number already exists in this class!', 'error'); return; }
 
             DB.students = DB.students.filter(s => !(s.class === origClass && s.roll === origRoll));
-            DB.students.push({ class: cls, roll, name, total, obtained, examType });
+            if (!(origClass === cls && origRoll === roll)) {
+                DB.results = DB.results.map(r => (r.class === origClass && r.roll === origRoll) ? { ...r, class: cls, roll } : r);
+            }
+            DB.students.push({ class: cls, roll, name });
             saveData();
-            adminCancelEditStudent();
+            adminCancelEditRoster();
+            renderAdminRoster();
             renderResultReport();
             renderTeacherStudents();
             updateAdminStats();
             renderHome();
             showToast('✅ Student updated!', 'success');
         } finally {
-            adminStudentSaveInProgress = false;
+            adminRosterSaveInProgress = false;
         }
     }
 
@@ -3591,6 +3764,7 @@
             $('contactPhone').value = DB.contact.phone || '';
             $('contactEmail').value = DB.contact.email || '';
             renderResultReport();
+            renderAdminRoster();
             if (DB.notice) {
                 $('noticeTitleInput').value = DB.notice.title || '';
                 $('noticeDescInput').value = DB.notice.desc || '';
@@ -3736,37 +3910,45 @@
     function renderResultReport() {
         const filter = $('reportClassFilter').value;
         const examFilter = $('reportExamTypeFilter').value.trim().toLowerCase();
-        let students = DB.students;
-        if (filter !== 'ALL') students = students.filter(s => s.class === filter);
-        if (examFilter) students = students.filter(s => (s.examType || '').toLowerCase().includes(examFilter));
+        let results = DB.results;
+        if (filter !== 'ALL') results = results.filter(r => r.class === filter);
+        if (examFilter) results = results.filter(r => (r.examType || '').toLowerCase().includes(examFilter));
         const tbody = $('reportTableBody');
         tbody.innerHTML = '';
-        if (students.length === 0) {
+        if (results.length === 0) {
             tbody.innerHTML =
-                '<tr><td colspan="11" style="text-align:center; padding:20px; color:var(--text-light);">No student records found.</td></tr>';
+                '<tr><td colspan="12" style="text-align:center; padding:20px; color:var(--text-light);">No results found.</td></tr>';
             return;
         }
-        students.sort((a, b) => { if (a.class !== b.class) return a.class.localeCompare(b.class); return a.roll - b.roll; });
-        students.forEach((s, index) => {
-            const total = Number(s.total) || 0;
-            const obtained = Number(s.obtained) || 0;
+        results = [...results].sort((a, b) => { if (a.class !== b.class) return a.class.localeCompare(b.class); return a.roll - b.roll; });
+        // Cache positions per (class, examType) pair so we don't recompute
+        // the whole ranking once per row.
+        const posCache = {};
+        results.forEach((r, index) => {
+            const student = DB.students.find(s => s.class === r.class && s.roll === r.roll);
+            const total = Number(r.total) || 0;
+            const obtained = Number(r.obtained) || 0;
             const hasValidTotal = total > 0;
             const perc = hasValidTotal ? (obtained / total) * 100 : 0;
             const percFixed = hasValidTotal ? perc.toFixed(1) + '%' : 'N/A';
             const gradeInfo = hasValidTotal ? calculateGrade(perc) : { grade: 'N/A', pass: false };
+            const posKey = r.class + '|' + r.examType;
+            if (!posCache[posKey]) posCache[posKey] = getClassPositions(r.class, r.examType);
+            const pos = posCache[posKey][r.roll];
+            const posLabel = pos ? `${ordinal(pos.rank)} / ${pos.totalRanked}` : '-';
             const tr = document.createElement('tr');
             tr.innerHTML =
-                `<td>${index+1}</td><td style="font-weight:600;">${esc(s.class)}</td><td>${esc(s.roll)}</td><td style="font-weight:500;">${esc(s.name)}</td><td>${esc(s.examType || '-')}</td><td style="font-weight:700; color:var(--primary);">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700; color:var(--gold);">${percFixed}</td><td style="font-weight:700; color:${gradeInfo.pass ? 'var(--primary)' : '#dc2626'};">${esc(gradeInfo.grade)}</td><td>${esc(DB.incharges[s.class]||'Not Assigned')}</td><td></td>`;
+                `<td>${index+1}</td><td style="font-weight:600;">${esc(r.class)}</td><td>${esc(r.roll)}</td><td style="font-weight:500;">${esc(student ? student.name : '(deleted student)')}</td><td>${esc(r.examType)}</td><td style="font-weight:700; color:var(--primary);">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700; color:var(--gold);">${percFixed}</td><td style="font-weight:700; color:${gradeInfo.pass ? 'var(--primary)' : '#dc2626'};">${esc(gradeInfo.grade)}</td><td style="font-weight:700;">${esc(posLabel)}</td><td>${esc(DB.incharges[r.class]||'Not Assigned')}</td><td></td>`;
             const actionsTd = tr.lastElementChild;
             const editBtn = document.createElement('button');
             editBtn.className = 'btn btn-primary btn-sm';
             editBtn.textContent = 'Edit';
-            editBtn.addEventListener('click', () => adminEditStudent(s.class, s.roll));
+            editBtn.addEventListener('click', () => adminEditResult(r.id));
             const delBtn = document.createElement('button');
             delBtn.className = 'btn btn-danger btn-sm';
             delBtn.textContent = 'Del';
             delBtn.style.marginLeft = '4px';
-            delBtn.addEventListener('click', () => deleteStudent(s.class, s.roll));
+            delBtn.addEventListener('click', () => deleteStudentResult(r.id));
             actionsTd.appendChild(editBtn);
             actionsTd.appendChild(delBtn);
             tbody.appendChild(tr);
@@ -3802,36 +3984,44 @@
         return win;
     }
 
-    function printSingleResult() {
-        const statusText = $('resStatus').textContent || '';
-        const statusColor = $('resStatus').style.color || '#000';
-        const examType = $('resExamType').textContent || '';
+    function printResultCard(cls, roll, examType) {
+        const student = DB.students.find(s => s.class === cls && s.roll === roll);
+        const r = getResult(cls, roll, examType);
+        if (!student || !r) { showToast('❌ Result not found', 'error'); return; }
+        const total = Number(r.total) || 0;
+        const obtained = Number(r.obtained) || 0;
+        const perc = total > 0 ? (obtained / total) * 100 : 0;
+        const gradeInfo = calculateGrade(perc);
+        const pos = getClassPositions(cls, examType)[roll];
+        const incharge = DB.incharges[cls] || 'Not Assigned';
+
         const bodyHtml = `
             <div style="text-align:center; margin-bottom:14px; border-bottom:2px solid #000; padding-bottom:12px;">
                 <h2 style="font-size:22px; font-weight:900;">GES BAIT MUGHAL</h2>
                 <p style="font-size:13px; color:#333;">Overall Student Performance Report</p>
-                ${examType ? `<p style="font-size:13px; font-weight:700; margin-top:4px;">${esc(examType)}</p>` : ''}
+                <p style="font-size:13px; font-weight:700; margin-top:4px;">${esc(examType)}</p>
             </div>
             <table style="margin-bottom:14px;">
                 <tbody>
-                    <tr><td style="font-weight:700; width:30%;">Class</td><td>${esc($('resClass').textContent)}</td></tr>
-                    <tr><td style="font-weight:700;">Roll No</td><td>${esc($('resRoll').textContent)}</td></tr>
-                    <tr><td style="font-weight:700;">Student</td><td>${esc($('resName').textContent)}</td></tr>
-                    <tr><td style="font-weight:700;">Incharge</td><td>${esc($('resIncharge').textContent)}</td></tr>
+                    <tr><td style="font-weight:700; width:30%;">Class</td><td>${esc(cls)}</td></tr>
+                    <tr><td style="font-weight:700;">Roll No</td><td>${esc(roll)}</td></tr>
+                    <tr><td style="font-weight:700;">Student</td><td>${esc(student.name)}</td></tr>
+                    <tr><td style="font-weight:700;">Incharge</td><td>${esc(incharge)}</td></tr>
                 </tbody>
             </table>
             <table>
-                <thead><tr><th>Total Marks</th><th>Obtained</th><th>Percentage</th><th>Grade</th></tr></thead>
+                <thead><tr><th>Total Marks</th><th>Obtained</th><th>Percentage</th><th>Grade</th>${pos ? '<th>Position</th>' : ''}</tr></thead>
                 <tbody>
                     <tr>
-                        <td>${esc($('resTotal').textContent)}</td>
-                        <td style="font-weight:700;">${esc($('resObtained').textContent)}</td>
-                        <td style="font-weight:700;">${esc($('resPercentage').textContent)}</td>
-                        <td style="font-weight:700;">${esc($('resGrade').textContent)}</td>
+                        <td>${esc(total)}</td>
+                        <td style="font-weight:700;">${esc(obtained)}</td>
+                        <td style="font-weight:700;">${perc.toFixed(1)}%</td>
+                        <td style="font-weight:700;">${esc(gradeInfo.grade)}</td>
+                        ${pos ? `<td style="font-weight:700;">${ordinal(pos.rank)} / ${pos.totalRanked}</td>` : ''}
                     </tr>
                 </tbody>
             </table>
-            <div style="text-align:center; margin-top:16px; font-size:18px; font-weight:800; color:${esc(statusColor)};">${esc(statusText)}</div>
+            <div style="text-align:center; margin-top:16px; font-size:18px; font-weight:800; color:${gradeInfo.pass ? '#15803d' : '#dc2626'};">${gradeInfo.pass ? '✅ Pass' : '❌ Fail'}</div>
             <div style="margin-top:20px; text-align:center; font-size:10px; color:#555; border-top:1px solid #ddd; padding-top:8px;">
                 © ${new Date().getFullYear()} GES Bait Mughal · Smart School System
             </div>`;
@@ -3845,18 +4035,25 @@
     function printResultReport() {
         const filter = $('reportClassFilter').value;
         const examFilter = $('reportExamTypeFilter').value.trim().toLowerCase();
-        let students = DB.students;
-        if (filter !== 'ALL') students = students.filter(s => s.class === filter);
-        if (examFilter) students = students.filter(s => (s.examType || '').toLowerCase().includes(examFilter));
-        if (students.length === 0) { showToast('❌ No students to print!', 'warning'); return; }
+        let results = DB.results;
+        if (filter !== 'ALL') results = results.filter(r => r.class === filter);
+        if (examFilter) results = results.filter(r => (r.examType || '').toLowerCase().includes(examFilter));
+        if (results.length === 0) { showToast('❌ No results to print!', 'warning'); return; }
+        results = [...results].sort((a, b) => { if (a.class !== b.class) return a.class.localeCompare(b.class); return a.roll - b.roll; });
 
-        let tableRows = students.map((s, i) => {
-            const total = Number(s.total) || 0;
-            const obtained = Number(s.obtained) || 0;
+        const posCache = {};
+        let tableRows = results.map((r, i) => {
+            const student = DB.students.find(s => s.class === r.class && s.roll === r.roll);
+            const total = Number(r.total) || 0;
+            const obtained = Number(r.obtained) || 0;
             const hasValidTotal = total > 0;
             const perc = hasValidTotal ? ((obtained / total) * 100).toFixed(1) : 'N/A';
             const gradeInfo = hasValidTotal ? calculateGrade(parseFloat(perc)) : { grade: 'N/A' };
-            return `<tr><td>${i+1}</td><td>${esc(s.class)}</td><td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td>${esc(s.examType || '-')}</td><td style="font-weight:700;">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${hasValidTotal ? perc+'%' : 'N/A'}</td><td style="font-weight:700;">${esc(gradeInfo.grade)}</td><td>${esc(DB.incharges[s.class]||'N/A')}</td></tr>`;
+            const posKey = r.class + '|' + r.examType;
+            if (!posCache[posKey]) posCache[posKey] = getClassPositions(r.class, r.examType);
+            const pos = posCache[posKey][r.roll];
+            const posLabel = pos ? `${ordinal(pos.rank)}/${pos.totalRanked}` : '-';
+            return `<tr><td>${i+1}</td><td>${esc(r.class)}</td><td>${esc(r.roll)}</td><td>${esc(student ? student.name : '-')}</td><td>${esc(r.examType)}</td><td style="font-weight:700;">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${hasValidTotal ? perc+'%' : 'N/A'}</td><td style="font-weight:700;">${esc(gradeInfo.grade)}</td><td>${esc(posLabel)}</td><td>${esc(DB.incharges[r.class]||'N/A')}</td></tr>`;
         }).join('');
 
         const bodyHtml = `
@@ -3866,7 +4063,7 @@
                 <p style="font-size:11px; color:#555;">${esc(filter==='ALL'?'All Classes':filter)}${examFilter ? ' | Exam: ' + esc($('reportExamTypeFilter').value.trim()) : ''} | Generated: ${new Date().toLocaleDateString()}</p>
             </div>
             <table>
-                <thead><tr><th>#</th><th>Class</th><th>Roll</th><th>Name</th><th>Exam Type</th><th>Obtained</th><th>Total</th><th>Percentage</th><th>Grade</th><th>Incharge</th></tr></thead>
+                <thead><tr><th>#</th><th>Class</th><th>Roll</th><th>Name</th><th>Exam Type</th><th>Obtained</th><th>Total</th><th>Percentage</th><th>Grade</th><th>Position</th><th>Incharge</th></tr></thead>
                 <tbody>${tableRows}</tbody>
             </table>
             <div style="margin-top:12px; text-align:center; font-size:10px; color:#555; border-top:1px solid #ddd; padding-top:8px;">
@@ -3880,22 +4077,29 @@
     }
 
     function printAllResults() {
-        if (DB.students.length === 0) { showToast('❌ No student records!', 'warning'); return; }
+        if (DB.results.length === 0) { showToast('❌ No results to print!', 'warning'); return; }
+        const results = [...DB.results].sort((a, b) => { if (a.class !== b.class) return a.class.localeCompare(b.class); return a.roll - b.roll; });
+        const posCache = {};
 
         const bodyHtml = `
             <div style="text-align:center; margin-bottom:12px; border-bottom:2px solid #000; padding-bottom:12px;">
                 <h2 style="font-size:20px; font-weight:900;">GES BAIT MUGHAL</h2>
-                <p style="font-size:13px; color:#333;">Complete Student Results Report</p>
+                <p style="font-size:13px; color:#333;">Complete Student Results Report — All Classes, All Exams</p>
                 <p style="font-size:11px; color:#555;">${new Date().toLocaleDateString()}</p>
             </div>
             <table>
-                <thead><tr><th>Class</th><th>Roll</th><th>Name</th><th>Exam Type</th><th>Obtained</th><th>Total</th><th>%</th><th>Incharge</th></tr></thead>
-                <tbody>${DB.students.map(s=>{
-                    const total = Number(s.total) || 0;
-                    const obtained = Number(s.obtained) || 0;
+                <thead><tr><th>Class</th><th>Roll</th><th>Name</th><th>Exam Type</th><th>Obtained</th><th>Total</th><th>%</th><th>Position</th><th>Incharge</th></tr></thead>
+                <tbody>${results.map(r => {
+                    const student = DB.students.find(s => s.class === r.class && s.roll === r.roll);
+                    const total = Number(r.total) || 0;
+                    const obtained = Number(r.obtained) || 0;
                     const hasValidTotal = total > 0;
                     const percText = hasValidTotal ? ((obtained/total)*100).toFixed(1)+'%' : 'N/A';
-                    return `<tr><td>${esc(s.class)}</td><td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td>${esc(s.examType || '-')}</td><td style="font-weight:700;">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${percText}</td><td>${esc(DB.incharges[s.class]||'N/A')}</td></tr>`;
+                    const posKey = r.class + '|' + r.examType;
+                    if (!posCache[posKey]) posCache[posKey] = getClassPositions(r.class, r.examType);
+                    const pos = posCache[posKey][r.roll];
+                    const posLabel = pos ? `${ordinal(pos.rank)}/${pos.totalRanked}` : '-';
+                    return `<tr><td>${esc(r.class)}</td><td>${esc(r.roll)}</td><td>${esc(student ? student.name : '-')}</td><td>${esc(r.examType)}</td><td style="font-weight:700;">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${percText}</td><td>${esc(posLabel)}</td><td>${esc(DB.incharges[r.class]||'N/A')}</td></tr>`;
                 }).join('')}</tbody>
             </table>
             <div style="margin-top:12px; text-align:center; font-size:10px; color:#555; border-top:1px solid #ddd; padding-top:8px;">
@@ -3908,7 +4112,6 @@
         showToast('🖨️ Printing all results...', 'success');
     }
 
-    // ─── RESULT SEARCH ──────────────────────────────────────────────
     // ─── RESULT SEARCH ──────────────────────────────────────────────
     // Checks whether the currently-selected class has any results uploaded
     // at all, and swaps the Roll Number field for a clear "No Result
@@ -3923,11 +4126,8 @@
         if (!rollGroup || !noDataMsg || !searchBtn) return; // not on this tab yet
 
         const cls = $('resultClass').value;
-        // "Has results" means at least one student in this class has actual
-        // marks entered — a class full of pre-registered students with no
-        // marks yet should still show "No Result Uploaded", matching what a
-        // roll-number search would tell them anyway.
-        const hasAny = DB.students.some(s => s.class === cls && (Number(s.total) || 0) > 0);
+        // "Has results" means at least one exam result exists for this class.
+        const hasAny = DB.results.some(r => r.class === cls && (Number(r.total) || 0) > 0);
 
         rollGroup.style.display = hasAny ? 'block' : 'none';
         searchBtn.style.display = hasAny ? 'block' : 'none';
@@ -3961,9 +4161,11 @@
         }
 
         const student = DB.students.find(s => s.class === cls && s.roll === roll);
+        const list = $('resultCardsList');
+        list.innerHTML = '';
+
         if (!student) {
             $('noResultDetail').textContent = `No student found for Roll No ${roll}, ${cls}.`;
-            $('resultCard').style.display = 'none';
             $('noResultCard').style.display = 'block';
             $('resultDisplay').style.display = 'block';
             showToast('❌ No student found for this roll number', 'error');
@@ -3971,16 +4173,12 @@
             return;
         }
 
-        const total = Number(student.total) || 0;
-        const obtained = Number(student.obtained) || 0;
-        const hasValidTotal = total > 0;
+        const results = getResultsForStudent(cls, roll).filter(r => (Number(r.total) || 0) > 0);
 
         // Student exists but no marks have been entered yet — show the same
-        // clear "No Result Uploaded" message rather than a confusing card
-        // full of N/A values.
-        if (!hasValidTotal) {
+        // clear "No Result Uploaded" message rather than an empty page.
+        if (results.length === 0) {
             $('noResultDetail').textContent = `No result has been uploaded yet for ${student.name} (Roll No ${roll}, ${cls}).`;
-            $('resultCard').style.display = 'none';
             $('noResultCard').style.display = 'block';
             $('resultDisplay').style.display = 'block';
             showToast('❌ No result uploaded for this roll number', 'error');
@@ -3988,34 +4186,47 @@
             return;
         }
 
-        const perc = (obtained / total) * 100;
-        const gradeInfo = calculateGrade(perc);
-
-        const examTypeEl = $('resExamType');
-        if (student.examType) {
-            examTypeEl.textContent = student.examType;
-            examTypeEl.style.display = 'block';
-        } else {
-            examTypeEl.textContent = '';
-            examTypeEl.style.display = 'none';
-        }
-
-        $('resClass').textContent = student.class;
-        $('resRoll').textContent = student.roll;
-        $('resName').textContent = student.name;
-        $('resIncharge').textContent = DB.incharges[student.class] || 'Not Assigned';
-        $('resTotal').textContent = total;
-        $('resObtained').textContent = obtained;
-        $('resPercentage').textContent = perc.toFixed(1) + '%';
-        $('resGrade').textContent = gradeInfo.grade;
-        const statusEl = $('resStatus');
-        statusEl.textContent = gradeInfo.pass ? '✅ Pass' : '❌ Fail';
-        statusEl.style.color = gradeInfo.pass ? 'var(--primary)' : '#dc2626';
-
         $('noResultCard').style.display = 'none';
-        $('resultCard').style.display = 'block';
+        const incharge = DB.incharges[cls] || 'Not Assigned';
+        results.forEach(r => {
+            const total = Number(r.total) || 0;
+            const obtained = Number(r.obtained) || 0;
+            const perc = (obtained / total) * 100;
+            const gradeInfo = calculateGrade(perc);
+            const pos = getClassPositions(cls, r.examType)[roll];
+            const card = document.createElement('div');
+            card.className = 'report-card';
+            card.innerHTML = `
+                <div class="header">
+                    <h2>GES BAIT MUGHAL</h2>
+                    <p>Overall Student Performance Report</p>
+                    <p style="font-weight:700; color:var(--gold); margin-top:4px;">${esc(r.examType)}</p>
+                </div>
+                <div class="student-info">
+                    <div><strong>Class:</strong> ${esc(cls)}</div>
+                    <div><strong>Roll No:</strong> ${esc(roll)}</div>
+                    <div><strong>Student:</strong> ${esc(student.name)}</div>
+                    <div><strong>Incharge:</strong> ${esc(incharge)}</div>
+                </div>
+                <div class="summary">
+                    <div class="item"><span class="label">Total Marks</span><span class="value">${esc(total)}</span></div>
+                    <div class="item"><span class="label">Obtained</span><span class="value">${esc(obtained)}</span></div>
+                    <div class="item"><span class="label">Percentage</span><span class="value">${perc.toFixed(1)}%</span></div>
+                    <div class="item"><span class="label">Grade</span><span class="value">${esc(gradeInfo.grade)}</span></div>
+                    ${pos ? `<div class="item"><span class="label">Position</span><span class="value">${ordinal(pos.rank)} / ${pos.totalRanked}</span></div>` : ''}
+                </div>
+                <div style="text-align:center; margin-top:14px; font-size:clamp(16px,1.6vw,20px); font-weight:800; color:${gradeInfo.pass ? 'var(--primary)' : '#dc2626'};">${gradeInfo.pass ? '✅ Pass' : '❌ Fail'}</div>
+                <div class="no-print" style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; justify-content:center;"></div>`;
+            const printBtn = document.createElement('button');
+            printBtn.className = 'btn btn-primary print-btn';
+            printBtn.innerHTML = '<i class="fas fa-print"></i> Print Result';
+            printBtn.addEventListener('click', () => printResultCard(cls, roll, r.examType));
+            card.querySelector('.no-print').appendChild(printBtn);
+            list.appendChild(card);
+        });
+
         $('resultDisplay').style.display = 'block';
-        showToast('✅ Result found!', 'success');
+        showToast(`✅ ${results.length} result${results.length === 1 ? '' : 's'} found!`, 'success');
         resultSearchInProgress = false;
     }
 
@@ -4775,6 +4986,7 @@
             const parsed = JSON.parse(saved);
             for (const k in parsed)
                 if (parsed.hasOwnProperty(k) && k !== '_loaded') DB[k] = parsed[k];
+            migrateStudentResults();
             DB._loaded = true;
             renderAll();
         }
