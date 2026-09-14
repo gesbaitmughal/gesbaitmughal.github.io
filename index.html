@@ -2038,9 +2038,10 @@
                 <div class="card-header"><h3><i class="fas fa-play-circle"></i> School Tour Video</h3><span style="font-size:clamp(10px,0.8vw,13px); color:var(--text-light);" id="videoStatus">▶️ Playing with sound</span></div>
                 <div class="video-wrapper" style="position:relative;">
                     <video id="schoolVideo" controls playsinline preload="auto"><source src="" type="video/mp4" /></video>
-                    <div id="videoOverlay" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:#ccc; text-align:center; padding:16px; pointer-events:none;">
+                    <div id="videoOverlay" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; color:#ccc; text-align:center; padding:16px; pointer-events:none;">
                         <i class="fas fa-photo-film" style="font-size:32px; opacity:0.6;"></i>
                         <span id="videoOverlayText" style="font-size:clamp(12px,1vw,14px);">No video uploaded</span>
+                        <button id="videoPlayBtn" onclick="manualPlayVideo()" class="btn btn-primary btn-sm" style="display:none; pointer-events:auto;"><i class="fas fa-play"></i> Play Video</button>
                     </div>
                     <div class="video-controls">
                         <span><i class="fas fa-volume-up" id="volumeIcon"></i> <span id="volumeText">Sound on</span></span>
@@ -2156,9 +2157,8 @@
                         <button onclick="teacherLogout()" class="btn btn-danger">Logout</button>
                     </div>
                 </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
                     <div class="stat-box" style="padding:clamp(8px,1vw,16px);"><span class="num" id="tStatStudents">0</span><span class="label">Students</span></div>
-                    <div class="stat-box" style="padding:clamp(8px,1vw,16px);"><span class="num" id="tStatHomework">0</span><span class="label">Homework</span></div>
                     <div class="stat-box" style="padding:clamp(8px,1vw,16px);"><span class="num" id="tStatAvg">0%</span><span class="label">Avg Performance</span></div>
                 </div>
                 <div class="card" style="margin-bottom:12px;">
@@ -2773,17 +2773,34 @@
             }
         }
 
-        function showVideoOverlay(text) {
+        function showVideoOverlay(text, showPlayButton) {
             $('videoOverlayText').textContent = text;
             $('videoOverlay').style.display = 'flex';
+            $('videoPlayBtn').style.display = showPlayButton ? 'inline-flex' : 'none';
         }
         function hideVideoOverlay() {
             $('videoOverlay').style.display = 'none';
         }
 
+        // Called when the person taps the visible "Play Video" button after
+        // autoplay was blocked. This runs inside a real click/tap event, so
+        // browsers allow it to actually start playback (including with
+        // sound) even where automatic autoplay was refused.
+        function manualPlayVideo() {
+            video.muted = false;
+            video.play().then(() => {
+                $('videoStatus').textContent = '▶️ Playing with sound';
+                $('volumeText').textContent = 'Sound on';
+                $('volumeIcon').className = 'fas fa-volume-up';
+                hideVideoOverlay();
+            }).catch(() => {
+                showVideoOverlay("This device/browser can't play this video file — try re-uploading it as a standard MP4 (H.264 codec).", false);
+            });
+        }
+
         function initVideo() {
             if (DB.video) {
-                showVideoOverlay('Loading video…');
+                showVideoOverlay('Loading video…', false);
                 video.src = DB.video;
                 video.load();
                 video.loop = false;
@@ -2802,24 +2819,25 @@
                         $('volumeText').textContent = 'Click to unmute';
                         $('volumeIcon').className = 'fas fa-volume-mute';
                     }).catch(() => {
-                        // Even muted autoplay failed — likely a codec/format the
-                        // browser can't decode at all. Show the controls so the
-                        // person can try tapping play themselves, and explain
-                        // why nothing is happening instead of a black screen.
+                        // Even muted autoplay failed — most likely the browser
+                        // is blocking ALL autoplay outright (common on
+                        // desktop). Show a real, tappable Play button rather
+                        // than relying on the small native controls, which
+                        // can be easy to miss against a black frame.
                         $('videoStatus').textContent = '⏸️ Tap play to watch';
-                        showVideoOverlay('Tap ▶ to play this video');
+                        showVideoOverlay('Autoplay is blocked on this browser', true);
                     });
                 });
             } else {
                 video.removeAttribute('src');
                 video.load();
                 $('videoStatus').textContent = '📹 No video uploaded';
-                showVideoOverlay('No video uploaded');
+                showVideoOverlay('No video uploaded', false);
             }
         }
         video.addEventListener('playing', hideVideoOverlay);
         video.addEventListener('error', () => {
-            showVideoOverlay(videoErrorMessage(video.error));
+            showVideoOverlay(videoErrorMessage(video.error), true);
             $('videoStatus').textContent = '⚠️ Video error';
             console.error('Video playback error:', video.error);
         });
@@ -3205,7 +3223,15 @@
             div.className = 'card';
             div.style.cssText = 'padding:6px; overflow:hidden;';
             div.innerHTML =
-                `<img src="${esc(img.file)}" alt="${esc(img.caption || 'School gallery photo')}" style="width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:10px;" loading="lazy" onerror="this.style.display='none'" /><p style="font-size:clamp(12px,1vw,14px); font-weight:600; text-align:center; padding:8px 0 2px;">${esc(img.caption)}</p>`;
+                `<img src="${esc(img.file)}" alt="${esc(img.caption || 'School gallery photo')}" style="width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:10px; cursor:pointer;" loading="lazy" onerror="this.style.display='none'" /><p style="font-size:clamp(12px,1vw,14px); font-weight:600; text-align:center; padding:8px 0 2px;">${esc(img.caption)}</p><div style="display:flex; justify-content:center; gap:6px; padding-bottom:4px;"></div>`;
+            const imgEl = div.querySelector('img');
+            const actions = div.querySelector('div:last-child');
+            const previewBtn = document.createElement('button');
+            previewBtn.className = 'btn btn-outline btn-sm';
+            previewBtn.innerHTML = '<i class="fas fa-eye"></i> Preview';
+            previewBtn.addEventListener('click', () => previewFile(img.file));
+            imgEl.addEventListener('click', () => previewFile(img.file));
+            actions.appendChild(previewBtn);
             grid.appendChild(div);
         });
     }
@@ -3314,9 +3340,7 @@
         const cls = getTeacherClass();
         if (!cls) return;
         const students = DB.students.filter(s => s.class === cls);
-        const homework = DB.homework.filter(h => h.class === cls || h.class === 'ALL');
         $('tStatStudents').textContent = students.length;
-        $('tStatHomework').textContent = homework.length;
         const validResults = DB.results.filter(r => r.class === cls && (Number(r.total) || 0) > 0);
         if (validResults.length > 0) {
             const avg = validResults.reduce((sum, r) => sum + (Number(r.obtained) / Number(r.total) * 100), 0) / validResults.length;
