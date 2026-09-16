@@ -2174,7 +2174,7 @@
                     </form>
                 </div>
                 <div class="card" style="margin-bottom:12px;">
-                    <div class="card-header"><h3><i class="fas fa-users"></i> Students</h3><span style="font-size:clamp(11px,0.8vw,13px); background:var(--gray); padding:2px 12px; border-radius:40px;" id="studentCount">0</span></div>
+                    <div class="card-header"><h3><i class="fas fa-users"></i> Students</h3><div style="display:flex; align-items:center; gap:8px;"><span style="font-size:clamp(11px,0.8vw,13px); background:var(--gray); padding:2px 12px; border-radius:40px;" id="studentCount">0</span><button onclick="printMyClassReport()" class="btn btn-gold btn-sm no-print"><i class="fas fa-print"></i> Print My Class Report</button></div></div>
                     <div class="form-group" style="margin-bottom:10px;"><input type="text" id="teacherStudentSearch" oninput="renderTeacherStudents()" placeholder="Search by name or roll number…" /></div>
                     <div class="table-wrap"><table>
                             <thead style="background:var(--gray);"><tr><th>Roll</th><th>Name</th><th>Results</th><th>Actions</th></tr></thead>
@@ -2185,8 +2185,9 @@
                     <div class="card-header"><h3><i class="fas fa-upload"></i> Upload Results</h3></div>
                     <p style="font-size:clamp(11px,0.9vw,13px); color:var(--text-light); margin-bottom:8px;">Choose which exam these marks belong to, then enter Total/Obtained for as many students as you like. "Save Draft" keeps them private while you double-check; "Publish" makes them visible to students/parents. Each exam is kept separate — a new exam never overwrites an earlier one.</p>
                     <div class="form-group"><label>Exam Type <span style="color:#dc2626;">*</span></label><input type="text" id="bulkExamType" list="examTypeSuggestions" placeholder="e.g. Final Term" oninput="renderBulkResultTable()" required /><datalist id="examTypeSuggestions"><option value="Annual Exam"></option><option value="Mid Term"></option><option value="Final Term"></option><option value="First Term"></option><option value="Second Term"></option><option value="Test"></option></datalist></div>
+                    <div class="form-group"><label>Total Marks <span style="color:#dc2626;">*</span> <span style="font-weight:400; color:var(--text-light);">(same for every student in this exam)</span></label><input type="number" id="bulkTotalMarks" min="1" placeholder="e.g. 500" required /></div>
                     <div class="table-wrap"><table>
-                            <thead style="background:var(--gray);"><tr><th>Roll</th><th>Name</th><th>Total</th><th>Obtained</th></tr></thead>
+                            <thead style="background:var(--gray);"><tr><th>Roll</th><th>Name</th><th>Obtained</th></tr></thead>
                             <tbody id="bulkResultTableBody"></tbody>
                         </table></div>
                     <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
@@ -2521,7 +2522,7 @@
             <div>
                 <h4><i class="fas fa-school"></i> GES Bait Mughal</h4>
                 <p>Government Elementary School committed to free quality education and moral values for every child.</p>
-                <p style="margin-top:4px;"><i class="fas fa-map-pin"></i> Bait Mughal, Jalal Pur Pir Wala, Punjab</p>
+                <p style="margin-top:4px;"><i class="fas fa-map-pin"></i> <span id="footerAddress">Bait Mughal, Jalal Pur Pir Wala, Punjab</span></p>
             </div>
             <div>
                 <h4><i class="fas fa-link"></i> Quick Links</h4>
@@ -3043,6 +3044,7 @@
         $('aboutText').textContent = DB.about;
         $('footerPhone').textContent = DB.contact.phone || '03027319839';
         $('footerEmail').textContent = DB.contact.email || 'gesbaitmughal@gmail.com';
+        $('footerAddress').textContent = DB.contact.address || 'Bait Mughal, Jalal Pur Pir Wala, Punjab';
 
         const list = $('announcementList');
         list.innerHTML = '';
@@ -3488,30 +3490,34 @@
         const examType = $('bulkExamType') ? $('bulkExamType').value.trim() : '';
         const list = DB.students.filter(s => s.class === cls).sort((a, b) => a.roll - b.roll);
         tbody.innerHTML = '';
+
+        // If this exam already has results saved, auto-fill the shared
+        // Total Marks field from whichever record has one, so the teacher
+        // doesn't have to remember/retype it.
+        if (examType) {
+            const anyExisting = DB.results.find(r => r.class === cls && r.examType === examType && (Number(r.total) || 0) > 0);
+            if (anyExisting && !$('bulkTotalMarks').value) {
+                $('bulkTotalMarks').value = anyExisting.total;
+            }
+        }
+
         if (list.length === 0) {
             tbody.innerHTML =
-                '<tr><td colspan="4" style="text-align:center; color:var(--text-light);">Add students above first, then enter their marks here.</td></tr>';
+                '<tr><td colspan="3" style="text-align:center; color:var(--text-light);">Add students above first, then enter their marks here.</td></tr>';
             return;
         }
         list.forEach(s => {
             const existing = examType ? getResult(cls, s.roll, examType) : null;
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td></td><td></td>`;
+            tr.innerHTML = `<td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td></td>`;
             const inputStyle = 'width:100%; min-width:70px; padding:4px 8px; border:2px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text);';
-            const totalInput = document.createElement('input');
-            totalInput.type = 'number'; totalInput.min = '1';
-            totalInput.style.cssText = inputStyle;
-            totalInput.value = existing ? existing.total : '';
-            totalInput.dataset.roll = s.roll;
-            totalInput.className = 'bulk-total-input';
             const obtainedInput = document.createElement('input');
             obtainedInput.type = 'number'; obtainedInput.min = '0';
             obtainedInput.style.cssText = inputStyle;
             obtainedInput.value = existing ? existing.obtained : '';
             obtainedInput.dataset.roll = s.roll;
             obtainedInput.className = 'bulk-obtained-input';
-            tr.children[2].appendChild(totalInput);
-            tr.children[3].appendChild(obtainedInput);
+            tr.children[2].appendChild(obtainedInput);
             tbody.appendChild(tr);
         });
     }
@@ -3527,23 +3533,23 @@
             if (!examType) { showToast('❌ Please enter which exam this is (e.g. Final Term)', 'error'); return; }
             if (tooLong(examType, 60)) { showToast('❌ Exam Type is too long (max 60 characters)', 'error'); return; }
 
-            const totalInputs = Array.from(document.querySelectorAll('#bulkResultTableBody .bulk-total-input'));
+            const total = parseInt($('bulkTotalMarks').value, 10);
+            if (isNaN(total) || total <= 0) { showToast('❌ Please enter the total marks for this exam', 'error'); return; }
+
             const obtainedInputs = Array.from(document.querySelectorAll('#bulkResultTableBody .bulk-obtained-input'));
             const updates = {};
             const errorRolls = [];
 
-            totalInputs.forEach((input, i) => {
+            obtainedInputs.forEach(input => {
                 const roll = parseInt(input.dataset.roll, 10);
-                const totalRaw = input.value.trim();
-                const obtainedRaw = obtainedInputs[i].value.trim();
-                if (totalRaw === '' && obtainedRaw === '') return; // row left blank — skip
-                const total = parseInt(totalRaw, 10);
+                const obtainedRaw = input.value.trim();
+                if (obtainedRaw === '') return; // row left blank — skip
                 const obtained = parseInt(obtainedRaw, 10);
-                if (isNaN(total) || isNaN(obtained) || total <= 0 || obtained < 0 || obtained > total) {
+                if (isNaN(obtained) || obtained < 0 || obtained > total) {
                     errorRolls.push(roll);
                     return;
                 }
-                updates[roll] = { total, obtained };
+                updates[roll] = obtained;
             });
 
             if (errorRolls.length > 0) {
@@ -3563,7 +3569,7 @@
                 DB.results.push({
                     id: existing ? existing.id : `${cls}-${roll}-${examType}-${Date.now()}`,
                     class: cls, roll, examType,
-                    total: updates[roll].total, obtained: updates[roll].obtained,
+                    total, obtained: updates[roll],
                     // Correcting an already-published result stays published;
                     // brand-new marks start as a draft until explicitly
                     // published with the button below.
@@ -4202,6 +4208,51 @@
         showToast('🖨️ Printing report...', 'success');
     }
 
+    // Lets a teacher print a results report for ONLY their own class —
+    // unlike the admin report above, this never shows other classes' data.
+    function printMyClassReport() {
+        const cls = getTeacherClass();
+        if (!cls) { showToast('❌ Session expired', 'error'); return; }
+        let results = DB.results.filter(r => r.class === cls);
+        if (results.length === 0) { showToast('❌ No results to print for your class yet!', 'warning'); return; }
+        results = [...results].sort((a, b) => a.roll - b.roll);
+
+        const posCache = {};
+        let tableRows = results.map((r, i) => {
+            const student = DB.students.find(s => s.class === r.class && s.roll === r.roll);
+            const total = Number(r.total) || 0;
+            const obtained = Number(r.obtained) || 0;
+            const hasValidTotal = total > 0;
+            const perc = hasValidTotal ? ((obtained / total) * 100).toFixed(1) : 'N/A';
+            const gradeInfo = hasValidTotal ? calculateGrade(parseFloat(perc)) : { grade: 'N/A' };
+            const posKey = r.class + '|' + r.examType;
+            if (!posCache[posKey]) posCache[posKey] = getClassPositions(r.class, r.examType);
+            const pos = posCache[posKey][r.roll];
+            const posLabel = pos ? `${ordinal(pos.rank)}` : '-';
+            const statusLabel = r.published ? 'Published' : 'Draft';
+            return `<tr><td>${i+1}</td><td>${esc(r.roll)}</td><td>${esc(student ? student.name : '-')}</td><td>${esc(r.examType)}</td><td style="font-weight:700;">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${hasValidTotal ? perc+'%' : 'N/A'}</td><td style="font-weight:700;">${esc(gradeInfo.grade)}</td><td>${esc(posLabel)}</td><td>${esc(statusLabel)}</td></tr>`;
+        }).join('');
+
+        const bodyHtml = `
+            <div style="text-align:center; margin-bottom:14px; border-bottom:2px solid #000; padding-bottom:12px;">
+                <h2 style="font-size:22px; font-weight:900;">GES BAIT MUGHAL</h2>
+                <p style="font-size:13px; color:#333;">${esc(cls)} — Results Report</p>
+                <p style="font-size:11px; color:#555;">Generated: ${new Date().toLocaleDateString()}</p>
+            </div>
+            <table>
+                <thead><tr><th>#</th><th>Roll</th><th>Name</th><th>Exam Type</th><th>Obtained</th><th>Total</th><th>Percentage</th><th>Grade</th><th>Position</th><th>Status</th></tr></thead>
+                <tbody>${tableRows}</tbody>
+            </table>
+            <div style="margin-top:12px; text-align:center; font-size:10px; color:#555; border-top:1px solid #ddd; padding-top:8px;">
+                © ${new Date().getFullYear()} GES Bait Mughal · Smart School System
+            </div>`;
+
+        const win = openPrintWindow(`${cls} Results Report`, bodyHtml);
+        if (!win) return;
+        setTimeout(() => { win.print(); }, 300);
+        showToast('🖨️ Printing your class report...', 'success');
+    }
+
     function printAllResults() {
         if (DB.results.length === 0) { showToast('❌ No results to print!', 'warning'); return; }
         const results = [...DB.results].sort((a, b) => { if (a.class !== b.class) return a.class.localeCompare(b.class); return a.roll - b.roll; });
@@ -4349,10 +4400,12 @@
                 <div><strong>Student:</strong> ${esc(student.name)}</div>
                 <div><strong>Incharge:</strong> ${esc(incharge)}</div>
             </div>
-            <table class="marks-table" style="margin-top:14px;">
-                <thead><tr><th>Exam</th><th>Total</th><th>Obtained</th><th>%</th><th>Grade</th><th>Position</th><th>Status</th></tr></thead>
-                <tbody>${rows}</tbody>
-            </table>
+            <div style="margin-top:14px; overflow-x:auto; -webkit-overflow-scrolling:touch;">
+                <table class="marks-table" style="min-width:520px;">
+                    <thead><tr><th>Exam</th><th>Total</th><th>Obtained</th><th>%</th><th>Grade</th><th>Position</th><th>Status</th></tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
             <div class="no-print" style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; justify-content:center;"></div>`;
         const printBtn = document.createElement('button');
         printBtn.className = 'btn btn-primary print-btn';
