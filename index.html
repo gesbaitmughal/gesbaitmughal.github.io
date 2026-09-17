@@ -2064,6 +2064,11 @@
                         </select>
                     </div>
                     <div class="form-group" id="resultRollGroup"><label for="resultRoll">Roll Number</label><input type="number" id="resultRoll" min="1" step="1" inputmode="numeric" placeholder="Enter roll number" required /></div>
+                    <div class="form-group" id="resultExamGroup" style="display:none;"><label for="resultExamSelect">Which Term/Exam?</label>
+                        <select id="resultExamSelect">
+                            <option value="ALL">All Terms</option>
+                        </select>
+                    </div>
                     <div id="resultNoDataMsg" style="display:none; text-align:center; color:var(--text-light); font-size:clamp(13px,1vw,15px); padding:8px 0;">
                         <i class="fas fa-folder-open" style="margin-right:6px;"></i>No Result Uploaded for this class yet
                     </div>
@@ -2174,12 +2179,20 @@
                     </form>
                 </div>
                 <div class="card" style="margin-bottom:12px;">
-                    <div class="card-header"><h3><i class="fas fa-users"></i> Students</h3><div style="display:flex; align-items:center; gap:8px;"><span style="font-size:clamp(11px,0.8vw,13px); background:var(--gray); padding:2px 12px; border-radius:40px;" id="studentCount">0</span><button onclick="printMyClassReport()" class="btn btn-gold btn-sm no-print"><i class="fas fa-print"></i> Print My Class Report</button></div></div>
+                    <div class="card-header"><h3><i class="fas fa-users"></i> Students</h3><span style="font-size:clamp(11px,0.8vw,13px); background:var(--gray); padding:2px 12px; border-radius:40px;" id="studentCount">0</span></div>
                     <div class="form-group" style="margin-bottom:10px;"><input type="text" id="teacherStudentSearch" oninput="renderTeacherStudents()" placeholder="Search by name or roll number…" /></div>
                     <div class="table-wrap"><table>
                             <thead style="background:var(--gray);"><tr><th>Roll</th><th>Name</th><th>Results</th><th>Actions</th></tr></thead>
                             <tbody id="teacherStudentList"></tbody>
                         </table></div>
+                    <div class="no-print" style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end; margin-top:12px; padding-top:12px; border-top:1px solid var(--border);">
+                        <div class="form-group" style="margin:0; flex:1; min-width:150px;"><label>Print which term?</label>
+                            <select id="teacherPrintExamSelect">
+                                <option value="ALL">All Terms</option>
+                            </select>
+                        </div>
+                        <button onclick="printMyClassReport()" class="btn btn-gold btn-sm"><i class="fas fa-print"></i> Print My Class Report</button>
+                    </div>
                 </div>
                 <div class="card" style="margin-bottom:12px;">
                     <div class="card-header"><h3><i class="fas fa-upload"></i> Upload Results</h3></div>
@@ -2274,13 +2287,15 @@
                 <div class="card" style="margin-bottom:12px;" id="adminReport">
                     <div class="card-header"><h3><i class="fas fa-chart-bar"></i> Student Result Report</h3>
                         <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                            <select id="reportClassFilter" style="padding:clamp(3px,0.4vw,8px) clamp(8px,0.8vw,14px); border:2px solid var(--border); border-radius:10px; font-size:clamp(11px,0.8vw,13px); background:var(--bg); color:var(--text);">
-                                <option value="ALL">All</option>
+                            <select id="reportClassFilter" onchange="populateAdminExamFilter(); renderResultReport();" style="padding:clamp(3px,0.4vw,8px) clamp(8px,0.8vw,14px); border:2px solid var(--border); border-radius:10px; font-size:clamp(11px,0.8vw,13px); background:var(--bg); color:var(--text);">
+                                <option value="ALL">All Classes</option>
                                 <option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option>
                                 <option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option>
                                 <option value="Class 7">Class 7</option><option value="Class 8">Class 8</option>
                             </select>
-                            <input type="text" id="reportExamTypeFilter" list="examTypeSuggestions" placeholder="Filter by exam type" style="padding:clamp(3px,0.4vw,8px) clamp(8px,0.8vw,14px); border:2px solid var(--border); border-radius:10px; font-size:clamp(11px,0.8vw,13px); background:var(--bg); color:var(--text); width:150px;" />
+                            <select id="reportExamTypeFilter" onchange="renderResultReport()" style="padding:clamp(3px,0.4vw,8px) clamp(8px,0.8vw,14px); border:2px solid var(--border); border-radius:10px; font-size:clamp(11px,0.8vw,13px); background:var(--bg); color:var(--text); width:150px;">
+                                <option value="ALL">All Terms</option>
+                            </select>
                             <button onclick="renderResultReport()" class="btn btn-primary btn-sm">View</button>
                             <button onclick="adminPublishAllDrafts()" class="btn btn-gold btn-sm"><i class="fas fa-bullhorn"></i> Publish All Drafts</button>
                             <button onclick="printResultReport()" class="btn btn-gold btn-sm"><i class="fas fa-print"></i> Print</button>
@@ -2689,9 +2704,16 @@
         function getResult(cls, roll, examType) {
             return DB.results.find(r => r.class === cls && r.roll === roll && r.examType === examType);
         }
-        function getExamTypesForClass(cls) {
-            const set = new Set(DB.results.filter(r => r.class === cls).map(r => r.examType));
+        function getExamTypesForClass(cls, publishedOnly) {
+            let list = DB.results.filter(r => r.class === cls);
+            if (publishedOnly) list = list.filter(r => r.published);
+            const set = new Set(list.map(r => r.examType));
             return Array.from(set).sort();
+        }
+        // Same as above but across every class — used when "All Classes" is
+        // selected in the admin Result Report.
+        function getAllExamTypes() {
+            return Array.from(new Set(DB.results.map(r => r.examType))).sort();
         }
         // Competition ranking (ties share a rank; next rank skips accordingly)
         // among every student in `cls` who sat `examType`.
@@ -3347,6 +3369,17 @@
         }
     }
 
+    function populateTeacherPrintExamSelect() {
+        const cls = getTeacherClass();
+        const select = $('teacherPrintExamSelect');
+        if (!cls || !select) return;
+        const currentValue = select.value;
+        const types = getExamTypesForClass(cls, false); // teacher sees drafts too, for their own review
+        select.innerHTML = '<option value="ALL">All Terms</option>' +
+            types.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+        if (types.includes(currentValue)) select.value = currentValue;
+    }
+
     function updateTeacherStats() {
         const cls = getTeacherClass();
         if (!cls) return;
@@ -3363,6 +3396,7 @@
         const cls = getTeacherClass();
         if (!cls) return;
         renderBulkResultTable();
+        populateTeacherPrintExamSelect();
         let list = DB.students.filter(s => s.class === cls);
         const searchBox = $('teacherStudentSearch');
         const query = searchBox ? searchBox.value.trim().toLowerCase() : '';
@@ -3708,10 +3742,10 @@
 
     function adminPublishAllDrafts() {
         const filter = $('reportClassFilter').value;
-        const examFilter = $('reportExamTypeFilter').value.trim().toLowerCase();
+        const examFilter = $('reportExamTypeFilter').value;
         let drafts = DB.results.filter(r => !r.published);
         if (filter !== 'ALL') drafts = drafts.filter(r => r.class === filter);
-        if (examFilter) drafts = drafts.filter(r => (r.examType || '').toLowerCase().includes(examFilter));
+        if (examFilter !== 'ALL') drafts = drafts.filter(r => r.examType === examFilter);
         if (drafts.length === 0) { showToast('⚠️ No draft results to publish (in the current filter)', 'warning'); return; }
         if (!confirm(`Publish ${drafts.length} draft result(s)? They will become visible to students/parents.`)) return;
         const draftIds = new Set(drafts.map(r => r.id));
@@ -4026,12 +4060,24 @@
     }
 
     // ─── RESULT REPORT ──────────────────────────────────────────────
+    function populateAdminExamFilter() {
+        const select = $('reportExamTypeFilter');
+        const classFilter = $('reportClassFilter').value;
+        if (!select) return;
+        const currentValue = select.value;
+        const types = classFilter === 'ALL' ? getAllExamTypes() : getExamTypesForClass(classFilter, false);
+        select.innerHTML = '<option value="ALL">All Terms</option>' +
+            types.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+        if (types.includes(currentValue)) select.value = currentValue;
+    }
+
     function renderResultReport() {
+        populateAdminExamFilter();
         const filter = $('reportClassFilter').value;
-        const examFilter = $('reportExamTypeFilter').value.trim().toLowerCase();
+        const examFilter = $('reportExamTypeFilter').value;
         let results = DB.results;
         if (filter !== 'ALL') results = results.filter(r => r.class === filter);
-        if (examFilter) results = results.filter(r => (r.examType || '').toLowerCase().includes(examFilter));
+        if (examFilter !== 'ALL') results = results.filter(r => r.examType === examFilter);
         const tbody = $('reportTableBody');
         tbody.innerHTML = '';
         if (results.length === 0) {
@@ -4114,49 +4160,92 @@
         return win;
     }
 
-    function printResultCard(cls, roll) {
+    function printResultCard(cls, roll, examType) {
         const student = DB.students.find(s => s.class === cls && s.roll === roll);
-        const results = getResultsForStudent(cls, roll).filter(r => r.published && (Number(r.total) || 0) > 0);
+        let results = getResultsForStudent(cls, roll).filter(r => r.published && (Number(r.total) || 0) > 0);
+        if (examType) results = results.filter(r => r.examType === examType);
         if (!student || results.length === 0) { showToast('❌ Result not found', 'error'); return; }
         const incharge = DB.incharges[cls] || 'Not Assigned';
 
-        const rows = results.map(r => {
+        let bodyHtml;
+        if (examType) {
+            // Single term: exam name shown right under the school name, no
+            // Exam column needed since there's only ever one row.
+            const r = results[0];
             const total = Number(r.total) || 0;
             const obtained = Number(r.obtained) || 0;
             const perc = (obtained / total) * 100;
             const gradeInfo = calculateGrade(perc);
             const pos = getClassPositions(cls, r.examType)[roll];
-            return `<tr>
-                <td>${esc(r.examType)}</td>
-                <td>${esc(total)}</td>
-                <td style="font-weight:700;">${esc(obtained)}</td>
-                <td style="font-weight:700;">${perc.toFixed(1)}%</td>
-                <td style="font-weight:700;">${esc(gradeInfo.grade)}</td>
-                <td>${pos ? ordinal(pos.rank) : '-'}</td>
-                <td style="font-weight:700;">${gradeInfo.pass ? 'Pass' : 'Fail'}</td>
-            </tr>`;
-        }).join('');
-
-        const bodyHtml = `
-            <div style="text-align:center; margin-bottom:14px; border-bottom:2px solid #000; padding-bottom:12px;">
-                <h2 style="font-size:22px; font-weight:900;">GES BAIT MUGHAL</h2>
-                <p style="font-size:13px; color:#333;">Overall Student Performance Report — All Exams</p>
-            </div>
-            <table style="margin-bottom:14px;">
-                <tbody>
-                    <tr><td style="font-weight:700; width:30%;">Class</td><td>${esc(cls)}</td></tr>
-                    <tr><td style="font-weight:700;">Roll No</td><td>${esc(roll)}</td></tr>
-                    <tr><td style="font-weight:700;">Student</td><td>${esc(student.name)}</td></tr>
-                    <tr><td style="font-weight:700;">Incharge</td><td>${esc(incharge)}</td></tr>
-                </tbody>
-            </table>
-            <table>
-                <thead><tr><th>Exam</th><th>Total</th><th>Obtained</th><th>%</th><th>Grade</th><th>Position</th><th>Status</th></tr></thead>
-                <tbody>${rows}</tbody>
-            </table>
-            <div style="margin-top:20px; text-align:center; font-size:10px; color:#555; border-top:1px solid #ddd; padding-top:8px;">
-                © ${new Date().getFullYear()} GES Bait Mughal · Smart School System
-            </div>`;
+            bodyHtml = `
+                <div style="text-align:center; margin-bottom:14px; border-bottom:2px solid #000; padding-bottom:12px;">
+                    <h2 style="font-size:22px; font-weight:900;">GES BAIT MUGHAL</h2>
+                    <p style="font-size:13px; color:#333;">Overall Student Performance Report</p>
+                    <p style="font-size:13px; font-weight:700; margin-top:4px;">${esc(r.examType)}</p>
+                </div>
+                <table style="margin-bottom:14px;">
+                    <tbody>
+                        <tr><td style="font-weight:700; width:30%;">Class</td><td>${esc(cls)}</td></tr>
+                        <tr><td style="font-weight:700;">Roll No</td><td>${esc(roll)}</td></tr>
+                        <tr><td style="font-weight:700;">Student</td><td>${esc(student.name)}</td></tr>
+                        <tr><td style="font-weight:700;">Incharge</td><td>${esc(incharge)}</td></tr>
+                    </tbody>
+                </table>
+                <table>
+                    <thead><tr><th>Total Marks</th><th>Obtained</th><th>Percentage</th><th>Grade</th>${pos ? '<th>Position</th>' : ''}</tr></thead>
+                    <tbody>
+                        <tr>
+                            <td>${esc(total)}</td>
+                            <td style="font-weight:700;">${esc(obtained)}</td>
+                            <td style="font-weight:700;">${perc.toFixed(1)}%</td>
+                            <td style="font-weight:700;">${esc(gradeInfo.grade)}</td>
+                            ${pos ? `<td style="font-weight:700;">${ordinal(pos.rank)}</td>` : ''}
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="text-align:center; margin-top:16px; font-size:18px; font-weight:800; color:${gradeInfo.pass ? '#15803d' : '#dc2626'};">${gradeInfo.pass ? '✅ Pass' : '❌ Fail'}</div>
+                <div style="margin-top:20px; text-align:center; font-size:10px; color:#555; border-top:1px solid #ddd; padding-top:8px;">
+                    © ${new Date().getFullYear()} GES Bait Mughal · Smart School System
+                </div>`;
+        } else {
+            // All terms: an Exam column is needed to tell the rows apart.
+            const rows = results.map(r => {
+                const total = Number(r.total) || 0;
+                const obtained = Number(r.obtained) || 0;
+                const perc = (obtained / total) * 100;
+                const gradeInfo = calculateGrade(perc);
+                const pos = getClassPositions(cls, r.examType)[roll];
+                return `<tr>
+                    <td>${esc(r.examType)}</td>
+                    <td>${esc(total)}</td>
+                    <td style="font-weight:700;">${esc(obtained)}</td>
+                    <td style="font-weight:700;">${perc.toFixed(1)}%</td>
+                    <td style="font-weight:700;">${esc(gradeInfo.grade)}</td>
+                    <td>${pos ? ordinal(pos.rank) : '-'}</td>
+                    <td style="font-weight:700;">${gradeInfo.pass ? 'Pass' : 'Fail'}</td>
+                </tr>`;
+            }).join('');
+            bodyHtml = `
+                <div style="text-align:center; margin-bottom:14px; border-bottom:2px solid #000; padding-bottom:12px;">
+                    <h2 style="font-size:22px; font-weight:900;">GES BAIT MUGHAL</h2>
+                    <p style="font-size:13px; color:#333;">Overall Student Performance Report — All Terms</p>
+                </div>
+                <table style="margin-bottom:14px;">
+                    <tbody>
+                        <tr><td style="font-weight:700; width:30%;">Class</td><td>${esc(cls)}</td></tr>
+                        <tr><td style="font-weight:700;">Roll No</td><td>${esc(roll)}</td></tr>
+                        <tr><td style="font-weight:700;">Student</td><td>${esc(student.name)}</td></tr>
+                        <tr><td style="font-weight:700;">Incharge</td><td>${esc(incharge)}</td></tr>
+                    </tbody>
+                </table>
+                <table>
+                    <thead><tr><th>Exam</th><th>Total</th><th>Obtained</th><th>%</th><th>Grade</th><th>Position</th><th>Status</th></tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>
+                <div style="margin-top:20px; text-align:center; font-size:10px; color:#555; border-top:1px solid #ddd; padding-top:8px;">
+                    © ${new Date().getFullYear()} GES Bait Mughal · Smart School System
+                </div>`;
+        }
 
         const win = openPrintWindow('Student Result', bodyHtml);
         if (!win) return;
@@ -4166,14 +4255,15 @@
 
     function printResultReport() {
         const filter = $('reportClassFilter').value;
-        const examFilter = $('reportExamTypeFilter').value.trim().toLowerCase();
+        const examFilter = $('reportExamTypeFilter').value;
         let results = DB.results;
         if (filter !== 'ALL') results = results.filter(r => r.class === filter);
-        if (examFilter) results = results.filter(r => (r.examType || '').toLowerCase().includes(examFilter));
+        if (examFilter !== 'ALL') results = results.filter(r => r.examType === examFilter);
         if (results.length === 0) { showToast('❌ No results to print!', 'warning'); return; }
         results = [...results].sort((a, b) => { if (a.class !== b.class) return a.class.localeCompare(b.class); return a.roll - b.roll; });
 
         const posCache = {};
+        const showExamColumn = examFilter === 'ALL';
         let tableRows = results.map((r, i) => {
             const student = DB.students.find(s => s.class === r.class && s.roll === r.roll);
             const total = Number(r.total) || 0;
@@ -4185,17 +4275,17 @@
             if (!posCache[posKey]) posCache[posKey] = getClassPositions(r.class, r.examType);
             const pos = posCache[posKey][r.roll];
             const posLabel = pos ? `${ordinal(pos.rank)}` : '-';
-            return `<tr><td>${i+1}</td><td>${esc(r.class)}</td><td>${esc(r.roll)}</td><td>${esc(student ? student.name : '-')}</td><td>${esc(r.examType)}</td><td style="font-weight:700;">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${hasValidTotal ? perc+'%' : 'N/A'}</td><td style="font-weight:700;">${esc(gradeInfo.grade)}</td><td>${esc(posLabel)}</td><td>${esc(DB.incharges[r.class]||'N/A')}</td></tr>`;
+            return `<tr><td>${i+1}</td><td>${esc(r.class)}</td><td>${esc(r.roll)}</td><td>${esc(student ? student.name : '-')}</td>${showExamColumn ? `<td>${esc(r.examType)}</td>` : ''}<td style="font-weight:700;">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${hasValidTotal ? perc+'%' : 'N/A'}</td><td style="font-weight:700;">${esc(gradeInfo.grade)}</td><td>${esc(posLabel)}</td><td>${esc(DB.incharges[r.class]||'N/A')}</td></tr>`;
         }).join('');
 
         const bodyHtml = `
             <div style="text-align:center; margin-bottom:14px; border-bottom:2px solid #000; padding-bottom:12px;">
                 <h2 style="font-size:22px; font-weight:900;">GES BAIT MUGHAL</h2>
                 <p style="font-size:13px; color:#333;">Complete Student Results Report</p>
-                <p style="font-size:11px; color:#555;">${esc(filter==='ALL'?'All Classes':filter)}${examFilter ? ' | Exam: ' + esc($('reportExamTypeFilter').value.trim()) : ''} | Generated: ${new Date().toLocaleDateString()}</p>
+                <p style="font-size:11px; color:#555;">${esc(filter==='ALL'?'All Classes':filter)}${examFilter !== 'ALL' ? ' | ' + esc(examFilter) : ''} | Generated: ${new Date().toLocaleDateString()}</p>
             </div>
             <table>
-                <thead><tr><th>#</th><th>Class</th><th>Roll</th><th>Name</th><th>Exam Type</th><th>Obtained</th><th>Total</th><th>Percentage</th><th>Grade</th><th>Position</th><th>Incharge</th></tr></thead>
+                <thead><tr><th>#</th><th>Class</th><th>Roll</th><th>Name</th>${showExamColumn ? '<th>Exam Type</th>' : ''}<th>Obtained</th><th>Total</th><th>Percentage</th><th>Grade</th><th>Position</th><th>Incharge</th></tr></thead>
                 <tbody>${tableRows}</tbody>
             </table>
             <div style="margin-top:12px; text-align:center; font-size:10px; color:#555; border-top:1px solid #ddd; padding-top:8px;">
@@ -4213,11 +4303,14 @@
     function printMyClassReport() {
         const cls = getTeacherClass();
         if (!cls) { showToast('❌ Session expired', 'error'); return; }
+        const examChoice = $('teacherPrintExamSelect').value; // 'ALL' or a specific exam name
         let results = DB.results.filter(r => r.class === cls);
-        if (results.length === 0) { showToast('❌ No results to print for your class yet!', 'warning'); return; }
+        if (examChoice !== 'ALL') results = results.filter(r => r.examType === examChoice);
+        if (results.length === 0) { showToast('❌ No results to print for that selection yet!', 'warning'); return; }
         results = [...results].sort((a, b) => a.roll - b.roll);
 
         const posCache = {};
+        const showExamColumn = examChoice === 'ALL';
         let tableRows = results.map((r, i) => {
             const student = DB.students.find(s => s.class === r.class && s.roll === r.roll);
             const total = Number(r.total) || 0;
@@ -4230,17 +4323,18 @@
             const pos = posCache[posKey][r.roll];
             const posLabel = pos ? `${ordinal(pos.rank)}` : '-';
             const statusLabel = r.published ? 'Published' : 'Draft';
-            return `<tr><td>${i+1}</td><td>${esc(r.roll)}</td><td>${esc(student ? student.name : '-')}</td><td>${esc(r.examType)}</td><td style="font-weight:700;">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${hasValidTotal ? perc+'%' : 'N/A'}</td><td style="font-weight:700;">${esc(gradeInfo.grade)}</td><td>${esc(posLabel)}</td><td>${esc(statusLabel)}</td></tr>`;
+            return `<tr><td>${i+1}</td><td>${esc(r.roll)}</td><td>${esc(student ? student.name : '-')}</td>${showExamColumn ? `<td>${esc(r.examType)}</td>` : ''}<td style="font-weight:700;">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${hasValidTotal ? perc+'%' : 'N/A'}</td><td style="font-weight:700;">${esc(gradeInfo.grade)}</td><td>${esc(posLabel)}</td><td>${esc(statusLabel)}</td></tr>`;
         }).join('');
 
         const bodyHtml = `
             <div style="text-align:center; margin-bottom:14px; border-bottom:2px solid #000; padding-bottom:12px;">
                 <h2 style="font-size:22px; font-weight:900;">GES BAIT MUGHAL</h2>
                 <p style="font-size:13px; color:#333;">${esc(cls)} — Results Report</p>
+                ${examChoice !== 'ALL' ? `<p style="font-size:13px; font-weight:700; margin-top:4px;">${esc(examChoice)}</p>` : ''}
                 <p style="font-size:11px; color:#555;">Generated: ${new Date().toLocaleDateString()}</p>
             </div>
             <table>
-                <thead><tr><th>#</th><th>Roll</th><th>Name</th><th>Exam Type</th><th>Obtained</th><th>Total</th><th>Percentage</th><th>Grade</th><th>Position</th><th>Status</th></tr></thead>
+                <thead><tr><th>#</th><th>Roll</th><th>Name</th>${showExamColumn ? '<th>Exam Type</th>' : ''}<th>Obtained</th><th>Total</th><th>Percentage</th><th>Grade</th><th>Position</th><th>Status</th></tr></thead>
                 <tbody>${tableRows}</tbody>
             </table>
             <div style="margin-top:12px; text-align:center; font-size:10px; color:#555; border-top:1px solid #ddd; padding-top:8px;">
@@ -4300,6 +4394,7 @@
         const rollGroup = $('resultRollGroup');
         const noDataMsg = $('resultNoDataMsg');
         const searchBtn = $('resultSearchBtn');
+        const examGroup = $('resultExamGroup');
         if (!rollGroup || !noDataMsg || !searchBtn) return; // not on this tab yet
 
         const cls = $('resultClass').value;
@@ -4307,8 +4402,20 @@
         const hasAny = DB.results.some(r => r.class === cls && r.published && (Number(r.total) || 0) > 0);
 
         rollGroup.style.display = hasAny ? 'block' : 'none';
+        examGroup.style.display = hasAny ? 'block' : 'none';
         searchBtn.style.display = hasAny ? 'block' : 'none';
         noDataMsg.style.display = hasAny ? 'none' : 'block';
+
+        if (hasAny) {
+            const examSelect = $('resultExamSelect');
+            const currentValue = examSelect.value;
+            const types = getExamTypesForClass(cls, true);
+            examSelect.innerHTML = '<option value="ALL">All Terms</option>' +
+                types.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+            // Keep the person's previous choice selected if it's still valid
+            // for this class; otherwise fall back to "All Terms".
+            if (types.includes(currentValue)) examSelect.value = currentValue;
+        }
     }
 
     // Runs only when the PERSON changes the class dropdown themselves —
@@ -4328,6 +4435,7 @@
 
         const cls = $('resultClass').value;
         const rollRaw = $('resultRoll').value.trim();
+        const examChoice = $('resultExamSelect').value; // 'ALL' or a specific exam name
 
         if (rollRaw === '') { showToast('⚠️ Please enter a roll number.', 'warning'); resultSearchInProgress = false; return; }
         const roll = parseInt(rollRaw, 10);
@@ -4352,65 +4460,101 @@
 
         // Only PUBLISHED results are visible here — a teacher's draft marks
         // stay private until they explicitly publish them.
-        const results = getResultsForStudent(cls, roll).filter(r => r.published && (Number(r.total) || 0) > 0);
+        let results = getResultsForStudent(cls, roll).filter(r => r.published && (Number(r.total) || 0) > 0);
+        if (examChoice !== 'ALL') results = results.filter(r => r.examType === examChoice);
 
-        // Student exists but no published marks yet — show the same clear
-        // "No Result Uploaded" message rather than an empty page.
+        // Student exists but nothing published yet for what was asked —
+        // show the same clear "No Result Uploaded" message.
         if (results.length === 0) {
-            $('noResultDetail').textContent = `No result has been uploaded yet for ${student.name} (Roll No ${roll}, ${cls}).`;
+            $('noResultDetail').textContent = examChoice === 'ALL'
+                ? `No result has been uploaded yet for ${student.name} (Roll No ${roll}, ${cls}).`
+                : `No "${examChoice}" result has been uploaded yet for ${student.name} (Roll No ${roll}, ${cls}).`;
             $('noResultCard').style.display = 'block';
             $('resultDisplay').style.display = 'block';
-            showToast('❌ No result uploaded for this roll number', 'error');
+            showToast('❌ No result uploaded', 'error');
             resultSearchInProgress = false;
             return;
         }
 
         $('noResultCard').style.display = 'none';
         const incharge = DB.incharges[cls] || 'Not Assigned';
+        const card = document.createElement('div');
+        card.className = 'report-card';
 
-        // ONE combined card listing every exam this student has a published
-        // result for — not a separate card per exam.
-        const rows = results.map(r => {
+        if (examChoice === 'ALL') {
+            // Combined view: one table listing every exam, so the Exam
+            // column is needed to tell the rows apart.
+            const rows = results.map(r => {
+                const total = Number(r.total) || 0;
+                const obtained = Number(r.obtained) || 0;
+                const perc = (obtained / total) * 100;
+                const gradeInfo = calculateGrade(perc);
+                const pos = getClassPositions(cls, r.examType)[roll];
+                return `<tr>
+                    <td style="font-weight:600;">${esc(r.examType)}</td>
+                    <td>${esc(total)}</td>
+                    <td style="font-weight:700; color:var(--primary);">${esc(obtained)}</td>
+                    <td style="font-weight:700; color:var(--gold);">${perc.toFixed(1)}%</td>
+                    <td style="font-weight:700;">${esc(gradeInfo.grade)}</td>
+                    <td>${pos ? ordinal(pos.rank) : '-'}</td>
+                    <td style="font-weight:700; color:${gradeInfo.pass ? 'var(--primary)' : '#dc2626'};">${gradeInfo.pass ? 'Pass' : 'Fail'}</td>
+                </tr>`;
+            }).join('');
+            card.innerHTML = `
+                <div class="header">
+                    <h2>GES BAIT MUGHAL</h2>
+                    <p>Overall Student Performance Report — All Terms</p>
+                </div>
+                <div class="student-info">
+                    <div><strong>Class:</strong> ${esc(cls)}</div>
+                    <div><strong>Roll No:</strong> ${esc(roll)}</div>
+                    <div><strong>Student:</strong> ${esc(student.name)}</div>
+                    <div><strong>Incharge:</strong> ${esc(incharge)}</div>
+                </div>
+                <div style="margin-top:14px; overflow-x:auto; -webkit-overflow-scrolling:touch;">
+                    <table class="marks-table" style="min-width:520px;">
+                        <thead><tr><th>Exam</th><th>Total</th><th>Obtained</th><th>%</th><th>Grade</th><th>Position</th><th>Status</th></tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+                <div class="no-print" style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; justify-content:center;"></div>`;
+        } else {
+            // Single term selected: one simple summary card, exam name shown
+            // right under the school name — no Exam column needed since
+            // there's only ever one row.
+            const r = results[0];
             const total = Number(r.total) || 0;
             const obtained = Number(r.obtained) || 0;
             const perc = (obtained / total) * 100;
             const gradeInfo = calculateGrade(perc);
             const pos = getClassPositions(cls, r.examType)[roll];
-            return `<tr>
-                <td style="font-weight:600;">${esc(r.examType)}</td>
-                <td>${esc(total)}</td>
-                <td style="font-weight:700; color:var(--primary);">${esc(obtained)}</td>
-                <td style="font-weight:700; color:var(--gold);">${perc.toFixed(1)}%</td>
-                <td style="font-weight:700;">${esc(gradeInfo.grade)}</td>
-                <td>${pos ? ordinal(pos.rank) : '-'}</td>
-                <td style="font-weight:700; color:${gradeInfo.pass ? 'var(--primary)' : '#dc2626'};">${gradeInfo.pass ? 'Pass' : 'Fail'}</td>
-            </tr>`;
-        }).join('');
+            card.innerHTML = `
+                <div class="header">
+                    <h2>GES BAIT MUGHAL</h2>
+                    <p>Overall Student Performance Report</p>
+                    <p style="font-weight:700; color:var(--gold); margin-top:4px;">${esc(r.examType)}</p>
+                </div>
+                <div class="student-info">
+                    <div><strong>Class:</strong> ${esc(cls)}</div>
+                    <div><strong>Roll No:</strong> ${esc(roll)}</div>
+                    <div><strong>Student:</strong> ${esc(student.name)}</div>
+                    <div><strong>Incharge:</strong> ${esc(incharge)}</div>
+                </div>
+                <div class="summary">
+                    <div class="item"><span class="label">Total Marks</span><span class="value">${esc(total)}</span></div>
+                    <div class="item"><span class="label">Obtained</span><span class="value">${esc(obtained)}</span></div>
+                    <div class="item"><span class="label">Percentage</span><span class="value">${perc.toFixed(1)}%</span></div>
+                    <div class="item"><span class="label">Grade</span><span class="value">${esc(gradeInfo.grade)}</span></div>
+                    ${pos ? `<div class="item"><span class="label">Position</span><span class="value">${ordinal(pos.rank)}</span></div>` : ''}
+                </div>
+                <div style="text-align:center; margin-top:14px; font-size:clamp(16px,1.6vw,20px); font-weight:800; color:${gradeInfo.pass ? 'var(--primary)' : '#dc2626'};">${gradeInfo.pass ? '✅ Pass' : '❌ Fail'}</div>
+                <div class="no-print" style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; justify-content:center;"></div>`;
+        }
 
-        const card = document.createElement('div');
-        card.className = 'report-card';
-        card.innerHTML = `
-            <div class="header">
-                <h2>GES BAIT MUGHAL</h2>
-                <p>Overall Student Performance Report — All Exams</p>
-            </div>
-            <div class="student-info">
-                <div><strong>Class:</strong> ${esc(cls)}</div>
-                <div><strong>Roll No:</strong> ${esc(roll)}</div>
-                <div><strong>Student:</strong> ${esc(student.name)}</div>
-                <div><strong>Incharge:</strong> ${esc(incharge)}</div>
-            </div>
-            <div style="margin-top:14px; overflow-x:auto; -webkit-overflow-scrolling:touch;">
-                <table class="marks-table" style="min-width:520px;">
-                    <thead><tr><th>Exam</th><th>Total</th><th>Obtained</th><th>%</th><th>Grade</th><th>Position</th><th>Status</th></tr></thead>
-                    <tbody>${rows}</tbody>
-                </table>
-            </div>
-            <div class="no-print" style="display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; justify-content:center;"></div>`;
         const printBtn = document.createElement('button');
         printBtn.className = 'btn btn-primary print-btn';
         printBtn.innerHTML = '<i class="fas fa-print"></i> Print Result';
-        printBtn.addEventListener('click', () => printResultCard(cls, roll));
+        printBtn.addEventListener('click', () => printResultCard(cls, roll, examChoice === 'ALL' ? null : examChoice));
         card.querySelector('.no-print').appendChild(printBtn);
         list.appendChild(card);
 
