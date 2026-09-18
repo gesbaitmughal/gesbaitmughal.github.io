@@ -51,7 +51,6 @@ img,video{max-width:100%;height:auto}
 @keyframes floatShape{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(60px,-60px) scale(1.1)}}
 @keyframes welcomeSlideUp{from{opacity:0;transform:translateY(40px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
 
-/* ── TAB SWITCHER (new) ── */
 .input-tabs{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
 .input-tab{padding:6px 14px;border:2px solid var(--border);background:var(--card-bg);color:var(--text-light);border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;transition:var(--transition);display:inline-flex;align-items:center;gap:6px}
 .input-tab:hover{border-color:var(--primary);color:var(--primary)}
@@ -59,13 +58,7 @@ img,video{max-width:100%;height:auto}
 .input-tab.active i{color:var(--gold)}
 .url-hint{display:block;font-size:11px;color:var(--text-light);margin-top:4px;line-height:1.4}
 .url-hint code{background:var(--gray);padding:1px 5px;border-radius:4px;font-size:10.5px;color:var(--primary);font-weight:600;word-break:break-all}
-.file-name-preview{font-size:11px;color:var(--text-light);margin-top:4px;font-weight:600}
-
-/* base64 warning */
 .b64-warning{background:#fef3c7;border-left:4px solid #f59e0b;padding:8px 12px;border-radius:8px;font-size:12px;color:#92400e;margin-top:6px;font-weight:600}
-[data-theme="dark"] .b64-warning{background:#422006;color:#fde68a}
-
-/* migration card */
 .migrate-item{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 12px;background:var(--gray);border-radius:10px;margin-bottom:6px;font-size:13px}
 .migrate-item .info strong{display:block;font-size:13px;margin-bottom:2px}
 .migrate-item .info span{font-size:11px;color:var(--text-light);word-break:break-all}
@@ -371,7 +364,6 @@ window.dispatchEvent(new Event('firebase-ready'));
 
 <main class="main-content">
 
-<!-- HOME -->
 <section id="tab-home" class="tab-content active">
   <div class="hero-slider" id="heroSlider">
     <div id="sliderSlides"></div>
@@ -429,7 +421,6 @@ window.dispatchEvent(new Event('firebase-ready'));
   </div>
 </section>
 
-<!-- RESULTS -->
 <section id="tab-results" class="tab-content">
   <div class="card no-print" style="max-width:540px;margin:0 auto;">
     <div class="card-header"><h3><i class="fas fa-search"></i> Search Result</h3></div>
@@ -462,7 +453,6 @@ window.dispatchEvent(new Event('firebase-ready'));
   </div>
 </section>
 
-<!-- HOMEWORK -->
 <section id="tab-homework" class="tab-content">
   <div class="card">
     <div class="card-header">
@@ -477,7 +467,6 @@ window.dispatchEvent(new Event('firebase-ready'));
   </div>
 </section>
 
-<!-- BOOKS -->
 <section id="tab-books" class="tab-content">
   <div class="card">
     <div class="card-header"><h3><i class="fas fa-book"></i> Class Books</h3></div>
@@ -492,7 +481,6 @@ window.dispatchEvent(new Event('firebase-ready'));
   </div>
 </section>
 
-<!-- DOWNLOADS -->
 <section id="tab-downloads" class="tab-content">
   <div class="card">
     <div class="card-header"><h3><i class="fas fa-cloud-download-alt"></i> Downloads</h3></div>
@@ -500,7 +488,6 @@ window.dispatchEvent(new Event('firebase-ready'));
   </div>
 </section>
 
-<!-- GALLERY -->
 <section id="tab-gallery" class="tab-content">
   <div class="card">
     <div class="card-header"><h3><i class="fas fa-images"></i> Photo Gallery</h3></div>
@@ -508,7 +495,6 @@ window.dispatchEvent(new Event('firebase-ready'));
   </div>
 </section>
 
-<!-- LOGIN -->
 <section id="tab-login" class="tab-content">
   <div id="loginPanel" class="card no-print" style="max-width:440px;margin:0 auto;">
     <div style="text-align:center;margin-bottom:16px;">
@@ -542,7 +528,6 @@ window.dispatchEvent(new Event('firebase-ready'));
     </form>
   </div>
 
-  <!-- TEACHER DASHBOARD -->
   <div id="teacherDashboard" class="no-print" style="display:none;">
     <div class="card" style="margin-bottom:12px;">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
@@ -614,7 +599,6 @@ window.dispatchEvent(new Event('firebase-ready'));
     </div>
   </div>
 
-  <!-- ADMIN DASHBOARD -->
   <div id="adminDashboard" class="no-print" style="display:none;">
     <div class="card" style="margin-bottom:12px;">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
@@ -630,7 +614,6 @@ window.dispatchEvent(new Event('firebase-ready'));
       <div class="stat-box"><span class="num" id="aStatAnnounce">0</span><span class="label">Announcements</span></div>
     </div>
 
-    <!-- MIGRATION TOOL -->
     <div class="card" style="margin-bottom:12px;border:2px solid #f59e0b;background:linear-gradient(145deg,var(--card-bg) 0%,#fef3c7 100%);" id="adminMigrate">
       <div class="card-header" style="border-bottom-color:#f59e0b;">
         <h3><i class="fas fa-cloud-upload-alt" style="color:#d97706;"></i> Migrate Base64 → GitHub URLs</h3>
@@ -645,7 +628,16 @@ window.dispatchEvent(new Event('firebase-ready'));
       <div id="migrateStats" style="margin-top:10px;font-size:12px;color:#92400e;font-weight:700;"></div>
     </div>
 
-    <!-- Notice -->
+    <div class="card" style="margin-bottom:12px;border:2px solid var(--gold);">
+      <div class="card-header"><h3><i class="fas fa-user-graduate" style="color:var(--gold);"></i> Total Students Count</h3></div>
+      <form onsubmit="updateTotalStudents(event)" style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;">
+        <div class="form-group" style="margin:0;"><label>Total Students</label>
+          <input type="number" id="inputTotalStudents" required min="0" placeholder="Enter total students" style="font-size:16px;font-weight:700;" />
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </form>
+    </div>
+
     <div class="card" style="margin-bottom:12px;" id="adminNotice">
       <div class="card-header"><h3><i class="fas fa-bullhorn"></i> Important Notice</h3></div>
       <form onsubmit="saveNotice(event)" style="display:grid;gap:8px;">
@@ -659,8 +651,8 @@ window.dispatchEvent(new Event('firebase-ready'));
           </div>
           <div id="notice-file-wrap"><input type="file" id="noticeImageInput" accept="image/*" /></div>
           <div id="notice-url-wrap" style="display:none;">
-            <input type="url" id="noticeImageUrl" placeholder="https://cdn.jsdelivr.net/gh/USERNAME/ges-assets@main/images/..." />
-            <small class="url-hint">Format: <code>https://cdn.jsdelivr.net/gh/USERNAME/ges-assets@main/images/file.jpg</code></small>
+            <input type="url" id="noticeImageUrl" placeholder="https://cdn.jsdelivr.net/gh/gesbaitmughal/ges-assets@main/images/..." />
+            <small class="url-hint">Format: <code>https://cdn.jsdelivr.net/gh/gesbaitmughal/ges-assets@main/images/file.jpg</code></small>
           </div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
@@ -671,7 +663,6 @@ window.dispatchEvent(new Event('firebase-ready'));
       <div style="margin-top:6px;font-size:12px;color:var(--text-light);">Status: <span id="noticeStatusText">No notice set</span></div>
     </div>
 
-    <!-- Slider -->
     <div class="card" style="margin-bottom:12px;" id="adminSlider">
       <div class="card-header"><h3><i class="fas fa-images"></i> Slider Control</h3></div>
       <form onsubmit="addSlideImage(event)" style="display:grid;gap:8px;">
@@ -688,7 +679,7 @@ window.dispatchEvent(new Event('firebase-ready'));
           <div id="slide-file-wrap"><input type="file" id="slideImageFile" accept="image/*" /></div>
           <div id="slide-url-wrap" style="display:none;">
             <input type="url" id="slideImageUrl" placeholder="https://cdn.jsdelivr.net/gh/..." />
-            <small class="url-hint">Format: <code>https://cdn.jsdelivr.net/gh/USERNAME/ges-assets@main/images/...</code></small>
+            <small class="url-hint">Format: <code>https://cdn.jsdelivr.net/gh/gesbaitmughal/ges-assets@main/images/...</code></small>
           </div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
@@ -699,7 +690,6 @@ window.dispatchEvent(new Event('firebase-ready'));
       <div id="adminSliderList" style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;"></div>
     </div>
 
-    <!-- Video -->
     <div class="card" style="margin-bottom:12px;" id="adminVideo">
       <div class="card-header"><h3><i class="fas fa-video"></i> School Video</h3></div>
       <form onsubmit="uploadVideo(event)" style="display:grid;gap:8px;">
@@ -719,7 +709,6 @@ window.dispatchEvent(new Event('firebase-ready'));
       </form>
     </div>
 
-    <!-- Timings -->
     <div class="card" style="margin-bottom:12px;" id="adminTimings">
       <div class="card-header"><h3><i class="fas fa-clock"></i> School Timings</h3></div>
       <form onsubmit="updateTimings(event)" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
@@ -729,7 +718,6 @@ window.dispatchEvent(new Event('firebase-ready'));
       </form>
     </div>
 
-    <!-- Announcements -->
     <div class="card" style="margin-bottom:12px;" id="adminAnnouncements">
       <div class="card-header"><h3><i class="fas fa-bullhorn"></i> <span id="announceFormTitle">Add Announcement</span></h3></div>
       <form onsubmit="addAnnouncement(event)" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
@@ -746,7 +734,6 @@ window.dispatchEvent(new Event('firebase-ready'));
       <div id="adminAnnouncementList" style="margin-top:12px;display:flex;flex-direction:column;gap:8px;"></div>
     </div>
 
-    <!-- Homework -->
     <div class="card" style="margin-bottom:12px;" id="adminHomework">
       <div class="card-header"><h3><i class="fas fa-book-open"></i> Manage Homework</h3></div>
       <form onsubmit="adminAddHomework(event)" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
@@ -764,7 +751,7 @@ window.dispatchEvent(new Event('firebase-ready'));
           <div id="hw-file-wrap"><input type="file" id="adminHwFile" accept="application/pdf" /></div>
           <div id="hw-url-wrap" style="display:none;">
             <input type="url" id="adminHwUrl" placeholder="https://cdn.jsdelivr.net/gh/.../homework.pdf" />
-            <small class="url-hint">Format: <code>https://cdn.jsdelivr.net/gh/USERNAME/ges-assets@main/homework/...</code></small>
+            <small class="url-hint">Format: <code>https://cdn.jsdelivr.net/gh/gesbaitmughal/ges-assets@main/homework/...</code></small>
           </div>
         </div>
         <div style="grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;">
@@ -775,7 +762,6 @@ window.dispatchEvent(new Event('firebase-ready'));
       <div id="adminHomeworkList" style="margin-top:12px;display:flex;flex-direction:column;gap:8px;"></div>
     </div>
 
-    <!-- Books -->
     <div class="card" style="margin-bottom:12px;" id="adminBooks">
       <div class="card-header"><h3><i class="fas fa-book"></i> Manage Books</h3></div>
       <form onsubmit="adminAddBook(event)" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
@@ -791,7 +777,7 @@ window.dispatchEvent(new Event('firebase-ready'));
           <div id="book-file-wrap"><input type="file" id="adminBookFile" accept="application/pdf" /></div>
           <div id="book-url-wrap" style="display:none;">
             <input type="url" id="adminBookUrl" placeholder="https://cdn.jsdelivr.net/gh/.../book.pdf" />
-            <small class="url-hint">Format: <code>https://cdn.jsdelivr.net/gh/USERNAME/ges-assets@main/books/...</code></small>
+            <small class="url-hint">Format: <code>https://cdn.jsdelivr.net/gh/gesbaitmughal/ges-assets@main/books/...</code></small>
           </div>
         </div>
         <div style="grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;">
@@ -810,7 +796,6 @@ window.dispatchEvent(new Event('firebase-ready'));
       <div id="adminBooksList" style="margin-top:12px;display:flex;flex-direction:column;gap:8px;"></div>
     </div>
 
-    <!-- Downloads -->
     <div class="card" style="margin-bottom:12px;" id="adminDownloads">
       <div class="card-header"><h3><i class="fas fa-cloud-download-alt"></i> Manage Downloads</h3></div>
       <form onsubmit="adminAddDownload(event)" style="display:grid;gap:8px;">
@@ -825,7 +810,7 @@ window.dispatchEvent(new Event('firebase-ready'));
           <div id="dl-file-wrap"><input type="file" id="adminDownloadFile" /></div>
           <div id="dl-url-wrap" style="display:none;">
             <input type="url" id="adminDownloadUrl" placeholder="https://cdn.jsdelivr.net/gh/.../file.pdf" />
-            <small class="url-hint">Format: <code>https://cdn.jsdelivr.net/gh/USERNAME/ges-assets@main/downloads/...</code></small>
+            <small class="url-hint">Format: <code>https://cdn.jsdelivr.net/gh/gesbaitmughal/ges-assets@main/downloads/...</code></small>
           </div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
@@ -836,7 +821,6 @@ window.dispatchEvent(new Event('firebase-ready'));
       <div id="adminDownloadsList" style="margin-top:12px;display:flex;flex-direction:column;gap:8px;"></div>
     </div>
 
-    <!-- Gallery -->
     <div class="card" style="margin-bottom:12px;" id="adminGallery">
       <div class="card-header"><h3><i class="fas fa-images"></i> Manage Gallery</h3></div>
       <form onsubmit="adminAddGallery(event)" style="display:grid;gap:8px;">
@@ -851,7 +835,7 @@ window.dispatchEvent(new Event('firebase-ready'));
           <div id="gal-file-wrap"><input type="file" id="galleryFile" accept="image/*" /></div>
           <div id="gal-url-wrap" style="display:none;">
             <input type="url" id="galleryFileUrl" placeholder="https://cdn.jsdelivr.net/gh/.../photo.jpg" />
-            <small class="url-hint">Format: <code>https://cdn.jsdelivr.net/gh/USERNAME/ges-assets@main/images/...</code></small>
+            <small class="url-hint">Format: <code>https://cdn.jsdelivr.net/gh/gesbaitmughal/ges-assets@main/images/...</code></small>
           </div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
@@ -862,7 +846,6 @@ window.dispatchEvent(new Event('firebase-ready'));
       <div id="adminGalleryList" style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;"></div>
     </div>
 
-    <!-- Incharges -->
     <div class="card" style="margin-bottom:12px;" id="adminIncharges">
       <div class="card-header"><h3><i class="fas fa-chalkboard-user"></i> Assign Incharges</h3></div>
       <form onsubmit="assignIncharge(event)" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
@@ -873,7 +856,6 @@ window.dispatchEvent(new Event('firebase-ready'));
       <div id="adminInchargeList" style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
     </div>
 
-    <!-- Security -->
     <div class="card" style="margin-bottom:12px;" id="adminSecurity">
       <div class="card-header"><h3><i class="fas fa-key"></i> Security</h3></div>
       <form onsubmit="changeAdminPass(event)" style="display:flex;flex-direction:column;gap:6px;max-width:400px;">
@@ -883,7 +865,6 @@ window.dispatchEvent(new Event('firebase-ready'));
       </form>
     </div>
 
-    <!-- About -->
     <div class="card" style="margin-bottom:12px;" id="adminAbout">
       <div class="card-header"><h3><i class="fas fa-info-circle"></i> About & Contact</h3></div>
       <form onsubmit="updateAbout(event)" style="display:grid;gap:8px;">
@@ -949,14 +930,11 @@ window.dispatchEvent(new Event('firebase-ready'));
 </datalist>
 
 <script>
-// ══════════════════════════════════════════════════════════════════════
-// CONFIG
-// ══════════════════════════════════════════════════════════════════════
-const FILE_LIMITS = { image:1.5, video:5, pdf:5, any:8 }; // MB
-const BASE64_KEEP_THRESHOLD = 500 * 1024; // 500 KB — smaller stays base64
+const FILE_LIMITS = { image:1.5, video:5, pdf:5, any:8 };
+const BASE64_KEEP_THRESHOLD = 500 * 1024;
 const IMAGE_MAX_DIM = 1600;
 const IMAGE_QUALITY = 0.82;
-const JSDELIVR_HINT = 'https://cdn.jsdelivr.net/gh/USERNAME/ges-assets@main/';
+const JSDELIVR_HINT = 'https://cdn.jsdelivr.net/gh/gesbaitmughal/ges-assets@main/';
 
 let DB = {
   students:[], results:[], homework:[], announcements:[], gallery:[],
@@ -967,7 +945,7 @@ let DB = {
   headmaster:'Headmaster',
   about:'GES Bait Mughal is a government elementary school dedicated to providing free quality education, strong moral values, and a safe, nurturing environment for every child.',
   video:'',
-  videoType:'', // 'youtube' | 'file' | ''
+  videoType:'',
   contact:{ address:'Bait Mughal, Jalal Pur Pir Wala, Punjab', phone:'03027319839', email:'gesbaitmughal@gmail.com' },
   totalStudents:0,
   _loaded:false,
@@ -981,9 +959,6 @@ let DB = {
 const $ = id => document.getElementById(id);
 const CLASS_LIST = ['Class 1','Class 2','Class 3','Class 4','Class 5','Class 6','Class 7','Class 8'];
 
-// ══════════════════════════════════════════════════════════════════════
-// UTILITIES
-// ══════════════════════════════════════════════════════════════════════
 function esc(v){ return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function tooLong(s, max){ return (s||'').length > max; }
 function formatFileSize(b){ if(!b||b<=0)return''; if(b<1024)return b+' B'; if(b<1048576)return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(1)+' MB'; }
@@ -998,7 +973,6 @@ function fileIconFor(mime, name){
 }
 function ordinal(n){ const s=['th','st','nd','rd'], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
 
-// ── SOURCE TYPE DETECTION (NEW — core of the migration) ──
 function isURL(v){ return typeof v === 'string' && /^https?:\/\//i.test(v); }
 function isBase64(v){ return typeof v === 'string' && v.startsWith('data:'); }
 function isYouTube(v){
@@ -1013,7 +987,6 @@ function youTubeEmbedUrl(url){
   const id = extractYouTubeId(url);
   return id ? `https://www.youtube.com/embed/${id}` : null;
 }
-// Guess a sensible file name from a URL
 function fileNameFromUrl(url){
   try {
     const clean = url.split('?')[0].split('#')[0];
@@ -1022,7 +995,6 @@ function fileNameFromUrl(url){
   } catch { return 'file'; }
 }
 
-// ── IMAGE COMPRESSION ──
 function compressImage(file, maxDim = IMAGE_MAX_DIM, quality = IMAGE_QUALITY){
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -1063,9 +1035,6 @@ function validateFile(file, kind){
   return { ok:true };
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════════════════════════════════
 function showToast(msg, type='success'){
   const c = $('toastContainer');
   const t = document.createElement('div');
@@ -1076,9 +1045,6 @@ function showToast(msg, type='success'){
   setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(60px)'; setTimeout(()=>t.remove(), 400); }, 3500);
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// THEME
-// ══════════════════════════════════════════════════════════════════════
 let darkMode = localStorage.getItem('theme') === 'dark';
 function applyTheme(){
   document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
@@ -1088,29 +1054,20 @@ function applyTheme(){
 $('themeToggle').addEventListener('click', () => { darkMode = !darkMode; applyTheme(); });
 applyTheme();
 
-// ══════════════════════════════════════════════════════════════════════
-// TAB SWITCHING (input method file vs URL)  ── NEW
-// ══════════════════════════════════════════════════════════════════════
 function switchInput(prefix, mode){
-  // Toggle button active states
   document.querySelectorAll(`.input-tab[data-tabs="${prefix}"]`).forEach(b => {
     b.classList.toggle('active', b.dataset.mode === mode);
   });
-  // Toggle wrappers
   const fileWrap = $(`${prefix}-file-wrap`);
   const urlWrap  = $(`${prefix}-url-wrap`);
   if (fileWrap) fileWrap.style.display = mode === 'file' ? 'block' : 'none';
   if (urlWrap)  urlWrap.style.display  = mode === 'url'  ? 'block' : 'none';
 }
-// Helper to read the active mode for a prefix
 function getInputMode(prefix){
   const btn = document.querySelector(`.input-tab.active[data-tabs="${prefix}"]`);
   return btn ? btn.dataset.mode : 'file';
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// NAV
-// ══════════════════════════════════════════════════════════════════════
 const navBtns = document.querySelectorAll('.nav-btn');
 const tabs = {
   home:$('tab-home'), results:$('tab-results'), homework:$('tab-homework'),
@@ -1137,16 +1094,12 @@ function checkPrivateHashRoute(){
 }
 window.addEventListener('hashchange', checkPrivateHashRoute);
 
-// Scroll top
 let scrollTick = false;
 window.addEventListener('scroll', () => {
   if (scrollTick) return; scrollTick = true;
   requestAnimationFrame(() => { $('scrollTopBtn').classList.toggle('visible', window.scrollY > 400); scrollTick = false; });
 }, { passive:true });
 
-// ══════════════════════════════════════════════════════════════════════
-// VIDEO (supports YouTube iframe + file/URL video)
-// ══════════════════════════════════════════════════════════════════════
 let videoElement = null;
 function initVideo(){
   const container = $('videoContainer');
@@ -1160,14 +1113,12 @@ function initVideo(){
     $('videoStatus').textContent = '📹 No video uploaded';
     return;
   }
-  // YouTube embed
   if (isYouTube(DB.video)) {
     const embed = youTubeEmbedUrl(DB.video);
     container.innerHTML = `<iframe src="${esc(embed)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
     $('videoStatus').textContent = '▶️ YouTube video';
     return;
   }
-  // File / direct URL
   container.innerHTML = `
     <video id="schoolVideo" controls playsinline preload="metadata" style="width:100%;display:block;aspect-ratio:16/9;">
       <source src="${esc(DB.video)}" type="video/mp4" />
@@ -1213,9 +1164,6 @@ function toggleFullscreen(){
   else if (videoElement && videoElement.webkitRequestFullscreen) videoElement.webkitRequestFullscreen();
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// SLIDER
-// ══════════════════════════════════════════════════════════════════════
 let currentSlide = 0, sliderInterval = null, sliderSignature = '';
 const DEFAULT_SLIDES = [
   { title:'🏫 Welcome to GES Bait Mughal', img:'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1600&q=80' },
@@ -1250,9 +1198,6 @@ document.addEventListener('visibilitychange', () => {
   else resetSliderInterval();
 });
 
-// ══════════════════════════════════════════════════════════════════════
-// NOTICE
-// ══════════════════════════════════════════════════════════════════════
 let noticeShown = false, dataLoadComplete = false;
 function showNotice(){
   if (noticeShown || !dataLoadComplete) return;
@@ -1273,9 +1218,6 @@ $('noticeCloseBtn').addEventListener('click', closeNotice);
 $('noticeCloseBottom').addEventListener('click', closeNotice);
 $('noticeOverlay').addEventListener('click', e => { if (e.target === this) closeNotice(); });
 
-// ══════════════════════════════════════════════════════════════════════
-// FIREBASE SYNC
-// ══════════════════════════════════════════════════════════════════════
 function saveToFirebase(){
   if (!window.firebaseDB) return;
   const { ref, set, db } = window.firebaseDB;
@@ -1331,9 +1273,6 @@ function migrateStudentResults(){
   });
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// RESULT HELPERS
-// ══════════════════════════════════════════════════════════════════════
 function getResultsForStudent(cls, roll){ return DB.results.filter(r => r.class === cls && r.roll === roll); }
 function getExamTypesForClass(cls, publishedOnly){
   let list = DB.results.filter(r => r.class === cls);
@@ -1354,9 +1293,6 @@ function calculateGrade(pct){
   return { grade:'F', pass:false };
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// AUTH
-// ══════════════════════════════════════════════════════════════════════
 const AUTH_DOMAIN = 'gesbaitmughal-auth.local';
 const ADMIN_EMAIL = `headmaster@${AUTH_DOMAIN}`;
 function classToEmail(cls){ return cls.toLowerCase().replace(/\s+/g,'') + '@' + AUTH_DOMAIN; }
@@ -1442,9 +1378,6 @@ function renderStaffArea(){
   }
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// TEACHER — Save student + marks
-// ══════════════════════════════════════════════════════════════════════
 let studentSaveInProgress = false;
 function saveStudent(e){
   e.preventDefault();
@@ -1586,20 +1519,12 @@ function updateTeacherStats(){
   } else $('tStatAvg').textContent = '0%';
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// ADMIN ROSTER
-// ══════════════════════════════════════════════════════════════════════
-let adminRosterSaveInProgress = false;
 function renderAdminRoster(){
   const tbody = $('adminRosterList');
   if (!tbody) return;
-  let list = DB.students;
-  list = [...list].sort((a,b) => a.class !== b.class ? a.class.localeCompare(b.class) : a.roll - b.roll);
+  let list = [...DB.students].sort((a,b) => a.class !== b.class ? a.class.localeCompare(b.class) : a.roll - b.roll);
   tbody.innerHTML = '';
-  if (list.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-light);padding:12px;">No students.</td></tr>';
-    return;
-  }
+  if (list.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-light);padding:12px;">No students.</td></tr>'; return; }
   list.forEach(s => {
     const results = getResultsForStudent(s.class, s.roll);
     const tr = document.createElement('tr');
@@ -1610,13 +1535,7 @@ function renderAdminRoster(){
     tbody.appendChild(tr);
   });
 }
-function adminCancelEditRoster(){}
-function adminSaveRosterCombined(e){ e.preventDefault(); }
-function adminDeleteRosterResult(){}
 
-// ══════════════════════════════════════════════════════════════════════
-// ADMIN UI
-// ══════════════════════════════════════════════════════════════════════
 function renderAdminUI(){
   if (!isAdminLoggedIn()) return;
   renderAdminAnnouncements();
@@ -1634,6 +1553,7 @@ function renderAdminUI(){
   $('contactAddress').value = DB.contact.address || '';
   $('contactPhone').value = DB.contact.phone || '';
   $('contactEmail').value = DB.contact.email || '';
+  $('inputTotalStudents').value = DB.totalStudents || 0;
   renderAdminRoster();
   if (DB.notice) {
     $('noticeTitleInput').value = DB.notice.title || '';
@@ -1648,10 +1568,15 @@ function updateAdminStats(){
   $('aStatHomework').textContent = DB.homework.length;
   $('aStatAnnounce').textContent = DB.announcements.length;
 }
+function updateTotalStudents(e){
+  e.preventDefault();
+  const val = parseInt($('inputTotalStudents').value, 10);
+  if (isNaN(val) || val < 0) { showToast('❌ Enter a valid number', 'error'); return; }
+  DB.totalStudents = val;
+  saveData(); renderHome(); updateAdminStats();
+  showToast('✅ Updated!', 'success');
+}
 
-// ══════════════════════════════════════════════════════════════════════
-// NOTICE
-// ══════════════════════════════════════════════════════════════════════
 async function saveNotice(e){
   e.preventDefault();
   const title = $('noticeTitleInput').value.trim();
@@ -1662,10 +1587,7 @@ async function saveNotice(e){
   let img = DB.notice.img || '';
   if (mode === 'url') {
     const url = $('noticeImageUrl').value.trim();
-    if (url) {
-      if (!isURL(url)) { showToast('❌ Invalid URL (must start with http)', 'error'); return; }
-      img = url;
-    }
+    if (url) { if (!isURL(url)) { showToast('❌ Invalid URL', 'error'); return; } img = url; }
   } else if ($('noticeImageInput').files[0]) {
     const file = $('noticeImageInput').files[0];
     const check = validateFile(file, 'image'); if (!check.ok) { showToast(check.msg, 'error'); return; }
@@ -1691,9 +1613,6 @@ function deleteNotice(){
   showToast('🗑️ Notice deleted', 'warning');
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// SLIDER
-// ══════════════════════════════════════════════════════════════════════
 async function addSlideImage(e){
   e.preventDefault();
   const editId = $('editSlideId').value;
@@ -1705,21 +1624,15 @@ async function addSlideImage(e){
   let img = '';
   if (mode === 'url') {
     const url = $('slideImageUrl').value.trim();
-    if (url) {
-      if (!isURL(url)) { showToast('❌ Invalid URL', 'error'); return; }
-      img = url;
-    } else if (editId) {
-      const ex = DB.slides.find(s => s.id === id); img = ex ? ex.img : '';
-    }
+    if (url) { if (!isURL(url)) { showToast('❌ Invalid URL', 'error'); return; } img = url; }
+    else if (editId) { const ex = DB.slides.find(s => s.id === id); img = ex ? ex.img : ''; }
     if (!img) { showToast('❌ Paste an image URL', 'warning'); return; }
   } else {
     const fi = $('slideImageFile');
     if (fi.files[0]) {
       const check = validateFile(fi.files[0], 'image'); if (!check.ok) { showToast(check.msg, 'warning'); return; }
       img = await compressImage(fi.files[0]);
-    } else if (editId) {
-      const ex = DB.slides.find(s => s.id === id); img = ex ? ex.img : '';
-    }
+    } else if (editId) { const ex = DB.slides.find(s => s.id === id); img = ex ? ex.img : ''; }
     if (!img) { showToast('❌ Choose an image', 'warning'); return; }
   }
   const isEdit = DB.slides.some(s => s.id === id);
@@ -1728,8 +1641,7 @@ async function addSlideImage(e){
   saveData();
   cancelEditSlide();
   sliderSignature = '';
-  renderHome();
-  renderAdminSlider();
+  renderHome(); renderAdminSlider();
   showToast(isEdit ? '✅ Slide updated!' : '✅ Slide added!', 'success');
 }
 function editSlideImage(id){
@@ -1740,7 +1652,6 @@ function editSlideImage(id){
   $('slideImageOptionalNote').style.display = 'inline';
   $('slideSubmitBtn').innerHTML = '<i class="fas fa-save"></i> Update';
   $('slideCancelBtn').style.display = 'inline-flex';
-  // Auto-switch to URL tab if existing image is a URL
   if (isURL(s.img)) { switchInput('slide','url'); $('slideImageUrl').value = s.img; }
 }
 function cancelEditSlide(){
@@ -1754,8 +1665,7 @@ function cancelEditSlide(){
 function deleteSlideImage(id){
   if (!confirm('Delete this slide?')) return;
   DB.slides = DB.slides.filter(s => s.id !== id);
-  saveData();
-  sliderSignature = '';
+  saveData(); sliderSignature = '';
   renderHome(); renderAdminSlider();
   showToast('🗑️ Deleted', 'warning');
 }
@@ -1767,20 +1677,14 @@ function renderAdminSlider(){
     <div style="border-radius:10px;overflow:hidden;background:var(--gray);">
       <img src="${esc(s.img)}" style="width:100%;height:70px;object-fit:cover;" loading="lazy" onerror="this.style.background='#ccc'" />
       <div style="padding:4px 8px;display:flex;justify-content:space-between;align-items:center;gap:4px;">
-        <span style="font-size:11px;font-weight:600;">${esc(s.title)}</span>
-        <div>
-          <button class="btn btn-primary btn-sm" data-edit-slide="${esc(s.id)}">✎</button>
-          <button class="btn btn-danger btn-sm" data-del-slide="${esc(s.id)}">×</button>
-        </div>
+        <span style="font-size:11px;font-weight:600;">${esc(s.title)} ${isURL(s.img) ? '<i class="fas fa-link" style="color:#10b981;font-size:9px;"></i>' : ''}</span>
+        <div><button class="btn btn-primary btn-sm" data-edit-slide="${esc(s.id)}">✎</button><button class="btn btn-danger btn-sm" data-del-slide="${esc(s.id)}">×</button></div>
       </div>
     </div>`).join('');
   c.querySelectorAll('[data-edit-slide]').forEach(btn => btn.addEventListener('click', () => editSlideImage(btn.dataset.editSlide)));
   c.querySelectorAll('[data-del-slide]').forEach(btn => btn.addEventListener('click', () => deleteSlideImage(btn.dataset.delSlide)));
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// VIDEO
-// ══════════════════════════════════════════════════════════════════════
 async function uploadVideo(e){
   e.preventDefault();
   const mode = getInputMode('video');
@@ -1790,28 +1694,20 @@ async function uploadVideo(e){
     if (!isURL(url)) { showToast('❌ Invalid URL', 'error'); return; }
     DB.video = url;
     DB.videoType = isYouTube(url) ? 'youtube' : 'file';
-    saveData();
-    renderHome();
+    saveData(); renderHome();
     showToast(isYouTube(url) ? '✅ YouTube video saved!' : '✅ Video URL saved!', 'success');
     return;
   }
   const fi = $('videoFile');
   const check = validateFile(fi.files[0], 'video');
   if (!check.ok) { showToast(check.msg, 'warning'); return; }
-  if (fi.files[0].size > BASE64_KEEP_THRESHOLD * 4) {
-    showToast('ℹ️ Large video — upload to GitHub and paste URL for best performance', 'info');
-  }
   const dataUrl = await fileToDataURL(fi.files[0]);
   DB.video = dataUrl;
   DB.videoType = 'file';
-  saveData();
-  renderHome();
+  saveData(); renderHome();
   showToast('✅ Video uploaded!', 'success');
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// TIMINGS / ANNOUNCEMENTS / HOMEWORK / BOOKS / DOWNLOADS / GALLERY
-// ══════════════════════════════════════════════════════════════════════
 function updateTimings(e){
   e.preventDefault();
   const nt = $('inputSchoolTime').value.trim();
@@ -1877,19 +1773,13 @@ async function adminAddHomework(e){
   let file = '';
   if (mode === 'url') {
     const url = $('adminHwUrl').value.trim();
-    if (url) {
-      if (!isURL(url)) { showToast('❌ Invalid URL', 'error'); return; }
-      file = url;
-    } else {
-      const ex = DB.homework.find(h => h.id === id); file = ex ? ex.file : '';
-    }
+    if (url) { if (!isURL(url)) { showToast('❌ Invalid URL', 'error'); return; } file = url; }
+    else { const ex = DB.homework.find(h => h.id === id); file = ex ? ex.file : ''; }
   } else if ($('adminHwFile').files[0]) {
     const f = $('adminHwFile').files[0];
     const check = validateFile(f, 'pdf'); if (!check.ok) { showToast(check.msg, 'error'); return; }
     file = await fileToDataURL(f);
-  } else {
-    const ex = DB.homework.find(h => h.id === id); file = ex ? ex.file : '';
-  }
+  } else { const ex = DB.homework.find(h => h.id === id); file = ex ? ex.file : ''; }
   DB.homework = DB.homework.filter(h => h.id !== id);
   DB.homework.push({ id, class:cls, subject, title, desc, file });
   saveData();
@@ -2142,35 +2032,15 @@ function updateAbout(e){
   showToast('✅ Saved!', 'success');
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// ⭐ MIGRATION TOOL — scan DB for base64 items and replace with URL
-// ══════════════════════════════════════════════════════════════════════
 function scanBase64Items(){
   const items = [];
-  // Gallery
-  (DB.gallery || []).forEach(g => {
-    if (isBase64(g.file)) items.push({ store:'gallery', id:g.id, label:`Gallery: ${g.caption}`, field:'file', data:g.file });
-  });
-  // Slides
-  (DB.slides || []).forEach(s => {
-    if (isBase64(s.img)) items.push({ store:'slides', id:s.id, label:`Slider: ${s.title}`, field:'img', data:s.img });
-  });
-  // Notice
+  (DB.gallery || []).forEach(g => { if (isBase64(g.file)) items.push({ store:'gallery', id:g.id, label:`Gallery: ${g.caption}`, field:'file', data:g.file }); });
+  (DB.slides || []).forEach(s => { if (isBase64(s.img)) items.push({ store:'slides', id:s.id, label:`Slider: ${s.title}`, field:'img', data:s.img }); });
   if (isBase64(DB.notice?.img)) items.push({ store:'notice', id:'notice', label:`Notice: ${DB.notice.title}`, field:'img', data:DB.notice.img });
-  // Video
   if (isBase64(DB.video)) items.push({ store:'video', id:'video', label:`Video (large)`, field:'video', data:DB.video });
-  // Books
-  (DB.books || []).forEach(b => {
-    if (isBase64(b.file)) items.push({ store:'books', id:b.id, label:`Book: ${b.class} — ${b.title}`, field:'file', data:b.file });
-  });
-  // Homework
-  (DB.homework || []).forEach(h => {
-    if (isBase64(h.file)) items.push({ store:'homework', id:h.id, label:`Homework: ${h.class} — ${h.title}`, field:'file', data:h.file });
-  });
-  // Downloads
-  (DB.downloads || []).forEach(d => {
-    if (isBase64(d.file)) items.push({ store:'downloads', id:d.id, label:`Download: ${d.title}`, field:'file', data:d.file });
-  });
+  (DB.books || []).forEach(b => { if (isBase64(b.file)) items.push({ store:'books', id:b.id, label:`Book: ${b.class} — ${b.title}`, field:'file', data:b.file }); });
+  (DB.homework || []).forEach(h => { if (isBase64(h.file)) items.push({ store:'homework', id:h.id, label:`Homework: ${h.class} — ${h.title}`, field:'file', data:h.file }); });
+  (DB.downloads || []).forEach(d => { if (isBase64(d.file)) items.push({ store:'downloads', id:d.id, label:`Download: ${d.title}`, field:'file', data:d.file }); });
 
   const list = $('migrateList');
   const stats = $('migrateStats');
@@ -2192,7 +2062,6 @@ function scanBase64Items(){
         <button class="btn btn-primary btn-sm" data-repl-idx="${idx}"><i class="fas fa-link"></i> Replace with URL</button>
       </div>
     </div>`).join('');
-
   list.querySelectorAll('[data-dl-idx]').forEach(btn => btn.addEventListener('click', () => {
     const it = items[parseInt(btn.dataset.dlIdx, 10)];
     downloadBase64AsFile(it.data, it.label);
@@ -2205,68 +2074,41 @@ function scanBase64Items(){
     replaceBase64WithUrl(it, url);
   }));
 }
-
 function downloadBase64AsFile(dataUrl, label){
   try {
     const blob = dataURLtoBlob(dataUrl);
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    // Guess extension from MIME type
     const mimeMatch = /data:(.*?);/.exec(dataUrl);
     const mime = mimeMatch ? mimeMatch[1] : '';
     const ext = mime.includes('png') ? 'png' : mime.includes('jpeg') ? 'jpg' : mime.includes('gif') ? 'gif' : mime.includes('webp') ? 'webp' : mime.includes('pdf') ? 'pdf' : mime.includes('mp4') ? 'mp4' : 'bin';
     const safe = label.replace(/[^\w\-.]+/g, '_').substring(0, 60);
     a.download = `${safe}.${ext}`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 30000);
     showToast('📥 Downloaded — upload it to GitHub now', 'success');
-  } catch (e) {
-    console.error(e);
-    showToast('❌ Could not download', 'error');
-  }
+  } catch (e) { console.error(e); showToast('❌ Could not download', 'error'); }
 }
-
 function replaceBase64WithUrl(item, url){
   try {
-    if (item.store === 'gallery') {
-      const g = DB.gallery.find(g => g.id === item.id);
-      if (g) g.file = url;
-    } else if (item.store === 'slides') {
-      const s = DB.slides.find(s => s.id === item.id);
-      if (s) s.img = url;
-    } else if (item.store === 'notice') {
-      DB.notice.img = url;
-    } else if (item.store === 'video') {
-      DB.video = url;
-    } else if (item.store === 'books') {
-      const b = DB.books.find(b => b.id === item.id);
-      if (b) b.file = url;
-    } else if (item.store === 'homework') {
-      const h = DB.homework.find(h => h.id === item.id);
-      if (h) h.file = url;
-    } else if (item.store === 'downloads') {
-      const d = DB.downloads.find(d => d.id === item.id);
-      if (d) d.file = url;
-    }
+    if (item.store === 'gallery') { const g = DB.gallery.find(g => g.id === item.id); if (g) g.file = url; }
+    else if (item.store === 'slides') { const s = DB.slides.find(s => s.id === item.id); if (s) s.img = url; }
+    else if (item.store === 'notice') { DB.notice.img = url; }
+    else if (item.store === 'video') { DB.video = url; }
+    else if (item.store === 'books') { const b = DB.books.find(b => b.id === item.id); if (b) b.file = url; }
+    else if (item.store === 'homework') { const h = DB.homework.find(h => h.id === item.id); if (h) h.file = url; }
+    else if (item.store === 'downloads') { const d = DB.downloads.find(d => d.id === item.id); if (d) d.file = url; }
     saveData();
     renderHome(); renderGallery(); renderAdminGallery();
     renderAdminSlider(); renderAdminBooks(); renderAdminDownloads();
     renderAdminHomework(); refreshBooksView(); renderDownloads();
     initVideo();
-    scanBase64Items(); // refresh list
+    scanBase64Items();
     showToast('✅ Replaced with URL!', 'success');
-  } catch (e) {
-    console.error(e);
-    showToast('❌ Replace failed', 'error');
-  }
+  } catch (e) { console.error(e); showToast('❌ Replace failed', 'error'); }
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// RENDER: HOME / HOMEWORK / BOOKS / DOWNLOADS / GALLERY
-// ══════════════════════════════════════════════════════════════════════
 function renderHome(){
   $('statStudents').textContent = DB.totalStudents || 0;
   $('statNews').textContent = DB.announcements.length;
@@ -2437,9 +2279,6 @@ function renderGallery(){
   });
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// ADMIN LIST RENDERERS
-// ══════════════════════════════════════════════════════════════════════
 function renderAdminAnnouncements(){
   const c = $('adminAnnouncementList');
   if (!c) return;
@@ -2523,9 +2362,6 @@ function renderAdminIncharges(){
   c.querySelectorAll('[data-rem]').forEach(b => b.addEventListener('click', () => removeIncharge(b.dataset.rem)));
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// FILE HELPERS — work for BOTH base64 and URL
-// ══════════════════════════════════════════════════════════════════════
 function dataURLtoBlob(dataUrl){
   const ci = dataUrl.indexOf(',');
   const header = dataUrl.slice(0, ci);
@@ -2541,38 +2377,29 @@ function downloadFile(data, name){
   if (!data) { showToast('❌ No file', 'error'); return; }
   try {
     if (isURL(data)) {
-      // Direct link download (works for jsDelivr/GitHub raw)
       const a = document.createElement('a');
-      a.href = data;
-      a.download = name || fileNameFromUrl(data);
-      a.target = '_blank';
-      a.rel = 'noopener';
+      a.href = data; a.download = name || fileNameFromUrl(data);
+      a.target = '_blank'; a.rel = 'noopener';
       document.body.appendChild(a); a.click(); a.remove();
       showToast('📥 Download started', 'success');
     } else if (isBase64(data)) {
       const url = URL.createObjectURL(dataURLtoBlob(data));
       const a = document.createElement('a');
-      a.href = url;
-      a.download = name || 'download';
+      a.href = url; a.download = name || 'download';
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 30000);
       showToast('📥 Download started', 'success');
     }
   } catch (e) { console.error(e); showToast('❌ Download failed', 'error'); }
 }
-// Preview modal — handles URL / base64, pdf/image/video
 function previewFile(data, kind){
   if (!data) { showToast('❌ No file', 'error'); return; }
   try {
     let url;
     if (isURL(data)) url = data;
-    else if (isBase64(data)) {
-      url = URL.createObjectURL(dataURLtoBlob(data));
-      // Revoke later
-      setTimeout(() => URL.revokeObjectURL(url), 120000);
-    } else { showToast('❌ Unsupported file', 'error'); return; }
+    else if (isBase64(data)) { url = URL.createObjectURL(dataURLtoBlob(data)); setTimeout(() => URL.revokeObjectURL(url), 120000); }
+    else { showToast('❌ Unsupported file', 'error'); return; }
 
-    // Determine content type
     let type = kind || '';
     if (!type || type === 'file') {
       if (/\.pdf($|\?)/i.test(data) || (isBase64(data) && data.startsWith('data:application/pdf'))) type = 'pdf';
@@ -2581,7 +2408,6 @@ function previewFile(data, kind){
     }
 
     if (type === 'pdf') {
-      // Open PDF in a modal-style overlay using iframe
       const overlay = document.createElement('div');
       overlay.style.cssText = 'position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.9);display:flex;flex-direction:column;padding:16px;';
       overlay.innerHTML = `
@@ -2597,15 +2423,11 @@ function previewFile(data, kind){
       document.body.appendChild(overlay);
       return;
     }
-    // Image or video → open in new tab (native viewer)
     const w = window.open(url, '_blank');
     if (!w) showToast('❌ Popup blocked', 'error');
   } catch (e) { console.error(e); showToast('❌ Preview failed', 'error'); }
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// RESULTS / PRINT (unchanged core, included for completeness)
-// ══════════════════════════════════════════════════════════════════════
 function checkClassHasResults(){
   const cls = $('resultClass').value;
   const has = DB.results.some(r => r.class === cls && r.published && (Number(r.total)||0) > 0);
@@ -2698,25 +2520,12 @@ function searchResult(e){
     showToast(`✅ Found ${results.length} exam(s)`, 'success');
   } finally { resultSearchInProgress = false; }
 }
-function populateAdminExamFilter(){
-  const sel = $('reportExamTypeFilter');
-  if (!sel) return;
-  const cf = $('reportClassFilter').value;
-  const cur = sel.value;
-  const types = cf === 'ALL' ? getAllExamTypes() : getExamTypesForClass(cf, false);
-  sel.innerHTML = '<option value="ALL">All Terms</option>' + types.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
-  if (types.includes(cur)) sel.value = cur;
-}
 function renderResultReport(){
-  populateAdminExamFilter();
   const tbody = $('reportTableBody');
   if (!tbody) return;
   tbody.innerHTML = '<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--text-light);">Report available when results exist.</td></tr>';
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// RENDER ALL
-// ══════════════════════════════════════════════════════════════════════
 function renderAll(){
   renderHome();
   renderHomework();
@@ -2727,9 +2536,6 @@ function renderAll(){
   refreshBooksView();
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════════════════════════════
 $('footerYear').textContent = new Date().getFullYear();
 $('announceDate').value = new Date().toISOString().split('T')[0];
 
