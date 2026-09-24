@@ -15,14 +15,17 @@
          or high-latency connection this alone can shave real, noticeable
          time off how soon the welcome screen's data finishes loading. -->
     <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://ges-bait-mughal-default-rtdb.firebaseio.com" />
-    <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://ges-baitmughal-official-default-rtdb.asia-southeast1.firebasedatabase.app" />
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+    <link rel="preconnect" href="https://api.cloudinary.com" crossorigin />
+    <link rel="preconnect" href="https://gbm-upload-gatekeeper.gesbaitmughal.workers.dev" crossorigin />
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://www.gstatic.com" />
-    <link rel="dns-prefetch" href="https://ges-bait-mughal-default-rtdb.firebaseio.com" />
-    <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com" />
+    <link rel="dns-prefetch" href="https://ges-baitmughal-official-default-rtdb.asia-southeast1.firebasedatabase.app" />
+    <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+    <link rel="dns-prefetch" href="https://api.cloudinary.com" />
 
     <!-- Firebase SDKs -->
     <script type="module">
@@ -35,13 +38,13 @@
         } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyCuP1jNM0VyMly5m4Zq8h-zbE6Hqnr5Zyg",
-            authDomain: "ges-bait-mughal.firebaseapp.com",
-            databaseURL: "https://ges-bait-mughal-default-rtdb.firebaseio.com",
-            projectId: "ges-bait-mughal",
-            storageBucket: "ges-bait-mughal.appspot.com",
-            messagingSenderId: "5737837063",
-            appId: "1:5737837063:web:dffc601015ffde68cac32"
+            apiKey: "AIzaSyCNIfpzJ0PUPApFafh9g23ppfhsQpxIsss",
+            authDomain: "ges-baitmughal-official.firebaseapp.com",
+            databaseURL: "https://ges-baitmughal-official-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "ges-baitmughal-official",
+            storageBucket: "ges-baitmughal-official.firebasestorage.app",
+            messagingSenderId: "930313857799",
+            appId: "1:930313857799:web:b8cf1924fca6e17a33b3a2"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -2641,7 +2644,7 @@
                                 Class Dashboard ("Change My Password"). Firebase Console is only
                                 needed if a teacher has <strong>forgotten</strong> their password
                                 and can't verify the current one — open
-                                <a href="https://console.firebase.google.com/project/ges-bait-mughal/authentication/users" target="_blank" rel="noopener noreferrer">Firebase Console → Authentication → Users</a>
+                                <a href="https://console.firebase.google.com/project/ges-baitmughal-official/authentication/users" target="_blank" rel="noopener noreferrer">Firebase Console → Authentication → Users</a>
                                 and reset the password for that class's account (e.g. <code>class3@gesbaitmughal-auth.local</code>).
                             </p>
                         </div>
@@ -3220,27 +3223,64 @@
             return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
         }
 
+        // ─── CLOUDINARY UPLOAD (via Cloudflare Worker gatekeeper) ─────────
+        // Files (images/video/pdf/word) no longer go to Firebase Storage
+        // (that needs a paid Blaze plan) — they go to Cloudinary's free
+        // tier instead. Only a signed-in Teacher/Admin can actually upload:
+        // this code first asks the Cloudflare Worker "gatekeeper" to check
+        // the current Firebase login and, if valid, hand back a one-time
+        // signed permission slip; only then does the file go to Cloudinary.
+        const CLOUDINARY_CLOUD_NAME = 'qwvbn9ru';
+        const CLOUDINARY_UPLOAD_PRESET = 'school_uploads';
+        const UPLOAD_GATEKEEPER_URL = 'https://gbm-upload-gatekeeper.gesbaitmughal.workers.dev';
+
+        async function getUploadSignature() {
+            const { auth } = window.firebaseAuth;
+            const user = auth && auth.currentUser;
+            if (!user) throw new Error('You must be logged in to upload files.');
+            const idToken = await user.getIdToken();
+            const res = await fetch(UPLOAD_GATEKEEPER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idToken })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Not authorized to upload.');
+            return data; // { signature, timestamp, apiKey, cloudName }
+        }
+
         function uploadFileToStorage(file, folder) {
-            if (!window.firebaseStorage) return Promise.reject(new Error('Still connecting — please try again in a moment.'));
-            const { storage, storageRef, uploadBytes, getDownloadURL } = window.firebaseStorage;
-            const safeName = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '-' + file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-            const fileRef = storageRef(storage, folder + '/' + safeName);
             return withTimeout(
-                uploadBytes(fileRef, file).then(() => getDownloadURL(fileRef)),
+                (async () => {
+                    const { signature, timestamp, apiKey, cloudName } = await getUploadSignature();
+                    const resourceType = file.type.startsWith('video/') ? 'video'
+                        : file.type.startsWith('image/') ? 'image'
+                        : 'raw'; // pdf, doc, docx, etc.
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('api_key', apiKey);
+                    formData.append('timestamp', timestamp);
+                    formData.append('signature', signature);
+                    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+                    const uploadRes = await fetch(
+                        `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,
+                        { method: 'POST', body: formData }
+                    );
+                    const uploadData = await uploadRes.json();
+                    if (!uploadRes.ok) throw new Error((uploadData.error && uploadData.error.message) || 'Upload failed');
+                    return uploadData.secure_url;
+                })(),
                 45000,
                 'Upload timed out — your internet may be too slow/unstable right now. Please try again.'
             );
         }
 
-        // Best-effort cleanup when a photo/file/video is replaced or deleted
-        // — silently does nothing for a blank value or old base64 data left
-        // over from before this upgrade, so it never blocks a delete.
+        // Cloudinary files aren't deleted automatically when replaced (that
+        // would need another signed backend call) — old files just stay in
+        // Cloudinary's free storage unused. This only matters once the 25GB
+        // free tier fills up someday; safe to ignore for now.
         function deleteFileFromStorage(url) {
-            if (!url || typeof url !== 'string' || !url.startsWith('http') || !window.firebaseStorage) return;
-            try {
-                const { storage, storageRef, deleteObject } = window.firebaseStorage;
-                deleteObject(storageRef(storage, url)).catch(() => {});
-            } catch (e) {}
+            // Intentionally a no-op for Cloudinary URLs.
         }
 
         // ─── FIREBASE ────────────────────────────────────────────────────
