@@ -3633,6 +3633,34 @@
         return { grade: 'F', pass: false };
     }
 
+    // A student marked Absent for an exam has obtained === 'AB' (a string,
+    // not a number) instead of a marks value — this marker is what every
+    // percentage/grade/position calculation below checks for first, so an
+    // absent student is shown as "Absent" everywhere instead of a 0% / F.
+    const ABSENT_MARK = 'AB';
+    // Recognizes "A" or "Absent" (any case, extra spaces ok) typed directly
+    // into a marks box instead of a number.
+    function isAbsentText(raw) {
+        const v = String(raw || '').trim().toLowerCase();
+        return v === 'a' || v === 'absent';
+    }
+    function isSubjectAbsent(sub) {
+        return !!sub && sub.obtained === ABSENT_MARK;
+    }
+    // A whole exam entry only counts as "Absent" when there's a single
+    // overall mark (non-subject mode) recorded as 'AB', or — in subject-wise
+    // mode — when EVERY subject is individually marked Absent. A student
+    // absent in just some papers keeps a normal total/percentage/grade
+    // computed from the papers they did sit, with only those specific
+    // subject rows shown as "Absent" (see isSubjectAbsent above).
+    function isResultAbsent(result) {
+        if (!result) return false;
+        if (Array.isArray(result.subjects) && result.subjects.length > 0) {
+            return result.subjects.every(isSubjectAbsent);
+        }
+        return result.obtained === ABSENT_MARK;
+    }
+
     // ─── AUTH (Firebase Authentication) ───────────────────────────────
     // Class ↔ synthetic email mapping. Firebase Auth requires an email
     // address per account; these don't need to receive real mail — they're
@@ -3755,7 +3783,7 @@
         $('tStatStudents').textContent = students.length;
         const validResults = DB.results.filter(r => r.class === cls && (Number(r.total) || 0) > 0);
         if (validResults.length > 0) {
-            const avg = validResults.reduce((sum, r) => sum + (Number(r.obtained) / Number(r.total) * 100), 0) / validResults.length;
+            const avg = validResults.reduce((sum, r) => sum + ((Number(r.obtained) || 0) / Number(r.total) * 100), 0) / validResults.length;
             $('tStatAvg').textContent = avg.toFixed(1) + '%';
         } else $('tStatAvg').textContent = '0%';
     }
@@ -3764,7 +3792,7 @@
     // short readable string, e.g. "Math: 42/50 · English: 38/50".
     function subjectsBreakdownText(r) {
         if (!Array.isArray(r.subjects) || r.subjects.length === 0) return '';
-        return r.subjects.map(s => `${esc(s.name)}: ${esc(s.obtained)}/${esc(s.total)}`).join(' · ');
+        return r.subjects.map(s => `${esc(s.name)}: ${isSubjectAbsent(s) ? 'Absent' : `${esc(s.obtained)}/${esc(s.total)}`}`).join(' · ');
     }
 
     // ─── CLASS ROSTER & RESULTS (one all-in-one table, shared by Teacher & Head) ─
@@ -3904,36 +3932,41 @@
         }
         const existing = (originalRoll && cls) ? getResult(cls, parseInt(originalRoll, 10), examType) : null;
         const inputStyle = 'width:100%; min-width:56px; padding:4px 6px; border:2px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:12px;';
+        const outer = document.createElement('div');
+        outer.style.cssText = 'display:flex; flex-direction:column; gap:4px;';
         if (subjectMode) {
+            // Type a number for marks, or type A / Absent in a paper the
+            // student missed — that paper still counts toward the total.
             const defs = getSubjectDefsFromDOM(scope);
             if (defs.length === 0) {
                 td.innerHTML = '<span style="font-size:11px; color:var(--text-light);">Add a subject above</span>';
                 return;
             }
             const wrap = document.createElement('div');
-            wrap.style.cssText = 'display:flex; gap:4px; flex-wrap:wrap;';
+            wrap.style.cssText = 'display:flex; gap:6px; flex-wrap:wrap;';
             defs.forEach((d, i) => {
+                const existingSub = existing && Array.isArray(existing.subjects) ? existing.subjects[i] : null;
                 const input = document.createElement('input');
-                input.type = 'number'; input.min = '0';
-                input.style.cssText = inputStyle + 'max-width:60px;';
+                input.type = 'text'; input.inputMode = 'numeric';
+                input.style.cssText = inputStyle + 'max-width:64px;';
                 input.placeholder = d.name || `S${i + 1}`;
-                input.title = d.name ? `${d.name} (max ${d.total || '?'})` : '';
+                input.title = d.name ? `${d.name} (max ${d.total || '?'}) — type A or Absent if the student missed this paper` : '';
                 input.className = 'roster-subject-input';
                 input.dataset.subjectIndex = i;
-                if (existing && Array.isArray(existing.subjects) && existing.subjects[i]) {
-                    input.value = existing.subjects[i].obtained;
-                }
+                if (existingSub) input.value = isSubjectAbsent(existingSub) ? 'A' : existingSub.obtained;
                 wrap.appendChild(input);
             });
-            td.appendChild(wrap);
+            outer.appendChild(wrap);
         } else {
             const input = document.createElement('input');
-            input.type = 'number'; input.min = '0';
+            input.type = 'text'; input.inputMode = 'numeric';
             input.style.cssText = inputStyle;
             input.className = 'roster-obtained-input';
-            if (existing) input.value = existing.obtained;
-            td.appendChild(input);
+            input.title = 'Type a number, or A / Absent if the student missed this exam';
+            if (existing) input.value = isResultAbsent(existing) ? 'A' : existing.obtained;
+            outer.appendChild(input);
         }
+        td.appendChild(outer);
     }
 
     function createRosterRow(student, scope) {
@@ -4116,13 +4149,17 @@
                 parsedRows.forEach(({ tr, roll }) => {
                     if (subjectMode) {
                         const inputs = Array.from(tr.querySelectorAll('.roster-subject-input'));
-                        if (!inputs.some(i => i.value.trim() !== '')) return; // left blank — no change for this student
+                        if (!inputs.some(i => i.value.trim() !== '')) return; // left fully blank — no change for this student
                         let obtainedSum = 0, rowOk = true;
                         const subjects = [];
                         inputs.forEach((input, i) => {
-                            const raw = input.value.trim();
-                            const val = raw === '' ? 0 : parseInt(raw, 10);
                             const max = subjectDefs[i] ? subjectDefs[i].total : 0;
+                            const raw = input.value.trim();
+                            if (isAbsentText(raw)) {
+                                subjects.push({ name: subjectDefs[i].name, total: max, obtained: ABSENT_MARK });
+                                return; // counts as 0 — that paper's total still counts, same as everyone else
+                            }
+                            const val = raw === '' ? 0 : parseInt(raw, 10);
                             if (isNaN(val) || val < 0 || val > max) { rowOk = false; return; }
                             obtainedSum += val;
                             subjects.push({ name: subjectDefs[i].name, total: max, obtained: val });
@@ -4132,7 +4169,9 @@
                     } else {
                         const input = tr.querySelector('.roster-obtained-input');
                         if (!input || input.value.trim() === '') return; // left blank — no change
-                        const obtained = parseInt(input.value.trim(), 10);
+                        const raw = input.value.trim();
+                        if (isAbsentText(raw)) { resultUpdates.push({ roll, obtained: ABSENT_MARK }); return; }
+                        const obtained = parseInt(raw, 10);
                         if (isNaN(obtained) || obtained < 0 || obtained > sharedTotal) { markErrors.push(roll); return; }
                         resultUpdates.push({ roll, obtained });
                     }
@@ -4252,8 +4291,9 @@
         }
         list.innerHTML = '';
         results.forEach(r => {
+            const absent = isResultAbsent(r);
             const total = Number(r.total) || 0;
-            const obtained = Number(r.obtained) || 0;
+            const obtained = Number(r.obtained) || 0; // 'AB' → 0, same as anyone scoring zero
             const hasValidTotal = total > 0;
             const perc = hasValidTotal ? ((obtained / total) * 100).toFixed(1) + '%' : 'N/A';
             const pos = hasValidTotal ? getClassPositions(cls, r.examType)[roll] : null;
@@ -4264,8 +4304,7 @@
             const row = document.createElement('div');
             row.className = 'book-row';
             row.style.flexWrap = 'wrap';
-            row.innerHTML =
-                `<span class="book-title">${esc(r.examType)}: <strong>${esc(obtained)}/${hasValidTotal ? esc(total) : 'N/A'}</strong> (${perc})${pos ? ` — Position ${ordinal(pos.rank)}` : ''} ${statusBadge}${subjectsLine ? `<br><span style="font-size:11px; color:var(--text-light);">${subjectsLine}</span>` : ''}</span><div></div>`;
+            row.innerHTML = `<span class="book-title">${esc(r.examType)}: <strong style="${absent ? 'color:#dc2626;' : ''}">${absent ? 'Absent' : esc(obtained)}${!absent ? `/${hasValidTotal ? esc(total) : 'N/A'}` : ''}</strong> (${perc})${pos ? ` — Position ${ordinal(pos.rank)}` : ''} ${statusBadge}${subjectsLine ? `<br><span style="font-size:11px; color:var(--text-light);">${subjectsLine}</span>` : ''}</span><div></div>`;
             const actions = row.lastElementChild;
             if (!r.published) {
                 const pubBtn = document.createElement('button');
@@ -4417,8 +4456,8 @@
                 '<button type="button" class="btn btn-danger btn-sm" onclick="smRemoveTermBlock(this)"><i class="fas fa-trash"></i> Delete Term</button>' +
             '</div>' +
             '<div class="sm-simple-wrap" style="display:' + (hasSubjects ? 'none' : 'grid') + '; grid-template-columns:1fr 1fr; gap:8px;">' +
-                '<div class="form-group" style="margin:0;"><label>Total</label><input type="number" class="sm-total" min="1" value="' + (result && !hasSubjects ? esc(result.total) : '') + '" /></div>' +
-                '<div class="form-group" style="margin:0;"><label>Obtained</label><input type="number" class="sm-obtained" min="0" value="' + (result && !hasSubjects ? esc(result.obtained) : '') + '" /></div>' +
+                '<div class="form-group" style="margin:0;"><label>Total</label><input type="number" class="sm-total" min="1" value="' + (result ? esc(result.total) : '') + '" /></div>' +
+                '<div class="form-group" style="margin:0;"><label>Obtained <span style="font-weight:400; color:var(--text-light);">(or type A / Absent)</span></label><input type="text" inputmode="numeric" class="sm-obtained" value="' + (result && !hasSubjects ? (isResultAbsent(result) ? 'A' : esc(result.obtained)) : '') + '" /></div>' +
             '</div>' +
             '<div class="sm-subjects-wrap" style="display:' + (hasSubjects ? 'block' : 'none') + '; padding:8px; border:1px dashed var(--border); border-radius:8px; margin-top:4px;">' +
                 '<div class="sm-subjects-list" style="display:flex; flex-direction:column; gap:6px; margin-bottom:8px;"></div>' +
@@ -4442,11 +4481,11 @@
         row.innerHTML =
             '<input class="sm-sub-name" type="text" placeholder="Subject" style="flex:1.4; padding:4px 6px; border:2px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:12px;" />' +
             '<input class="sm-sub-total" type="number" min="1" placeholder="Max" style="flex:1; padding:4px 6px; border:2px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:12px;" />' +
-            '<input class="sm-sub-obtained" type="number" min="0" placeholder="Obtained" style="flex:1; padding:4px 6px; border:2px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:12px;" />' +
+            '<input class="sm-sub-obtained" type="text" inputmode="numeric" placeholder="Obtained or A" title="Type a number, or A / Absent if the student missed this paper" style="flex:1; padding:4px 6px; border:2px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); font-size:12px;" />' +
             '<button type="button" class="btn btn-danger btn-sm" style="padding:2px 8px;">×</button>';
         if (name !== undefined) row.querySelector('.sm-sub-name').value = name;
         if (total !== undefined) row.querySelector('.sm-sub-total').value = total;
-        if (obtained !== undefined) row.querySelector('.sm-sub-obtained').value = obtained;
+        if (obtained !== undefined) row.querySelector('.sm-sub-obtained').value = (obtained === ABSENT_MARK) ? 'A' : obtained;
         row.querySelector('button').addEventListener('click', () => row.remove());
         list.appendChild(row);
     }
@@ -4583,22 +4622,33 @@
                     for (const row of rows) {
                         const subName = row.querySelector('.sm-sub-name').value.trim();
                         const subTotal = parseInt(row.querySelector('.sm-sub-total').value, 10);
-                        const subObtained = parseInt(row.querySelector('.sm-sub-obtained').value, 10);
                         if (!subName || !Number.isInteger(subTotal) || subTotal <= 0) {
                             showToast(`❌ Every subject in "${examType}" needs a name and a valid max marks value`, 'error'); return;
                         }
+                        const rawObtained = row.querySelector('.sm-sub-obtained').value.trim();
+                        if (isAbsentText(rawObtained)) {
+                            subjects.push({ name: subName, total: subTotal, obtained: ABSENT_MARK });
+                            total += subTotal; // counts as 0 — that paper's total still counts, same as everyone else
+                            continue;
+                        }
+                        const subObtained = parseInt(rawObtained, 10);
                         if (isNaN(subObtained) || subObtained < 0 || subObtained > subTotal) {
-                            showToast(`❌ Invalid obtained marks for "${subName}" in "${examType}"`, 'error'); return;
+                            showToast(`❌ Invalid obtained marks for "${subName}" in "${examType}" — enter a number, or A / Absent`, 'error'); return;
                         }
                         subjects.push({ name: subName, total: subTotal, obtained: subObtained });
                         total += subTotal; obtained += subObtained;
                     }
                 } else {
                     total = parseInt(block.querySelector('.sm-total').value, 10);
-                    obtained = parseInt(block.querySelector('.sm-obtained').value, 10);
                     if (isNaN(total) || total <= 0) { showToast(`❌ Please enter valid total marks for "${examType}"`, 'error'); return; }
-                    if (isNaN(obtained) || obtained < 0) { showToast(`❌ Please enter valid obtained marks for "${examType}"`, 'error'); return; }
-                    if (obtained > total) { showToast(`❌ Obtained marks cannot exceed total marks for "${examType}"`, 'error'); return; }
+                    const rawObtained = block.querySelector('.sm-obtained').value.trim();
+                    if (isAbsentText(rawObtained)) {
+                        obtained = ABSENT_MARK;
+                    } else {
+                        obtained = parseInt(rawObtained, 10);
+                        if (isNaN(obtained) || obtained < 0) { showToast(`❌ Please enter valid obtained marks for "${examType}" — a number, or A / Absent`, 'error'); return; }
+                        if (obtained > total) { showToast(`❌ Obtained marks cannot exceed total marks for "${examType}"`, 'error'); return; }
+                    }
                 }
                 parsedTerms.push({ resultId, examType, total, obtained, subjects });
             }
@@ -4835,6 +4885,7 @@
         const posCache = {};
         results.forEach((r, index) => {
             const student = DB.students.find(s => s.class === r.class && s.roll === r.roll);
+            const absent = isResultAbsent(r);
             const total = Number(r.total) || 0;
             const obtained = Number(r.obtained) || 0;
             const hasValidTotal = total > 0;
@@ -4850,7 +4901,7 @@
                 : '<span style="background:#fef3c7; color:#92400e; font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px;">Draft</span>';
             const tr = document.createElement('tr');
             tr.innerHTML =
-                `<td>${index+1}</td><td style="font-weight:600;">${esc(r.class)}</td><td>${esc(r.roll)}</td><td style="font-weight:500;">${esc(student ? student.name : '(deleted student)')}</td><td>${esc(r.examType)}</td><td style="font-weight:700; color:var(--primary);">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700; color:var(--gold);">${percFixed}</td><td style="font-weight:700; color:${gradeInfo.pass ? 'var(--primary)' : '#dc2626'};">${esc(gradeInfo.grade)}</td><td style="font-weight:700;">${esc(posLabel)}</td><td>${statusLabel}</td><td>${esc(DB.incharges[r.class]||'Not Assigned')}</td><td></td>`;
+                `<td>${index+1}</td><td style="font-weight:600;">${esc(r.class)}</td><td>${esc(r.roll)}</td><td style="font-weight:500;">${esc(student ? student.name : '(deleted student)')}</td><td>${esc(r.examType)}</td><td style="font-weight:700; color:var(--primary);">${absent ? 'Absent' : esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700; color:var(--gold);">${percFixed}</td><td style="font-weight:700; color:${gradeInfo.pass ? 'var(--primary)' : '#dc2626'};">${esc(gradeInfo.grade)}</td><td style="font-weight:700;">${esc(posLabel)}</td><td>${statusLabel}</td><td>${esc(DB.incharges[r.class]||'Not Assigned')}</td><td></td>`;
             const actionsTd = tr.lastElementChild;
             if (!r.published) {
                 const pubBtn = document.createElement('button');
@@ -4984,9 +5035,10 @@
             // Single term: exam name shown right under the school name, no
             // Exam column needed since there's only ever one row.
             const r = results[0];
+            const absent = isResultAbsent(r);
             const total = Number(r.total) || 0;
             const obtained = Number(r.obtained) || 0;
-            const perc = (obtained / total) * 100;
+            const perc = total > 0 ? (obtained / total) * 100 : 0;
             const gradeInfo = calculateGrade(perc);
             const pos = getClassPositions(cls, r.examType)[roll];
             bodyHtml = `
@@ -5006,14 +5058,14 @@
                 ${Array.isArray(r.subjects) && r.subjects.length > 0 ? `
                 <table style="margin-bottom:12px;">
                     <thead><tr><th>Subject</th><th>Max Marks</th><th>Obtained</th></tr></thead>
-                    <tbody>${r.subjects.map(s => `<tr><td>${esc(s.name)}</td><td>${esc(s.total)}</td><td style="font-weight:700;">${esc(s.obtained)}</td></tr>`).join('')}</tbody>
+                    <tbody>${r.subjects.map(s => `<tr><td>${esc(s.name)}</td><td>${esc(s.total)}</td><td style="font-weight:700; ${isSubjectAbsent(s) ? 'color:#dc2626;' : ''}">${isSubjectAbsent(s) ? 'Absent' : esc(s.obtained)}</td></tr>`).join('')}</tbody>
                 </table>` : ''}
                 <table>
                     <thead><tr><th>Total Marks</th><th>Obtained</th><th>Percentage</th><th>Grade</th>${pos ? '<th>Position</th>' : ''}</tr></thead>
                     <tbody>
                         <tr>
                             <td>${esc(total)}</td>
-                            <td style="font-weight:700;">${esc(obtained)}</td>
+                            <td style="font-weight:700;">${absent ? 'Absent' : esc(obtained)}</td>
                             <td style="font-weight:700;">${perc.toFixed(1)}%</td>
                             <td style="font-weight:700;">${esc(gradeInfo.grade)}</td>
                             ${pos ? `<td style="font-weight:700;">${ordinal(pos.rank)}</td>` : ''}
@@ -5027,15 +5079,16 @@
         } else {
             // All terms: an Exam column is needed to tell the rows apart.
             const rows = results.map(r => {
+                const absent = isResultAbsent(r);
                 const total = Number(r.total) || 0;
                 const obtained = Number(r.obtained) || 0;
-                const perc = (obtained / total) * 100;
+                const perc = total > 0 ? (obtained / total) * 100 : 0;
                 const gradeInfo = calculateGrade(perc);
                 const pos = getClassPositions(cls, r.examType)[roll];
                 return `<tr>
                     <td>${esc(r.examType)}</td>
                     <td>${esc(total)}</td>
-                    <td style="font-weight:700;">${esc(obtained)}</td>
+                    <td style="font-weight:700;">${absent ? 'Absent' : esc(obtained)}</td>
                     <td style="font-weight:700;">${perc.toFixed(1)}%</td>
                     <td style="font-weight:700;">${esc(gradeInfo.grade)}</td>
                     <td>${pos ? ordinal(pos.rank) : '-'}</td>
@@ -5083,6 +5136,7 @@
         const showExamColumn = examFilter === 'ALL';
         let tableRows = results.map((r, i) => {
             const student = DB.students.find(s => s.class === r.class && s.roll === r.roll);
+            const absent = isResultAbsent(r);
             const total = Number(r.total) || 0;
             const obtained = Number(r.obtained) || 0;
             const hasValidTotal = total > 0;
@@ -5092,7 +5146,7 @@
             if (!posCache[posKey]) posCache[posKey] = getClassPositions(r.class, r.examType);
             const pos = posCache[posKey][r.roll];
             const posLabel = pos ? `${ordinal(pos.rank)}` : '-';
-            return `<tr><td>${i+1}</td><td>${esc(r.class)}</td><td>${esc(r.roll)}</td><td>${esc(student ? student.name : '-')}</td>${showExamColumn ? `<td>${esc(r.examType)}</td>` : ''}<td style="font-weight:700;">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${hasValidTotal ? perc+'%' : 'N/A'}</td><td style="font-weight:700;">${esc(gradeInfo.grade)}</td><td>${esc(posLabel)}</td><td>${esc(DB.incharges[r.class]||'N/A')}</td></tr>`;
+            return `<tr><td>${i+1}</td><td>${esc(r.class)}</td><td>${esc(r.roll)}</td><td>${esc(student ? student.name : '-')}</td>${showExamColumn ? `<td>${esc(r.examType)}</td>` : ''}<td style="font-weight:700;">${absent ? 'Absent' : esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${hasValidTotal ? perc+'%' : 'N/A'}</td><td style="font-weight:700;">${esc(gradeInfo.grade)}</td><td>${esc(posLabel)}</td><td>${esc(DB.incharges[r.class]||'N/A')}</td></tr>`;
         }).join('');
 
         const bodyHtml = `
@@ -5149,6 +5203,7 @@
 
         let tableRows = results.map((r, i) => {
             const student = DB.students.find(s => s.class === r.class && s.roll === r.roll);
+            const absent = isResultAbsent(r);
             const total = Number(r.total) || 0;
             const obtained = Number(r.obtained) || 0;
             const hasValidTotal = total > 0;
@@ -5162,10 +5217,10 @@
             const subjectCells = subjectCols
                 ? subjectCols.map(name => {
                     const sub = Array.isArray(r.subjects) ? r.subjects.find(s => s.name === name) : null;
-                    return `<td>${sub ? esc(sub.obtained) : '-'}</td>`;
+                    return `<td>${sub ? (isSubjectAbsent(sub) ? 'Absent' : esc(sub.obtained)) : '-'}</td>`;
                 }).join('')
                 : '';
-            return `<tr><td>${i+1}</td><td>${esc(r.roll)}</td><td>${esc(student ? student.name : '-')}</td>${showExamColumn ? `<td>${esc(r.examType)}</td>` : ''}${subjectCells}<td style="font-weight:700;">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${hasValidTotal ? perc+'%' : 'N/A'}</td><td style="font-weight:700;">${esc(gradeInfo.grade)}</td><td>${esc(posLabel)}</td><td>${esc(statusLabel)}</td></tr>`;
+            return `<tr><td>${i+1}</td><td>${esc(r.roll)}</td><td>${esc(student ? student.name : '-')}</td>${showExamColumn ? `<td>${esc(r.examType)}</td>` : ''}${subjectCells}<td style="font-weight:700;">${absent ? 'Absent' : esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${absent ? '-' : (hasValidTotal ? perc+'%' : 'N/A')}</td><td style="font-weight:700;">${esc(gradeInfo.grade)}</td><td>${esc(posLabel)}</td><td>${esc(statusLabel)}</td></tr>`;
         }).join('');
 
         const bodyHtml = `
@@ -5204,6 +5259,7 @@
                 <thead><tr><th>Class</th><th>Roll</th><th>Name</th><th>Exam Type</th><th>Obtained</th><th>Total</th><th>%</th><th>Position</th><th>Incharge</th></tr></thead>
                 <tbody>${results.map(r => {
                     const student = DB.students.find(s => s.class === r.class && s.roll === r.roll);
+                    const absent = isResultAbsent(r);
                     const total = Number(r.total) || 0;
                     const obtained = Number(r.obtained) || 0;
                     const hasValidTotal = total > 0;
@@ -5212,7 +5268,7 @@
                     if (!posCache[posKey]) posCache[posKey] = getClassPositions(r.class, r.examType);
                     const pos = posCache[posKey][r.roll];
                     const posLabel = pos ? `${ordinal(pos.rank)}` : '-';
-                    return `<tr><td>${esc(r.class)}</td><td>${esc(r.roll)}</td><td>${esc(student ? student.name : '-')}</td><td>${esc(r.examType)}</td><td style="font-weight:700;">${esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${percText}</td><td>${esc(posLabel)}</td><td>${esc(DB.incharges[r.class]||'N/A')}</td></tr>`;
+                    return `<tr><td>${esc(r.class)}</td><td>${esc(r.roll)}</td><td>${esc(student ? student.name : '-')}</td><td>${esc(r.examType)}</td><td style="font-weight:700;">${absent ? 'Absent' : esc(obtained)}</td><td>${hasValidTotal ? esc(total) : 'N/A'}</td><td style="font-weight:700;">${percText}</td><td>${esc(posLabel)}</td><td>${esc(DB.incharges[r.class]||'N/A')}</td></tr>`;
                 }).join('')}</tbody>
             </table>
             <div style="margin-top:12px; text-align:center; font-size:10px; color:#555; border-top:1px solid #ddd; padding-top:8px;">
@@ -5331,15 +5387,16 @@
             // Combined view: one table listing every exam, so the Exam
             // column is needed to tell the rows apart.
             const rows = results.map(r => {
+                const absent = isResultAbsent(r);
                 const total = Number(r.total) || 0;
                 const obtained = Number(r.obtained) || 0;
-                const perc = (obtained / total) * 100;
+                const perc = total > 0 ? (obtained / total) * 100 : 0;
                 const gradeInfo = calculateGrade(perc);
                 const pos = getClassPositions(cls, r.examType)[roll];
                 return `<tr>
                     <td style="font-weight:600;">${esc(r.examType)}</td>
                     <td>${esc(total)}</td>
-                    <td style="font-weight:700; color:var(--primary);">${esc(obtained)}</td>
+                    <td style="font-weight:700; color:var(--primary);">${absent ? 'Absent' : esc(obtained)}</td>
                     <td style="font-weight:700; color:var(--gold);">${perc.toFixed(1)}%</td>
                     <td style="font-weight:700;">${esc(gradeInfo.grade)}</td>
                     <td>${pos ? ordinal(pos.rank) : '-'}</td>
@@ -5369,9 +5426,10 @@
             // right under the school name — no Exam column needed since
             // there's only ever one row.
             const r = results[0];
+            const absent = isResultAbsent(r);
             const total = Number(r.total) || 0;
             const obtained = Number(r.obtained) || 0;
-            const perc = (obtained / total) * 100;
+            const perc = total > 0 ? (obtained / total) * 100 : 0;
             const gradeInfo = calculateGrade(perc);
             const pos = getClassPositions(cls, r.examType)[roll];
             card.innerHTML = `
@@ -5390,12 +5448,12 @@
                 <div style="margin-bottom:14px; overflow-x:auto;">
                     <table class="marks-table">
                         <thead><tr><th>Subject</th><th>Max Marks</th><th>Obtained</th></tr></thead>
-                        <tbody>${r.subjects.map(s => `<tr><td>${esc(s.name)}</td><td>${esc(s.total)}</td><td style="font-weight:700; color:var(--primary);">${esc(s.obtained)}</td></tr>`).join('')}</tbody>
+                        <tbody>${r.subjects.map(s => `<tr><td>${esc(s.name)}</td><td>${esc(s.total)}</td><td style="font-weight:700; color:${isSubjectAbsent(s) ? '#dc2626' : 'var(--primary)'};">${isSubjectAbsent(s) ? 'Absent' : esc(s.obtained)}</td></tr>`).join('')}</tbody>
                     </table>
                 </div>` : ''}
                 <div class="summary">
                     <div class="item"><span class="label">Total Marks</span><span class="value">${esc(total)}</span></div>
-                    <div class="item"><span class="label">Obtained</span><span class="value">${esc(obtained)}</span></div>
+                    <div class="item"><span class="label">Obtained</span><span class="value">${absent ? 'Absent' : esc(obtained)}</span></div>
                     <div class="item"><span class="label">Percentage</span><span class="value">${perc.toFixed(1)}%</span></div>
                     <div class="item"><span class="label">Grade</span><span class="value">${esc(gradeInfo.grade)}</span></div>
                     ${pos ? `<div class="item"><span class="label">Position</span><span class="value">${ordinal(pos.rank)}</span></div>` : ''}
